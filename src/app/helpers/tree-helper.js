@@ -9,13 +9,26 @@ import {
   theme,
 } from "./tree-variables";
 
-export const onMouseEnterPart = (e, part) => (part.isHighlighted = true);
+export const onMouseEnterPart = (e, part) => {
+  if (!part.isSelected) {
+    part.isHovered = true; // Set hover state
+    if (!part.isHighlighted) {
+      part.isHighlighted = false; // Ensure highlight is not set on hover
+    }
+  }
+};
+
 export const onMouseLeavePart = (e, part) => {
-  if (!part.isSelected) part.isHighlighted = false;
+  part.isHovered = false; // Clear hover state
+  if (!part.isSelected) {
+    part.isHighlighted = false; // Ensure highlight is cleared on leave
+  }
 };
+
 export const onSelectionChange = (part) => {
-  part.isHighlighted = part.isSelected;
+  part.isHighlighted = part.isSelected; // Update highlight based on selection
 };
+
 
 export const strokeStyle = (shape) => {
   return shape
@@ -26,7 +39,12 @@ export const strokeStyle = (shape) => {
     .bind("stroke", statusProperty, (status) => getStrokeForStatus(status))
     .bindObject("stroke", "isHighlighted", (isHighlighted, obj) =>
       isHighlighted
-        ? theme.colors.selectionStroke
+        ? "red" // Set stroke color to red when highlighted
+        : getStrokeForStatus(obj.part.data.status)
+    )
+    .bindObject("stroke", "isHovered", (isHovered, obj) =>
+      isHovered
+        ? theme.colors.hoverStroke // Customize hover stroke color if needed
         : getStrokeForStatus(obj.part.data.status)
     );
 };
@@ -206,4 +224,3 @@ export const createNodeTemplate = (onNodeClick) =>
     ),
     personBadge()
   );
-

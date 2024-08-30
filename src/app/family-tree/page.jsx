@@ -53,7 +53,6 @@ function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isButtonloading, setIsButtonLoading] = useState(false);
-  const [fetchDataTrigger, setFetchDataTrigger] = useState(false);
   const [sameParentIDs, setSameParentIDs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -91,15 +90,12 @@ function App() {
 
     console.log("Request Data Before Conditional:", requestdata);
 
-    // Add parentId only if nodeId is valid
     if (typeof nodeId === "string" && nodeId.trim() !== "") {
       requestdata.parentId = nodeId;
     }
 
-    // Debug after adding parentId
     console.log("Request Data After Conditional:", requestdata);
 
-    // Proceed with fetching data
     async function fetchData() {
       setIsButtonLoading(true);
 
@@ -145,14 +141,26 @@ function App() {
         }
 
         toast.success("Child added successfully!");
-        setFetchDataTrigger((prev) => !prev);
         setIsButtonLoading(false);
+        setData((prevData) => {
+          const newData = [...prevData];
+          newData.push({
+            parent: result.child.parents[0],
+            name: result.child.name,
+            gender: result.child.gender,
+            dateOfBirth: result.child.dateOfBirth.split("T")[0],
+          });
+
+          return newData;
+        });
+        console.log("Updated data");
+        console.log(data);
         reset();
         closeModal();
+        onClose();
       } catch (error) {
         console.error("Fetch error:", error);
       } finally {
-        setLoading(false);
       }
     }
 
@@ -199,6 +207,7 @@ function App() {
     const diagram = diagramRef.current?.getDiagram();
 
     if (diagram) {
+      // Clear previous highlights
       diagram.clearHighlighteds();
 
       const nodesArray = Array.isArray(nodesToHighlight)
@@ -210,9 +219,12 @@ function App() {
         if (node) {
           diagram.centerRect(node.actualBounds);
           diagram.select(node);
-          node.isHighlighted = true;
+          node.isHighlighted = true; // Mark the node as highlighted
         }
       });
+
+      // Update the diagram to reflect changes
+      diagram.requestUpdate();
     }
   };
 
@@ -251,7 +263,7 @@ function App() {
     fetchData();
 
     return () => abortController.abort();
-  }, [fetchDataTrigger]);
+  }, []);
 
   return (
     <>
@@ -288,8 +300,9 @@ function App() {
                       {...register("parentName", {
                         required: "Parent name is required",
                         pattern: {
-                          value: /^[A-Za-z\s]*$/,
-                          message: "Parent name should contain only letters.",
+                          value: /^[A-Za-z\s.,'-]*$/,
+                          message:
+                            "Parent name should contain only letters, spaces, dots, commas, apostrophes, and hyphens.",
                         },
                       })}
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
