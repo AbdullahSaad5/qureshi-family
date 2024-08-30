@@ -104,18 +104,20 @@ function App() {
       setIsButtonLoading(true);
 
       try {
-        const response = await fetch("http://localhost:8080/api/addChild", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestdata),
-        });
+        const response = await fetch(
+          "https://quresh-family-5b06b2823b36.herokuapp.com/api/addChild",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestdata),
+          }
+        );
 
         const result = await response.json();
         console.log("Add child API response:", result);
 
-        // Handle different result scenarios
         if (result.error === "Parent not found") {
           toast.error("Parent not found");
           setIsButtonLoading(false);
@@ -220,9 +222,12 @@ function App() {
 
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:8080/api/members", {
-          signal: abortController.signal,
-        });
+        const response = await fetch(
+          "https://quresh-family-5b06b2823b36.herokuapp.com/api/members",
+          {
+            signal: abortController.signal,
+          }
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
