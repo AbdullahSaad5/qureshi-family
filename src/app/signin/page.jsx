@@ -3,8 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import API from "../../app/axios";
 import { toast } from "react-hot-toast";
-
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
@@ -16,25 +17,42 @@ function Login() {
       [name]: value,
     }));
   };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await API.post("/login", loginInfo);
-      setLoginInfo({ email: "", password: "" });
       console.log("Login successful:", res.data);
-      if (res.ok) {
-        toast.success("Logged in successfully!");
-        // Redirect or perform other actions
-      } else {
-        toast.error(`Login failed: ${res.data.message}`);
-      }
+      toast.success("Logged in successfully!");
+      localStorage.setItem("userToken", res.data.message); // Assuming you receive a token
+      setLoginInfo({ email: "", password: "" });
+      // Redirect or perform other actions
+      router.push("/family-tree");
+
       // Assuming you get a token or user data on successful login
       // You might want to save the token or user data in localStorage or state
-      // navigate('/dashboard'); // Redirect to a dashboard or homepage after successful login
     } catch (error) {
-      toast.error("An error occurred. Please try again.");
-      // Show an error message to the user
+      if (error.response) {
+        if (error.response.status === 401) {
+          // Specific handling for incorrect password or unauthorized access
+          toast.error("Incorrect email or password. Please try again.");
+        } else if (error.response.data && error.response.data.message) {
+          // Other specific error messages from the server
+          toast.error(`Login failed: ${error.response.data.message}`);
+        } else {
+          // General error handling for other status codes
+          toast.error("An error occurred. Please try again.");
+        }
+      } else {
+        // Network error or other unforeseen errors
+        toast.error(
+          "A network error occurred. Please check your connection and try again."
+        );
+      }
+      console.error("Error during login:", error);
     }
   };
 
@@ -73,16 +91,28 @@ function Login() {
                   >
                     Password
                   </label>
-                  <input
-                    onChange={handleChange}
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    value={loginInfo.password}
-                  />
+                  <div className="relative">
+                    <input
+                      onChange={handleChange}
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
+                      placeholder="••••••••"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      required
+                      value={loginInfo.password}
+                    />
+                    <div
+                      onClick={togglePasswordVisibility}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash className="text-gray-500" />
+                      ) : (
+                        <FaEye className="text-gray-500" />
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <button

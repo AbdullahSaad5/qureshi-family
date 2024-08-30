@@ -31,13 +31,13 @@ export const strokeStyle = (shape) => {
     );
 };
 
-export const genderToText = (gender) => (gender === "M" ? "MALE" : "FEMALE");
+export const genderToText = (gender) => (gender === "male" ? "MALE" : "FEMALE");
 
 export const genderToTextColor = (gender) =>
-  gender === "M" ? theme.colors.maleBadgeText : theme.colors.femaleBadgeText;
+  gender === "male" ? theme.colors.maleBadgeText : theme.colors.femaleBadgeText;
 
 export const genderToFillColor = (gender) =>
-  gender === "M"
+  gender === "male"
     ? theme.colors.maleBadgeBackground
     : theme.colors.femaleBadgeBackground;
 
@@ -186,19 +186,24 @@ export const createLinkTemplate = () =>
       .bindObject("strokeWidth", "isSelected", (selected) => (selected ? 2 : 1))
   );
 
-export const createNodeTemplate = () =>
+export const createNodeTemplate = (onNodeClick) =>
   new go.Node("Spot", {
     selectionAdorned: false,
     mouseEnter: onMouseEnterPart,
     mouseLeave: onMouseLeavePart,
     selectionChanged: onSelectionChange,
+    click: (e, node) => {
+      const parentID = node.data._id;
+      if (onNodeClick) {
+        onNodeClick(parentID);
+      }
+    },
   }).add(
     new go.Panel("Spot").add(
       personMainShape(),
       personNameTextBlock(),
       personBirthDeathTextBlock()
     ),
-    personImage(),
-    personBadge(),
-    personCounter()
+    personBadge()
   );
+

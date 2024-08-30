@@ -2,7 +2,7 @@
 
 import { Menu } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 // @ts-ignore
 import Logo from "../_assets/next.svg";
@@ -15,6 +15,23 @@ function NavBar() {
   const router = useRouter();
   const [active, setActive] = useState("login");
   const currentLocation = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if userToken is available in localStorage
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, [currentLocation]);
+
+  const handleLogout = () => {
+    // Clear the token from localStorage
+    localStorage.removeItem("userToken");
+    setIsLoggedIn(false);
+    router.push("/signin");
+    // Optionally redirect to the homepage or login page
+  };
 
   return (
     <nav className="flex h-14 items-center justify-between rounded border bg-white px-6 py-10 shadow-sm">
@@ -81,30 +98,39 @@ function NavBar() {
           ))}
         </ul>
       </details>
-      <div className="hidden rounded-full border border-blue-600   p-0.5 py-2 lg:block">
-        <Link
-          href="/signin"
-          className={`${
-            active === "login" ? "bg-blue-500 text-white" : "text-primary"
-          } rounded-full px-4 py-2 text-xs transition-colors duration-300 lg:text-sm`}
-          onClick={() => {
-            setActive("login");
-          }}
+      {isLoggedIn ? (
+        <button
+          className="bg-blue-500 px-4 py-2 rounded-full border-none hover:bg-blue-600 text-white"
+          onClick={handleLogout}
         >
-          Login
-        </Link>
-        <Link
-          href="/signup"
-          className={`${
-            active === "register" ? "bg-blue-500 text-white" : "text-primary"
-          } rounded-full px-4 py-2 text-xs transition-colors duration-300 lg:text-sm`}
-          onClick={() => {
-            setActive("register");
-          }}
-        >
-          Register
-        </Link>
-      </div>
+          Logout
+        </button>
+      ) : (
+        <div className="hidden rounded-full border border-blue-600   p-0.5 py-2 lg:block">
+          <Link
+            href="/signin"
+            className={`${
+              active === "login" ? "bg-blue-500 text-white" : "text-primary"
+            } rounded-full px-4 py-2 text-xs transition-colors duration-300 lg:text-sm`}
+            onClick={() => {
+              setActive("login");
+            }}
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className={`${
+              active === "register" ? "bg-blue-500 text-white" : "text-primary"
+            } rounded-full px-4 py-2 text-xs transition-colors duration-300 lg:text-sm`}
+            onClick={() => {
+              setActive("register");
+            }}
+          >
+            Register
+          </Link>
+        </div>
+      )}
     </nav>
   );
 }
