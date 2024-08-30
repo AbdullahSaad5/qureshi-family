@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 
-
 import "./App.css";
 import { createLinkTemplate, createNodeTemplate } from "../helpers/tree-helper";
 
@@ -57,6 +56,8 @@ function App() {
   const [fetchDataTrigger, setFetchDataTrigger] = useState(false);
   const [sameParentIDs, setSameParentIDs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
   const [isSameNameModalOpen, setIsSameNameModalOpen] = useState(false);
   const [parentID, setParentID] = useState(null);
@@ -81,13 +82,13 @@ function App() {
   });
 
   const onSubmit = (data, nodeId) => {
-    console.log("Form Data:", data);
-    console.log("Selected Parent Node ID:", nodeId);
+    console.log(data);
+    if (!data.childName || data.childName === "") {
+      return;
+    }
 
-    
     let requestdata = { ...data };
 
-    
     console.log("Request Data Before Conditional:", requestdata);
 
     // Add parentId only if nodeId is valid
@@ -156,9 +157,19 @@ function App() {
     fetchData();
   };
 
+  const onClose = () => {
+    setIsConfirmModalOpen(false);
+    setParentID(null);
+  };
+
+  const onConfirm = () => {
+    handleSubmit((values) => onSubmit(values, parentID))();
+  };
+
   handleNodeClick = (nodeID) => {
-    console.log("Node clicked with ID:", nodeID); // Debug log
-    handleSubmit((values) => onSubmit(values, nodeID))();
+    console.log("Node clicked with ID:", nodeID);
+    setIsConfirmModalOpen(true);
+    setParentID(nodeID);
   };
 
   const moveToNextNode = () => {
@@ -459,6 +470,30 @@ function App() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {isConfirmModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-5 rounded shadow-md">
+                <h3 className="text-lg font-semibold">
+                  Are you sure you want to add a child?
+                </h3>
+                <div className="flex justify-end mt-4">
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded mr-2"
+                    onClick={onClose}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    onClick={onConfirm}
+                  >
+                    Confirm
+                  </button>
+                </div>
               </div>
             </div>
           )}
