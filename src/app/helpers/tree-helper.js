@@ -192,11 +192,18 @@ export const createNodeTemplate = () =>
     mouseEnter: onMouseEnterPart,
     mouseLeave: onMouseLeavePart,
     selectionChanged: onSelectionChange,
+
+    click: (e, node) => {
+      const parentID = node.data._id;
+      const parentName = node.data.name;
+      console.log(`Parent Name: ${parentName}`);
+      console.log(`Parent ID: ${parentID}`);
+    },
   }).add(
     new go.Panel("Spot").add(
       personMainShape(),
       personNameTextBlock(),
       personBirthDeathTextBlock()
     ),
-    personBadge(),
+    personBadge()
   );

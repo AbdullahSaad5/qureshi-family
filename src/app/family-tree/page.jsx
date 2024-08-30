@@ -54,8 +54,9 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [isButtonloading, setIsButtonLoading] = useState(false);
   const [fetchDataTrigger, setFetchDataTrigger] = useState(false);
-
+  const [sameParentIDs, setSameParentIDs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
   const [isSameNameModalOpen, setIsSameNameModalOpen] = useState(false);
 
   const diagramRef = useRef(null);
@@ -123,6 +124,7 @@ function App() {
           reset();
 
           highlightNodes(result.parents.map((parent) => parent._id));
+          setSameParentIDs(result.parents.map((parent) => parent._id));
           return;
         }
 
@@ -141,13 +143,39 @@ function App() {
     fetchData();
   };
 
+  const moveToNextNode = () => {
+    if (sameParentIDs.length === 0) return;
+
+    const nextIndex = (currentNodeIndex + 1) % sameParentIDs.length;
+    setCurrentNodeIndex(nextIndex);
+
+    const nextNodeKey = sameParentIDs[nextIndex];
+    highlightNodes([nextNodeKey]); // Pass as an array
+  };
+
+  const moveToPreviousNode = () => {
+    if (sameParentIDs.length === 0) return;
+
+    const prevIndex =
+      (currentNodeIndex - 1 + sameParentIDs.length) % sameParentIDs.length;
+    setCurrentNodeIndex(prevIndex);
+
+    const prevNodeKey = sameParentIDs[prevIndex];
+    highlightNodes([prevNodeKey]); // Pass as an array
+  };
+
   const highlightNodes = (nodesToHighlight) => {
     const diagram = diagramRef.current?.getDiagram();
 
     if (diagram) {
       diagram.clearHighlighteds();
 
-      nodesToHighlight.forEach((nodeId) => {
+      
+      const nodesArray = Array.isArray(nodesToHighlight)
+        ? nodesToHighlight
+        : [nodesToHighlight];
+
+      nodesArray.forEach((nodeId) => {
         const node = diagram.findNodeForKey(nodeId);
         if (node) {
           diagram.centerRect(node.actualBounds);
@@ -191,6 +219,11 @@ function App() {
 
     return () => abortController.abort();
   }, [fetchDataTrigger]);
+
+  useEffect(() => {
+    console.log("Same parent IDs");
+    console.log(sameParentIDs);
+  }, [sameParentIDs]);
 
   return (
     <>
@@ -417,6 +450,23 @@ function App() {
               </div>
             </div>
           )}
+
+          <div className="flex gap-5">
+            <button
+              className="cursor-pointer"
+              onClick={moveToPreviousNode}
+              disabled={sameParentIDs.length === 0}
+            >
+              Previous
+            </button>
+            <button
+              className="cursor-pointer"
+              onClick={moveToNextNode}
+              disabled={sameParentIDs.length === 0}
+            >
+              Next
+            </button>
+          </div>
 
           <ReactDiagram
             ref={diagramRef}
