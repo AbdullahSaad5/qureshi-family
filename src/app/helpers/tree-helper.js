@@ -186,18 +186,17 @@ export const createLinkTemplate = () =>
       .bindObject("strokeWidth", "isSelected", (selected) => (selected ? 2 : 1))
   );
 
-export const createNodeTemplate = () =>
+export const createNodeTemplate = (onNodeClick) =>
   new go.Node("Spot", {
     selectionAdorned: false,
     mouseEnter: onMouseEnterPart,
     mouseLeave: onMouseLeavePart,
     selectionChanged: onSelectionChange,
-
     click: (e, node) => {
       const parentID = node.data._id;
-      const parentName = node.data.name;
-      console.log(`Parent Name: ${parentName}`);
-      console.log(`Parent ID: ${parentID}`);
+      if (onNodeClick) {
+        onNodeClick(parentID);
+      }
     },
   }).add(
     new go.Panel("Spot").add(
@@ -207,3 +206,4 @@ export const createNodeTemplate = () =>
     ),
     personBadge()
   );
+
