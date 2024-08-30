@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-// import { useNavigate } from "react-router-dom";
 import API from "../axios";
 import { toast } from "react-hot-toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Signup() {
-  //   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const [signupInfo, setSignupInfo] = useState({
@@ -24,7 +24,9 @@ function Signup() {
       [name]: value,
     });
   };
-
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const validateForm = () => {
     let errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,18 +60,15 @@ function Signup() {
           password: signupInfo.password,
         });
         setSignupInfo({ email: "", password: "", confirmPassword: "" });
-        if (res.ok) {
-          toast.success("SignUp successfully!");
-          router.push("/signup");
-          console.log("Signup successful:", res.data);
-        } else {
-          toast.error(`SignUp failed: ${res.data.message}`);
-        }
+        toast.success("SignUp successfully!");
+        console.log("Signup successful:", res.data);
+        router.push("/signin");
       } catch (error) {
-        toast.error("An error occurred. Please try again.");
+        toast.error(`SignUp failed: ${error.response.data.message}`);
+        // toast.error("An error occurred. Please try again.");
         console.error(
           "Error during signup:",
-          error.response ? error.response.data : error.message
+          error.response ? error.response.data.message : error.message
         );
       }
     } else {
@@ -118,21 +117,32 @@ function Signup() {
                   >
                     Password
                   </label>
-                  <input
-                    onChange={handleChange}
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    value={signupInfo.password}
-                  />
+                  <div className="relative">
+                    <input
+                      onChange={handleChange}
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
+                      placeholder="••••••••"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      required
+                      value={signupInfo.password}
+                    />
+                    <div
+                      onClick={togglePasswordVisibility}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash className="text-gray-500" />
+                      ) : (
+                        <FaEye className="text-gray-500" />
+                      )}
+                    </div>
+                  </div>
                   {errors.password && (
                     <p className="text-red-500 text-sm">{errors.password}</p>
                   )}
                 </div>
-
                 {/* Confirm Password Input */}
                 <div>
                   <label
@@ -141,16 +151,28 @@ function Signup() {
                   >
                     Confirm Password
                   </label>
-                  <input
-                    onChange={handleChange}
-                    type="password"
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    value={signupInfo.confirmPassword}
-                  />
+                  <div className="relative">
+                    <input
+                      onChange={handleChange}
+                      type={showPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      placeholder="••••••••"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      required
+                      value={signupInfo.confirmPassword}
+                    />
+                    <div
+                      onClick={togglePasswordVisibility}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash className="text-gray-500" />
+                      ) : (
+                        <FaEye className="text-gray-500" />
+                      )}
+                    </div>
+                  </div>
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-sm">
                       {errors.confirmPassword}
