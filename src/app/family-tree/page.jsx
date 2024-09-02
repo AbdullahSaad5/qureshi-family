@@ -87,9 +87,6 @@ function App() {
     }
 
     let requestdata = { ...data };
-
-    console.log("Request Data Before Conditional:", requestdata);
-
     if (typeof nodeId === "string" && nodeId.trim() !== "") {
       requestdata.parentId = nodeId;
     }
@@ -140,21 +137,18 @@ function App() {
           return;
         }
 
-        toast.success("Child added successfully!");
+        toast.success("Your request has been sent to admin for review");
         setIsButtonLoading(false);
-        setData((prevData) => {
-          const newData = [...prevData];
-          newData.push({
-            parent: result.child.parents[0],
-            name: result.child.name,
-            gender: result.child.gender,
-            dateOfBirth: result.child.dateOfBirth.split("T")[0],
-          });
-
-          return newData;
-        });
-        console.log("Updated data");
-        console.log(data);
+        // setData((prevData) => {
+        //   const newData = [...prevData];
+        //   newData.push({
+        //     parent: result.child.parents[0],
+        //     name: result.child.name,
+        //     gender: result.child.gender,
+        //     dateOfBirth: result.child.dateOfBirth.split("T")[0],
+        //   });
+        //   return newData;
+        // });
         reset();
         closeModal();
         onClose();
@@ -189,7 +183,7 @@ function App() {
     setCurrentNodeIndex(nextIndex);
 
     const nextNodeKey = sameParentIDs[nextIndex];
-    highlightNodes([nextNodeKey]); // Pass as an array
+    highlightNodes([nextNodeKey]);
   };
 
   const moveToPreviousNode = () => {
@@ -200,14 +194,13 @@ function App() {
     setCurrentNodeIndex(prevIndex);
 
     const prevNodeKey = sameParentIDs[prevIndex];
-    highlightNodes([prevNodeKey]); // Pass as an array
+    highlightNodes([prevNodeKey]);
   };
 
   const highlightNodes = (nodesToHighlight) => {
     const diagram = diagramRef.current?.getDiagram();
 
     if (diagram) {
-      // Clear previous highlights
       diagram.clearHighlighteds();
 
       const nodesArray = Array.isArray(nodesToHighlight)
@@ -217,13 +210,24 @@ function App() {
       nodesArray.forEach((nodeId) => {
         const node = diagram.findNodeForKey(nodeId);
         if (node) {
+          node.part.addAdornment(
+            "highlight",
+            new go.Adornment(
+              "Auto",
+              new go.Shape("RoundedRectangle", {
+                fill: "rgba(255,255,0,0.5)",
+                stroke: "yellow",
+                strokeWidth: 3,
+              }),
+              new go.Placeholder()
+            )
+          );
+
           diagram.centerRect(node.actualBounds);
           diagram.select(node);
-          node.isHighlighted = true; // Mark the node as highlighted
         }
       });
 
-      // Update the diagram to reflect changes
       diagram.requestUpdate();
     }
   };
@@ -516,16 +520,16 @@ function App() {
             </div>
           )}
 
-          <div className="flex gap-5">
+          <div className="flex gap-3 ml-5 mb-5">
             <button
-              className="cursor-pointer"
+              className="cursor-pointer p-2 rounded text-white bg-blue-400"
               onClick={moveToPreviousNode}
               disabled={sameParentIDs.length === 0}
             >
               Previous
             </button>
             <button
-              className="cursor-pointer"
+              className="cursor-pointer p-2 rounded text-white bg-blue-400"
               onClick={moveToNextNode}
               disabled={sameParentIDs.length === 0}
             >
