@@ -97,16 +97,13 @@ function App() {
       setIsButtonLoading(true);
 
       try {
-        const response = await fetch(
-          "https://quresh-family-5b06b2823b36.herokuapp.com/api/addChild",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestdata),
-          }
-        );
+        const response = await fetch(`${process.env.backend_URL}/addChild`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestdata),
+        });
 
         const result = await response.json();
         console.log("Add child API response:", result);
@@ -238,8 +235,10 @@ function App() {
 
     async function fetchData() {
       try {
+        console.log("Inside API request");
+        console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
         const response = await fetch(
-          "https://quresh-family-5b06b2823b36.herokuapp.com/api/members",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`,
           {
             signal: abortController.signal,
           }

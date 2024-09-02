@@ -6,8 +6,8 @@ export default function Contact() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+
     // Handle form submission logic here
     console.log({ name, email, message });
     // You might want to use a toast to show success or error messages here
@@ -80,7 +80,7 @@ export default function Contact() {
                 onChange={(e) => setMessage(e.target.value)}
                 required
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                rows="5"
+               
               />
             </div>
 

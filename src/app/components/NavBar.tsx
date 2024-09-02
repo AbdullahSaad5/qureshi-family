@@ -38,7 +38,6 @@ function NavBar() {
       <div
         className={cn(
           "z-10 grid place-items-center rounded-full bg-white",
-
           currentLocation === "/" && "left-8 top-8 lg:relative lg:h-40 lg:w-40"
         )}
       >
@@ -61,6 +60,7 @@ function NavBar() {
               <Link
                 href={link.href}
                 className={`mx-1 px-2 py-3 hover:text-primary ${
+                  currentLocation && // Add this check
                   currentLocation.startsWith(link.href) &&
                   (currentLocation[link.href.length] === "/" ||
                     currentLocation.length === link.href.length) &&
@@ -86,6 +86,7 @@ function NavBar() {
                 key={link.name}
                 href={link.href}
                 className={`mx-2 ${
+                  currentLocation && // Add this check
                   currentLocation.startsWith(link.href) &&
                   (currentLocation[link.href.length] === "/" ||
                     currentLocation.length === link.href.length) &&
@@ -106,7 +107,7 @@ function NavBar() {
           Logout
         </button>
       ) : (
-        <div className="hidden rounded-full border border-blue-600   p-0.5 py-2 lg:block">
+        <div className="hidden rounded-full border border-blue-600 p-0.5 py-2 lg:block">
           <Link
             href="/signin"
             className={`${
