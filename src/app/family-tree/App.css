@@ -74,3 +74,47 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+/* Overlay that dims the entire screen */
+.focus-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Light black with 70% opacity */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it is on top of other elements */
+}
+
+/* Focused node styles */
+.focused-node {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001; /* Ensure it is on top of the overlay */
+}
+
+/* Container for nodes */
+.nodes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Node styles */
+.node {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Focused node in the main view */
+.node.focused {
+  background-color: #ffeb3b; /* Highlight color */
+  border: 2px solid #ff9800; /* Border to emphasize */
+}

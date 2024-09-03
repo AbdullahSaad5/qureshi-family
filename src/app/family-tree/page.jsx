@@ -4,13 +4,56 @@ import { ReactDiagram } from "gojs-react";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import FocusOverlay from "./FocusOverlay";
 
 import "./App.css";
 import { createLinkTemplate, createNodeTemplate } from "../helpers/tree-helper";
 
 let handleNodeClick = () => {};
 
-function initDiagram(modelData = []) {
+const prepareGraphData = (nodes) => {
+  const linkDataArray = [];
+  const nodeMap = new Map(nodes.map((node) => [node._id, node]));
+
+  const findAncestors = (nodeId, ancestors = new Set()) => {
+    const node = nodeMap.get(nodeId);
+    if (!node || !node.parents) return ancestors;
+    node.parents.forEach((parentId) => {
+      ancestors.add(parentId);
+      findAncestors(parentId, ancestors);
+    });
+    return ancestors;
+  };
+
+  nodes.sort((a, b) => {
+    const aAncestors = findAncestors(a._id);
+    const bAncestors = findAncestors(b._id);
+
+    if (aAncestors.has(b._id)) return 1;
+    if (bAncestors.has(a._id)) return -1;
+    return 0;
+  });
+
+  // Add a unique key to each link
+  nodes.forEach((node) => {
+    if (Array.isArray(node.parents) && node.parents.length > 0) {
+      node.parents.forEach((parentId) => {
+        linkDataArray.push({
+          from: parentId,
+          to: node._id,
+          key: `${parentId}-${node._id}`, // Create a unique key for each link
+        });
+      });
+    }
+  });
+
+  return {
+    nodeDataArray: nodes,
+    linkDataArray,
+  };
+};
+
+function initDiagram(modelData = [], linkDataArray = []) {
   const diagram = new go.Diagram({
     "undoManager.isEnabled": true,
     "clickCreatingTool.archetypeNodeData": {
@@ -30,17 +73,18 @@ function initDiagram(modelData = []) {
     }),
     "toolManager.hoverDelay": 100,
     linkTemplate: createLinkTemplate(),
-    model: new go.TreeModel({
+    model: new go.GraphLinksModel({
       nodeKeyProperty: "_id",
+      linkKeyProperty: "66d6f0d3c827f79acedc045e",
       nodeDataArray: modelData,
+      linkDataArray: linkDataArray,
     }),
   });
 
   diagram.nodeTemplate = createNodeTemplate(handleNodeClick);
 
-  // Initially center on root:
   diagram.addDiagramListener("InitialLayoutCompleted", () => {
-    const root = diagram.findNodeForKey("66cdb9c49f9e60170b886c5a");
+    const root = diagram.findNodeForKey(modelData[0]?._id);
     if (!root) return;
     diagram.scale = 0.6;
     diagram.scrollToRect(root.actualBounds);
@@ -49,6 +93,46 @@ function initDiagram(modelData = []) {
   return diagram;
 }
 
+// function initDiagram(modelData = []) {
+//   const diagram = new go.Diagram({
+//     "undoManager.isEnabled": true,
+//     "clickCreatingTool.archetypeNodeData": {
+//       text: "new node",
+//       color: "lightblue",
+//     },
+//     layout: new go.TreeLayout({
+//       angle: 90,
+//       nodeSpacing: 20,
+//       layerSpacing: 50,
+//       layerStyle: go.TreeLayout.LayerUniform,
+//       treeStyle: go.TreeStyle.LastParents,
+//       alternateAngle: 90,
+//       alternateLayerSpacing: 35,
+//       alternateAlignment: go.TreeAlignment.BottomRightBus,
+//       alternateNodeSpacing: 20,
+//     }),
+//     "toolManager.hoverDelay": 100,
+//     linkTemplate: createLinkTemplate(),
+//     model: new go.TreeModel({
+//       nodeKeyProperty: "_id",
+//       nodeDataArray: modelData,
+//     }),
+//   });
+
+//   diagram.nodeTemplate = createNodeTemplate(handleNodeClick);
+
+//   // Initially center on root:
+//   diagram.addDiagramListener("InitialLayoutCompleted", () => {
+//     // Find a root node or default to the first one
+//     const root = diagram.findNodeForKey(modelData[0]?._id);
+//     if (!root) return;
+//     diagram.scale = 0.6;
+//     diagram.scrollToRect(root.actualBounds);
+//   });
+
+//   return diagram;
+// }
+
 function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +140,9 @@ function App() {
   const [sameParentIDs, setSameParentIDs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [linkData, setLinkData] = useState([]);
+
+  const [highlightedNode, setHighlightedNode] = useState(null);
 
   const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
   const [isSameNameModalOpen, setIsSameNameModalOpen] = useState(false);
@@ -97,7 +184,7 @@ function App() {
       setIsButtonLoading(true);
 
       try {
-        const response = await fetch(`${process.env.backend_URL}/addChild`, {
+        const response = await fetch(`http://localhost:8080/api/addChild`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +193,7 @@ function App() {
         });
 
         const result = await response.json();
-        console.log("Add child API response:", result);
+        console.log("Add child API response:", result.error);
 
         if (result.error === "Parent not found") {
           toast.error("Parent not found");
@@ -114,7 +201,11 @@ function App() {
           return;
         }
 
-        if (result.error === "Multiple parents please enter a date of birth") {
+        if (
+          result.error ===
+          "Multiple parents found. Please enter a date of birth."
+        ) {
+          console.log("Inside if multiple parent found");
           console.log("Please enter a date of birth of father");
           setIsButtonLoading(false);
           closeModal();
@@ -130,6 +221,7 @@ function App() {
           console.log(result.parents);
           closeSameNameModal();
           highlightNodes(result.parents.map((parent) => parent._id));
+
           setSameParentIDs(result.parents.map((parent) => parent._id));
           return;
         }
@@ -204,9 +296,14 @@ function App() {
         ? nodesToHighlight
         : [nodesToHighlight];
 
+      // Ensure highlightedNode is set to the first highlighted node
+      let highlightedNode = null;
+
       nodesArray.forEach((nodeId) => {
         const node = diagram.findNodeForKey(nodeId);
         if (node) {
+          if (!highlightedNode) highlightedNode = node;
+
           node.part.addAdornment(
             "highlight",
             new go.Adornment(
@@ -225,6 +322,7 @@ function App() {
         }
       });
 
+      setHighlightedNode(highlightedNode); // Update the state with the first highlighted node
       diagram.requestUpdate();
     }
   };
@@ -235,14 +333,9 @@ function App() {
 
     async function fetchData() {
       try {
-        console.log("Inside API request");
-        console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`,
-          {
-            signal: abortController.signal,
-          }
-        );
+        const response = await fetch(`http://localhost:8080/api/members`, {
+          signal: abortController.signal,
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -250,12 +343,12 @@ function App() {
         console.log("Tree API response");
         console.log(result.familyTreeData);
 
-        const formattedData = result.familyTreeData.map((node) => ({
-          ...node,
-          parent: node.parent ? node.parent : "",
-        }));
+        const { nodeDataArray, linkDataArray } = prepareGraphData(
+          result.familyTreeData
+        );
 
-        setData(formattedData);
+        setData(nodeDataArray);
+        setLinkData(linkDataArray); // Update linkData state here
       } catch (error) {
         console.error("Fetch error:", error);
       } finally {
@@ -535,15 +628,18 @@ function App() {
               Next
             </button>
           </div>
+            <ReactDiagram
+              ref={diagramRef}
+              initDiagram={() => initDiagram(data, linkData)}
+              divClassName="diagram-component"
+              nodeDataArray={data}
+              linkDataArray={linkData}
+              nodeTemplate={createNodeTemplate(handleNodeClick)}
+            />
 
-          <ReactDiagram
-            ref={diagramRef}
-            initDiagram={() => initDiagram(data)}
-            divClassName="diagram-component"
-            nodeDataArray={data}
-            linkDataArray={[]}
-            nodeTemplate={createNodeTemplate(handleNodeClick)}
-          />
+          <div style={{ position: "relative" }}>
+            {highlightedNode && <FocusOverlay node={highlightedNode} />}
+          </div>
         </>
       )}
     </>
