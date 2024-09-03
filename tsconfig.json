@@ -22,6 +22,6 @@
       "@utils/*": ["./src/app/_utils/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/components/orgChart.js", "src/app/family-tree/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/components/orgChart.js", "src/app/family-tree/page.jsx", "src/app/components/LandingPage/Header.jsx"],
   "exclude": ["node_modules"]
 }
