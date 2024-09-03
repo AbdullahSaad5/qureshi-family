@@ -144,6 +144,12 @@ function App() {
 
   const [highlightedNode, setHighlightedNode] = useState(null);
 
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const [diagramSize, setDiagramSize] = useState({ width: 1000, height: 1000 });
+
   const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
   const [isSameNameModalOpen, setIsSameNameModalOpen] = useState(false);
   const [parentID, setParentID] = useState(null);
@@ -326,6 +332,33 @@ function App() {
       diagram.requestUpdate();
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Example function to update diagram size
+  useEffect(() => {
+    const updateDiagramSize = () => {
+      const diagram = diagramRef.current?.getDiagram();
+      if (diagram) {
+        const bounds = diagram.getBounds();
+        setDiagramSize({
+          width: bounds.width,
+          height: bounds.height,
+        });
+      }
+    };
+
+    updateDiagramSize();
+    window.addEventListener("resize", updateDiagramSize);
+    return () => window.removeEventListener("resize", updateDiagramSize);
+  }, []);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -628,6 +661,7 @@ function App() {
               Next
             </button>
           </div>
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
             <ReactDiagram
               ref={diagramRef}
               initDiagram={() => initDiagram(data, linkData)}
@@ -636,9 +670,13 @@ function App() {
               linkDataArray={linkData}
               nodeTemplate={createNodeTemplate(handleNodeClick)}
             />
-
-          <div style={{ position: "relative" }}>
-            {highlightedNode && <FocusOverlay node={highlightedNode} />}
+            {highlightedNode && (
+              <FocusOverlay
+                node={highlightedNode}
+                diagramSize={diagramSize}
+                screenSize={screenSize}
+              />
+            )}
           </div>
         </>
       )}
