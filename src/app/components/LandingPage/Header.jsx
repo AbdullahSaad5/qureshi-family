@@ -15,6 +15,13 @@ function Header() {
     setMenuOpen(!menuOpen);
   };
 
+  const handleNavigation = (path) => {
+    router.push(path);
+    if (window.innerWidth < 768) {
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <div className="p-5 w-full bg-[#FFFFFF] flex flex-row justify-between items-center px-6 lg:px-10 relative">
       <div
@@ -39,39 +46,39 @@ function Header() {
       >
         <div className="flex flex-col md:flex-row gap-4 lg:gap-10 mt-4 md:mt-0">
           <div
-            onClick={() => router.push("/family-tree")}
+            onClick={() => handleNavigation("/family-tree")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Explore
           </div>
           <div
-            onClick={() => router.push("/Expand")}
+            onClick={() => handleNavigation("/Expand")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Expand
           </div>
           <div
-            onClick={() => router.push("/Endorse")}
+            onClick={() => handleNavigation("/Endorse")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Endorse
           </div>
           <div
-            onClick={() => router.push("/AboutUs")}
+            onClick={() => handleNavigation("/AboutUs")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             About Us
           </div>
 
           <div
-            onClick={() => router.push("/signin")}
+            onClick={() => handleNavigation("/signin")}
             className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Login
           </div>
 
           <div
-            onClick={() => router.push("/signup")}
+            onClick={() => handleNavigation("/signup")}
             className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Sign Up
