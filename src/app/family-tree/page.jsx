@@ -144,10 +144,7 @@ function App() {
 
   const [highlightedNode, setHighlightedNode] = useState(null);
 
-  const [screenSize, setScreenSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
+  const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
   const [diagramSize, setDiagramSize] = useState({ width: 1000, height: 1000 });
 
   const [currentNodeIndex, setCurrentNodeIndex] = useState(0);
@@ -292,9 +289,43 @@ function App() {
     highlightNodes([prevNodeKey]);
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        setScreenSize({ width: window.innerWidth, height: window.innerHeight });
+      };
+
+      handleResize();
+
+      window.addEventListener("resize", handleResize);
+
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const updateDiagramSize = () => {
+        const diagram = diagramRef.current?.getDiagram();
+        if (diagram) {
+          const bounds = diagram.getBounds();
+          setDiagramSize({
+            width: bounds.width,
+            height: bounds.height,
+          });
+        }
+      };
+
+      updateDiagramSize();
+
+      window.addEventListener("resize", updateDiagramSize);
+
+      return () => window.removeEventListener("resize", updateDiagramSize);
+    }
+  }, []);
+
   const highlightNodes = (nodesToHighlight) => {
     const diagram = diagramRef.current?.getDiagram();
-
     if (diagram) {
       diagram.clearHighlighteds();
 
@@ -302,7 +333,6 @@ function App() {
         ? nodesToHighlight
         : [nodesToHighlight];
 
-      // Ensure highlightedNode is set to the first highlighted node
       let highlightedNode = null;
 
       nodesArray.forEach((nodeId) => {
@@ -328,37 +358,10 @@ function App() {
         }
       });
 
-      setHighlightedNode(highlightedNode); // Update the state with the first highlighted node
+      setHighlightedNode(highlightedNode);
       diagram.requestUpdate();
     }
   };
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Example function to update diagram size
-  useEffect(() => {
-    const updateDiagramSize = () => {
-      const diagram = diagramRef.current?.getDiagram();
-      if (diagram) {
-        const bounds = diagram.getBounds();
-        setDiagramSize({
-          width: bounds.width,
-          height: bounds.height,
-        });
-      }
-    };
-
-    updateDiagramSize();
-    window.addEventListener("resize", updateDiagramSize);
-    return () => window.removeEventListener("resize", updateDiagramSize);
-  }, []);
 
   useEffect(() => {
     const abortController = new AbortController();
