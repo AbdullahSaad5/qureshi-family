@@ -1,10 +1,9 @@
-import Header from "./components/LandingPage/Header";
-import HeroSection from "./components/LandingPage/HeroSection";
+import LandingPage from "./LandingPage/page";
 
 export default function Home() {
   return (
     <>
-      <HeroSection />
+      <LandingPage/>
     </>
   );
 }
