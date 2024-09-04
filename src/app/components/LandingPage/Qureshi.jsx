@@ -1,5 +1,6 @@
 import React from "react";
 import { Telescope, Expand, MessageSquareQuote } from "lucide-react";
+import { BsStars } from "react-icons/bs";
 
 // import { Poor_Richard } from "next/font/google";
 
@@ -11,8 +12,14 @@ import { Telescope, Expand, MessageSquareQuote } from "lucide-react";
 function Qureshi() {
   return (
     <section className="md:p-12 mb-12">
-      <div className={` text-[#82D026]  text-center m-4 p-4`}>
-        <h2 className="text-5xl">Qureshi</h2>
+      <div className="w-full  flex justify-center">
+        <div className="relative text-[#82D026] text-center m-4 p-4  w-64">
+          <BsStars className="absolute top-0 right-0 text-3xl" />
+
+          <BsStars className="absolute bottom-0 left-0 text-3xl" />
+
+          <h2 className="text-5xl">Qureshi</h2>
+        </div>
       </div>
 
       <div className=" m-4 p-4 text-center">
