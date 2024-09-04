@@ -1,26 +1,29 @@
 import React from 'react';
 import Image from "next/image";
-import card from '../../_assets/card.jpeg';
+import card1 from '../../_assets/card1.png';
+import card2 from '../../_assets/card2.png';
+import card3 from '../../_assets/card3.png';
+import card4 from '../../_assets/card4.png';
 
 function Card() {
   const cardData = [
     {
-      image: card,
+      image: card1,
       title: "Manual Data Verification",
       description: "To ensure accuracy, all genealogical data is manually verified, giving users confidence in the reliability of the information provided."
     },
     {
-      image: card,
+      image: card2,
       title: "Expandable Family Trees",
       description: "This feature allows users to build and expand their family trees, adding new branches as they discover more ancestors and relatives."
     },
     {
-      image: card,
+      image: card3,
       title: "Free Forever Access",
       description: "Users are granted lifetime access to the website's resources and features without any charges, ensuring that everyone can explore their ancestry at no cost."
     },
     {
-      image: card,
+      image: card4,
       title: "Qureshi Specific record",
       description: `This section focuses on gathering and providing detailed genealogical records specific to individuals with the surname "Qureshi," helping users trace their lineage and family history.`
     }
