@@ -32,7 +32,7 @@ function Card() {
   return (
     <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 py-12 bg-[#F4FFE8]'>
       {cardData.map((card, index) => (
-        <div key={index} className='shadow-lg p-4 rounded-lg bg-white my-16 mx-3 '>
+        <div key={index} className='shadow-lg p-4 rounded-lg bg-white my-4 mx-3 '>
           <Image
             src={card.image}
             alt={`card-image-${index}`}
