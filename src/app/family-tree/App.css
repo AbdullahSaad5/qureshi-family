@@ -11,17 +11,28 @@ body {
 }
 
 /* Loader.css */
+/* Loader container */
+.loader-container {
+  position: fixed; /* Fixed position to keep it above other content */
+  top: 0; /* Align to the top of the viewport */
+  left: 0; /* Align to the left of the viewport */
+  width: 100vw; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
+  display: flex; /* Flexbox to center the loader */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+  z-index: 9999; /* Ensure it’s above other content */
+}
+
+/* Loader animation */
 .loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 50px; /* Set specific width for the loader */
+  height: 50px; /* Set specific height for the loader */
+  border: 5px solid #f3f3f3; /* Light border color */
+  border-top: 5px solid #82D026; /* Green border-top for animation effect */
+  border-radius: 50%; /* Circular loader */
+  animation: spin 1s linear infinite; /* Spin animation */
 }
 
 @keyframes spin {

@@ -32,7 +32,7 @@ function KalmaCounter() {
     try {
       const res = await API.post(`/counter/${Kalma}`);
       setChange(change + 1);
-      setKalma("");
+      setKalma(1);
     } catch (error) {
       console.log("post error : ", error);
     }

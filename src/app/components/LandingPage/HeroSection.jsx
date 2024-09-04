@@ -31,7 +31,7 @@ const HeroSection = () => {
         ))}
       </Carousel>
      
-      <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 z-10">
+      <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 z-9">
         <h1
           className={`${righteous.className}  text-[#82D026] text-5xl md:text-6xl lg:text-7xl font-bold mb-4`}
         >

@@ -45,7 +45,7 @@ function Header() {
           menuOpen ? "flex" : "hidden"
         } flex-col items-center absolute top-full left-0 w-full bg-white transition-transform duration-300 ease-in-out md:static md:flex-row md:gap-5 lg:gap-20 md:w-auto md:bg-transparent md:flex z-10`}
       >
-        <div className="flex flex-col md:flex-row gap-4 lg:gap-10 mt-4 md:mt-0">
+        <div className="flex flex-col md:flex-row gap-4 lg:gap-10 mt-4 md:mt-0 ">
           <div
             onClick={() => handleNavigation("/family-tree")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
