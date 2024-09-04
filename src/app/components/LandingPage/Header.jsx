@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 
+
 function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
+import API from '../../axios'
 
 function KalmaCounter() {
   const [totalCount, setTotalCount] = useState("");
@@ -9,13 +10,14 @@ function KalmaCounter() {
   const [Loading, setLoading] = useState(false);
   const [change, setChange] = useState(0);
 
+  // console.log(totalCount)
+
   const getCounts = async () => {
     try {
-      const res = await axios.get(
-        `https://quresh-family-5b06b2823b36.herokuapp.com/api/counter`
-      );
+      const res = await API.get(`/counter`);
+      // console.log(res.data.count) 
+      setTotalCount(res.data.count)
       setChange(change + 1);
-      setKalma("");
     } catch (error) {
       console.log("post error : ", error);
     }
@@ -24,12 +26,11 @@ function KalmaCounter() {
     getCounts();
   }, [change]);
 
+
   const Submit = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(
-        `https://quresh-family-5b06b2823b36.herokuapp.com/api/counter/${Kalma}`
-      );
+      const res = await API.post(`/counter/${Kalma}`);
       setChange(change + 1);
       setKalma("");
     } catch (error) {
@@ -39,7 +40,7 @@ function KalmaCounter() {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center text-center w-full h-[500px]">
+    <section className="flex flex-col items-center justify-center text-center mb-36 w-full h-[600px] md:h-[500px]">
       <div className="p-6 mt-24  w-[70%]  border-b-2 border-[#999595]">
         <h2 className="text-2xl md:text-3xl py-6 font-medium text-[#82D026]">
           Kalma Counter : <span>{totalCount}</span>
@@ -56,9 +57,7 @@ function KalmaCounter() {
           <input
             type="number"
             min="0"
-            onChange={(e) => {
-              setKalma(e.target.value);
-            }}
+            onChange={(e) => { setKalma(e.target.value) }}
             value={Kalma}
             className="border-2 text-center text-xl border-black px-2 py-1 mx-3 w-16"
           />
