@@ -5,11 +5,13 @@ import SearchMember from "../components/LandingPage/SearchMember";
 import KalmaCounter from "../components/LandingPage/KalmaCounter";
 import Qureshi from '../components/LandingPage/Qureshi'
 import Card from '../components/LandingPage/Card'
+import Records from "../components/LandingPage/Records"
 
 export default function LandingPage() {
   return (
     <>
       <HeroSection />
+      <Records/>
       <Qureshi/>
       <SearchMember />
       <KalmaCounter />
