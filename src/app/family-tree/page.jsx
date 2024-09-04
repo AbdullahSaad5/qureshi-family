@@ -187,13 +187,16 @@ function App() {
       setIsButtonLoading(true);
 
       try {
-        const response = await fetch(`http://localhost:8080/api/addChild`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestdata),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/addChild`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestdata),
+          }
+        );
 
         const result = await response.json();
         console.log("Add child API response:", result.error);
@@ -369,9 +372,12 @@ function App() {
 
     async function fetchData() {
       try {
-        const response = await fetch(`http://localhost:8080/api/members`, {
-          signal: abortController.signal,
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`,
+          {
+            signal: abortController.signal,
+          }
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -400,7 +406,9 @@ function App() {
   return (
     <>
       {loading ? (
-        <div className="loader"></div>
+        <div class="loader-container">
+          <div class="loader"></div>
+        </div>
       ) : (
         <>
           <div className="flex justify-end mt-2 mb-2 mr-2">
