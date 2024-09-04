@@ -8,6 +8,7 @@ import {
   STROKE_WIDTH,
   theme,
 } from "./tree-variables";
+import * as go from "gojs";
 
 export const onMouseEnterPart = (e, part) => {
   if (!part.isSelected) {
@@ -28,7 +29,6 @@ export const onMouseLeavePart = (e, part) => {
 export const onSelectionChange = (part) => {
   part.isHighlighted = part.isSelected; // Update highlight based on selection
 };
-
 
 export const strokeStyle = (shape) => {
   return shape
@@ -58,6 +58,7 @@ export const genderToFillColor = (gender) =>
   gender === "male"
     ? theme.colors.maleBadgeBackground
     : theme.colors.femaleBadgeBackground;
+
 
 export const personBadge = () =>
   new go.Panel("Auto", {
@@ -113,40 +114,15 @@ export const personCounter = () =>
     );
 
 export const pictureStyle = (pic) => {
-  return (
-    pic
-      .bind("source", "", ({ status, gender }) => {
-        switch (status) {
-          case "king":
-          case "queen":
-            return "./images/king.svg";
-          case "prince":
-          case "princess":
-            return "./images/prince.svg";
-          case "civilian":
-            return gender === "M"
-              ? "./images/male-civilian.svg"
-              : "./images/female-civilian.svg";
-          default:
-            return "./images/male-civilian.svg";
-        }
-      })
-      // The SVG files are different sizes, so this keeps their aspect ratio reasonable
-      .bind("desiredSize", "status", (status) => {
-        switch (status) {
-          case "king":
-          case "queen":
-            return new go.Size(30, 20);
-          case "prince":
-          case "princess":
-            return new go.Size(28, 20);
-          case "civilian":
-          default:
-            return new go.Size(24, 24);
-        }
-      })
-  );
+  return pic
+    .bind("source", "", ({ gender }) => {
+      return gender === "male"
+        ? "./images/male-civilian.svg"
+        : "./images/female-civilian.svg";
+    })
+    .bind("desiredSize", "status", () => new go.Size(24, 24));
 };
+
 
 export const personImage = () =>
   new go.Panel("Spot", {
@@ -224,3 +200,4 @@ export const createNodeTemplate = (onNodeClick) =>
     ),
     personBadge()
   );
+

@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Poppins } from "next/font/google";
 import Header from "./components/LandingPage/Header";
+import Footer from "./components/LandingPage/Footer";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const poppins = Poppins({
@@ -28,6 +29,7 @@ export default function RootLayout({
         <Toaster />
         <Header/>
         <AntdRegistry>{children}</AntdRegistry>
+        <Footer/>
       </body>
     </html>
   );
