@@ -129,6 +129,7 @@ const ReactFlowTree = ({ data }) => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         edgeTypes={edgeTypes}
+        elementsSelectable={true}
         connectionLineType={ConnectionLineType.SmoothStep}
         fitView
       >

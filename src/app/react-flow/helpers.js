@@ -54,17 +54,17 @@ export const getAllEdges = (data, initialNodes) => {
     );
     if (findNode) {
       edges.push({
-        id: "father-" + item._id,
+        id: "parents-" + item._id,
         source: findNode.id,
         target: item._id,
         type: ConnectionLineType.SmoothStep,
       });
-      edges.push({
-        id: "mother-" + item._id,
-        source: findNode.id,
-        target: item._id,
-        type: ConnectionLineType.SmoothStep,
-      });
+      // edges.push({
+      //   id: "mother-" + item._id,
+      //   source: findNode.id,
+      //   target: item._id,
+      //   type: ConnectionLineType.SmoothStep,
+      // });
     }
     if (item.spouse?.length > 0) {
       item.spouse.forEach((spouse) => {
