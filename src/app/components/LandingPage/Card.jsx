@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from "next/image";
 import card1 from '../../_assets/card1.png';
-import card2 from '../../_assets/card2.png';
+import card2 from '../../_assets/card.jpg';
 import card3 from '../../_assets/card3.png';
 import card4 from '../../_assets/card4.png';
 

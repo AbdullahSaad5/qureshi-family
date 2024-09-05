@@ -17,7 +17,7 @@ export default function LandingPage() {
       <KalmaCounter />
       <Card/>
       <Verse />
-      <JoinFamily />
+      {/* <JoinFamily /> */}
     </>
   );
 }

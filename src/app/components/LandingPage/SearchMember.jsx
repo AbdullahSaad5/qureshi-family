@@ -8,7 +8,18 @@ function SearchMember() {
       className="relative flex items-center w-full min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${bg.src})` }}
     >
-      <div className=" xl:w-[27%] border-2 m-4 ml-10 md:ml-16 p-4 shadow-lg rounded-md bg-white bg-opacity-90">
+      <div className="bg-white hidden md:block bg-opacity-50 md:m-12 lg:m-16 p-4 rounded-lg">
+        <p className="text-black font-medium md:text-medium lg:text-xl">
+          Explore your Qureshi Family history in <br />
+          just minutes. Uncover generations of stories <br />
+          with our easy-to-use tools. Trace{" "}your lineage <br />
+          effortlessly and connect with your roots. <br />
+          Start your family history journey today with <br />
+          unmatched accuracy.
+        </p>
+      </div>
+
+      <div className=" border-2  m-4 ml-[50px] md:ml-0 lg:ml-[50px] xl:ml-[250px] p-4 shadow-lg rounded-md bg-white bg-opacity-90">
         <div className="text-center mt-">
           <div className="flex items-center justify-center my-3">
             <LuSearchCheck className="text-[#7E7E7E] mx-2  text-5xl" />

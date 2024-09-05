@@ -7,12 +7,12 @@ import endorse from "../../_assets/endorse.png";
 
 function Qureshi() {
   return (
-    <section className="md:p-12 mb-12">
+    <section className="md:p-12 mb-8 mt-12 sm:mt-0">
       <div className={` text-[#82D026]  text-center m-4 p-4`}>
         <h2 className="text-5xl">Qureshi</h2>
       </div>
 
-      <div className=" m-4 p-4 text-center">
+      <div className=" m-4 p- text-center">
         <p className="text-md">
           <span className="font-semibold text-[#646464]">Qureshi </span>also
           rendered as Quraishi, Qureshy, Quraishy, Qoraishi, Qoreshi, Koraishi,
@@ -76,7 +76,7 @@ function Qureshi() {
           <p className="text-[#82D026] cursor-pointer mb-2 mt-8">Learn More</p>
         </div>
       </div>
-      
+
     </section>
   );
 }

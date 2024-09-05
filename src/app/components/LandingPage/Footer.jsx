@@ -39,9 +39,10 @@ function Footer() {
 
       {/* Second Line - Table-Like Structure */}
       <div className=" flex items-center justify-center">
-        <div className=" w-[90%] grid grid-cols-2 sm:grid-cols-2 sm:gap-16 md:grid-cols-2 md:gap-16 lg:grid-cols-4  lg:gap-16 xl:w-[90%] xl:grid-cols-5 px-4  border-b-2 border-white p-16">
-          
-          <div>
+        <div className=" w-[90%] flex justify-center px-4  border-b-2 border-white p-16">
+          {/* use the below div instead of above div if there are more then 2 items to display */}
+        {/* <div className=" w-[90%] grid grid-cols-2 sm:grid-cols-2 sm:gap-16 md:grid-cols-2 md:gap-16 lg:grid-cols-4  lg:gap-16 xl:w-[90%] xl:grid-cols-5 px-4  border-b-2 border-white p-16"></div> */}
+          <div className="px-8y">
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
               COMPANY
             </h2>
@@ -53,20 +54,20 @@ function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="px-8">
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
               SUPPORT
             </h2>
             <div className="text-sm md:text-md lg:text-sm font-sm">
               <p className="py-1 md:py-2">Contact Support</p>
-              <p className="py-1 md:py-2">Help Center</p>
+              {/* <p className="py-1 md:py-2">Help Center</p>
               <p className="py-1 md:py-2">Support Devices</p>
               <p className="py-1 md:py-2">Activate Your Device</p>
-              <p className="py-1 md:py-2">Accessibility</p>
+              <p className="py-1 md:py-2">Accessibility</p> */}
             </div>
           </div>
 
-          <div className="my-12 md:my-0">
+          {/* <div className="my-12 md:my-0">
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
               PARTNERS
             </h2>
@@ -74,9 +75,9 @@ function Footer() {
               <p className="py-1 md:py-2">Advertise With Us</p>
               <p className="py-1 md:py-2">Partner With Us</p>
             </div>
-          </div>
+          </div> */}
 
-          <div className="my-12 md:my-0">
+          {/* <div className="my-12 md:my-0">
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
               AVAILABLE
             </h2>
@@ -85,9 +86,9 @@ function Footer() {
               <p className="py-1 md:py-2">Apple</p>
               <p className="py-1 md:py-2">Android</p>
             </div>
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
               ABOUT
             </h2>
@@ -95,7 +96,7 @@ function Footer() {
               <p className="py-1 md:py-2">User Stories</p>
               <p className="py-1 md:py-2">Become An Affiliate</p>
             </div>
-          </div>
+          </div> */}
 
         </div>
       </div>

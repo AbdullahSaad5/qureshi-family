@@ -9,6 +9,7 @@ const righteous = Righteous({
   weight: "400",
   subsets: ["latin"],
 });
+
 const HeroSection = () => {
   const images = [sliderImage1, sliderImage2, sliderImage3];
   return (
@@ -27,7 +28,7 @@ const HeroSection = () => {
           </div>
         ))}
       </Carousel>
-      <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 z-10">
+      <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20">
         <h1
           className={`${righteous.className}  text-[#82D026] text-5xl md:text-6xl lg:text-7xl font-bold mb-4`}
         >
