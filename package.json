@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.1",
+    "@xyflow/react": "^12.2.1",
     "antd": "^5.20.4",
     "axios": "^1.7.5",
     "clsx": "^2.1.1",
+    "dagre": "^0.8.5",
     "gojs": "^3.0.10",
     "gojs-react": "^1.1.2",
     "lucide-react": "^0.436.0",
