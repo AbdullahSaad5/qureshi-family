@@ -1,40 +1,38 @@
 import { ConnectionLineType } from "@xyflow/react";
 
 export const getAllConnections = (data) => {
-  let initialNodes = [];
-  initialNodes = data.map((item) => {
+  const idSet = new Set(); // To track unique IDs
+
+  let initialNodes = data.map((item) => {
     const totalNodes = [];
+    const itemId = item._id;
+
     totalNodes.push({
-      id: item._id,
+      id: itemId,
       data: {
         label: item.name,
       },
     });
-    if (item.spouse?.length > 0) {
-      item.spouse.forEach((spouse) => {
-        // const id = `spouse-${item._id}-${spouse}`;
-        if (
-          !totalNodes.find(
-            (node) => node.id === `spouse-${item._id}-${spouse}` || node.id === `spouse-${spouse}-${item._id}`
-          )
-        )
+
+    if (item.spouseIds?.length > 0) {
+      item.spouseIds.forEach((spouse) => {
+        const spouseId1 = `spouse-${itemId}-${spouse}`;
+        const spouseId2 = `spouse-${spouse}-${itemId}`;
+
+        // Ensure IDs are unique
+        if (!idSet.has(spouseId1) && !idSet.has(spouseId2)) {
+          idSet.add(spouseId1);
           totalNodes.push({
-            id: `spouse-${item._id}-${spouse}`,
-            // data: {
-            //   label: "Spouse",
-            // },
+            id: spouseId1,
             shape: "diamond",
             isSpouse: true,
-
             style: {
               width: 1,
               height: 1,
-              // make it appear as a diamond
               backgroundColor: "red",
-              // borderRadius:å 0,
-              // transform: "rotate(45deg)",
             },
           });
+        }
       });
     }
 
@@ -45,55 +43,65 @@ export const getAllConnections = (data) => {
   return initialNodes;
 };
 
+
 export const getAllEdges = (data, initialNodes) => {
-  let initialEdges = data.map((item) => {
+  const edgeSet = new Set(); // To track unique edges
+
+  let initialEdges = data.flatMap((item) => {
     const edges = [];
 
     const findNode = initialNodes.find(
-      (node) => node.id === `spouse-${item.father}-${item.mother}` || node.id === `spouse-${item.mother}-${item.father}`
+      (node) =>
+        node.id === `spouse-${item.father}-${item.mother}` ||
+        node.id === `spouse-${item.mother}-${item.father}`
     );
     if (findNode) {
       edges.push({
-        id: "parents-" + item._id,
+        id: `parents-${item._id}`,
         source: findNode.id,
         target: item._id,
         type: ConnectionLineType.SmoothStep,
       });
-      // edges.push({
-      //   id: "mother-" + item._id,
-      //   source: findNode.id,
-      //   target: item._id,
-      //   type: ConnectionLineType.SmoothStep,
-      // });
     }
-    if (item.spouse?.length > 0) {
-      item.spouse.forEach((spouse) => {
+
+    if (item.spouseIds?.length > 0) {
+      item.spouseIds.forEach((spouse) => {
         const findNode = initialNodes.find(
-          (node) => node.id === `spouse-${item._id}-${spouse}` || node.id === `spouse-${spouse}-${item._id}`
+          (node) =>
+            node.id === `spouse-${item._id}-${spouse}` ||
+            node.id === `spouse-${spouse}-${item._id}`
         );
 
         if (findNode) {
-          edges.push({
-            id: `spouse-${item._id}-${spouse}`,
-            source: item._id,
-            target: findNode.id,
-            type: ConnectionLineType.SmoothStep,
-            animated: true,
-          });
-          edges.push({
-            id: `spouse-${spouse}-${item._id}`,
-            source: spouse,
-            target: findNode.id,
-            type: ConnectionLineType.SmoothStep,
-            animated: true,
-          });
+          const edgeId1 = `spouse-${item._id}-${spouse}`;
+          const edgeId2 = `spouse-${spouse}-${item._id}`;
+
+          // Ensure edge IDs are unique
+          if (!edgeSet.has(edgeId1)) {
+            edgeSet.add(edgeId1);
+            edges.push({
+              id: edgeId1,
+              source: item._id,
+              target: findNode.id,
+              type: ConnectionLineType.SmoothStep,
+            });
+          }
+
+          if (!edgeSet.has(edgeId2)) {
+            edgeSet.add(edgeId2);
+            edges.push({
+              id: edgeId2,
+              source: spouse,
+              target: findNode.id,
+              type: ConnectionLineType.SmoothStep,
+            });
+          }
         }
       });
     }
     return edges;
   });
 
-  initialEdges = initialEdges.flat(Infinity);
-
   return initialEdges;
 };
+
