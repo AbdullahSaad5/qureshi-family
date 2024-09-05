@@ -31,10 +31,10 @@ function Header() {
         <Image src={logo} alt="logo" width={70} height={50} />
         <div className="flex flex-col gap-1">
           <h1 className="text-[#82D026] text-2xl md:text-xl lg:text-2xl font-semibold">
-            Qureshi
+            Shajra e
           </h1>
           <h3 className="text-[#000000] text-xl md:text-lg lg:text-xl text-center font-semibold">
-            Family
+            Nasb
           </h3>
         </div>
       </div>
@@ -46,23 +46,18 @@ function Header() {
       >
         <div className="flex flex-col md:flex-row gap-4 lg:gap-10 mt-4 md:mt-0 ">
           <div
-            onClick={() => handleNavigation("/react-flow")}
+            onClick={() => handleNavigation("/Explore")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Explore
           </div>
           <div
-            onClick={() => handleNavigation("/Expand")}
+            onClick={() => handleNavigation("/react-flow")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Expand
           </div>
-          <div
-            onClick={() => handleNavigation("/Endorse")}
-            className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
-          >
-            Endorse
-          </div>
+
           <div
             onClick={() => handleNavigation("/AboutUs")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"

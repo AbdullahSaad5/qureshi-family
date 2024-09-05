@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   ReactFlow,
   addEdge,
@@ -62,7 +62,7 @@ const CustomEdge = ({
   );
 };
 
-const ReactFlowTree = ({ data }) => {
+const ReactFlowTree = ({ data, IDs }) => {
   const initialNodes = getAllConnections(data);
   const initialEdges = getAllEdges(data, initialNodes);
 
@@ -159,6 +159,13 @@ const ReactFlowTree = ({ data }) => {
     console.log(`Node clicked:`);
     console.log(node);
   };
+
+  useEffect(() => {
+    if (IDs.length > 0) {
+      console.log("Selected IDs");
+      console.log(IDs);
+    }
+  }, [IDs]);
 
   return (
     <div className="h-screen w-full">

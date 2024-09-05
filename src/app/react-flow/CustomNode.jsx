@@ -15,6 +15,8 @@ const CustomNode = ({ id, data }) => {
         padding: "10px",
         borderRadius: "4px",
         background: "#fff",
+        minWidth: "150px", // Ensuring enough space for content
+        minHeight: "50px", // Ensuring enough space for content
       }}
     >
       <div>{data.label}</div>
@@ -22,8 +24,15 @@ const CustomNode = ({ id, data }) => {
         style={{
           position: "absolute",
           bottom: "10px",
-          left: "10px",
+          right: "10px", // Changed to right from left for bottom-right corner
           cursor: "pointer",
+          backgroundColor: "rgba(255, 255, 255, 0.8)", // Slightly transparent background to improve visibility
+          borderRadius: "50%", // Round button
+          padding: "5px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 0 4px rgba(0, 0, 0, 0.2)", // Subtle shadow for better visibility
         }}
         onClick={handleClick}
       >
