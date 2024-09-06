@@ -16,7 +16,7 @@ export default function Explore() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL_LOCAL}/getAllPublicFigures`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllPublicFigures`
       );
       const data = await response.json();
 
@@ -34,10 +34,10 @@ export default function Explore() {
           Famous Personalities{" "}
         </h1>
         {/* <!-- Table Structure --> */}
-        <div className="overflow-x-auto rounded-xl flex items-center justify-center shadow-lg border-3 border-black w-[80%]">
-          <table className=" text-left text-sm border-2 border-[#EEEEEE] overflow-hidden">
+        <div className="overflow-x-auto rounded-xl flex items-center justify-center shadow-lg border-3 border-black w-full">
+          <table className=" text-left text-sm border-2 border-[#EEEEEE] overflow-hidden w-full">
             {/* Apply border-radius to the entire table */}
-            <thead className="bg-[#82D026] text-black">
+            <thead className="bg-[#82D026] text-black ">
               <tr className="">
                 <th className="p-3 border-2 border-[#EEEEEE] text-center">
                   id
@@ -48,7 +48,7 @@ export default function Explore() {
                 <th className="p-3 text-center">Description</th>
               </tr>
             </thead>
-            <tbody className="text-[#515151]">
+            <tbody className="text-[#515151] w-full ">
               {data.length > 0 ? (
                 data.map((item, index) => (
                   <>
@@ -58,13 +58,13 @@ export default function Explore() {
                       </td>
                       <td
                         onClick={() => handleNavigation(item._id)}
-                        className="p-3 border-2 border-[#EEEEEE]"
+                        className="p-3 border-2 border-[#EEEEEE] cursor-pointer"
                       >
                         <div className="hover:text-[#82D026]"> {item.name}</div>
                       </td>
                       <td
                         onClick={() => handleNavigation(item._id)}
-                        className="p-3 border-2 border-[#EEEEEE]"
+                        className="p-3 border-2 border-[#EEEEEE] cursor-pointer"
                       >
                         <div className="hover:text-[#82D026]">
                           {item.biography}
@@ -76,7 +76,7 @@ export default function Explore() {
               ) : (
                 <tr>
                   <td colSpan="3" className="p-3 text-center">
-                    No data available
+                    Loading...
                   </td>
                 </tr>
               )}
