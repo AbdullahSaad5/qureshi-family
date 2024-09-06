@@ -25,6 +25,8 @@ const LayoutFlow = () => {
   const [data, setData] = useState([]);
   const [IDs, setIDs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedParentID, setSelectedParentID] = useState("");
+  const [isAddSpouseModalOpen, setIsAddSpouseModalOpen] = useState(false);
 
   const {
     register,
@@ -69,6 +71,15 @@ const LayoutFlow = () => {
           (father) => father.id
         );
         setIDs(fatherIDs);
+        return;
+      }
+      if (
+        error.response.data.message ===
+        "No possible mothers found in father's spouse IDs."
+      ) {
+        toast.error("Please add spouse Details first");
+        handleOk();
+        setIsAddSpouseModalOpen(true);
         return;
       }
     }
@@ -162,7 +173,6 @@ const LayoutFlow = () => {
             )}
           </div>
 
-          {/* ID */}
           <div>
             <label
               htmlFor="id"
@@ -171,18 +181,15 @@ const LayoutFlow = () => {
               ID
             </label>
             <input
-              // onChange={handleChange}
               type="number"
-              name="id"
               id="id"
+              {...register("ID")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="ID"
-              required
-              // value={signupInfo.email}
             />
-            {/* {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )} */}
+            {errors.ID && (
+              <p className="text-red-500 text-sm">{errors.ID.message}</p>
+            )}
           </div>
 
           {/* Tribe */}
@@ -194,41 +201,35 @@ const LayoutFlow = () => {
               Tribe
             </label>
             <input
-              // onChange={handleChange}
               type="text"
-              name="tribe"
               id="tribe"
+              {...register("tribe")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Tribe"
-              required
-              // value={signupInfo.email}
             />
-            {/* {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )} */}
+            {errors.tribe && (
+              <p className="text-red-500 text-sm">{errors.tribe.message}</p>
+            )}
           </div>
 
           {/* Address */}
           <div>
             <label
-              htmlFor="addres"
+              htmlFor="address"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Addres
+              Address
             </label>
             <input
-              // onChange={handleChange}
               type="text"
-              name="addres"
-              id="addres"
+              id="address"
+              {...register("address")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Addres"
-              required
-              // value={signupInfo.email}
+              placeholder="Address"
             />
-            {/* {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )} */}
+            {errors.address && (
+              <p className="text-red-500 text-sm">{errors.address.message}</p>
+            )}
           </div>
 
           {/* About Input */}
@@ -240,13 +241,11 @@ const LayoutFlow = () => {
               About
             </label>
             <textarea
-              // onChange={handleChange}
-              name="aboutYou"
               id="aboutYou"
+              {...register("aboutYou")}
               rows="3"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Tell us about yourself..."
-              // value={signupInfo.aboutYou}
             />
           </div>
         </div>
@@ -254,6 +253,10 @@ const LayoutFlow = () => {
     },
   ];
 
+  const onSubmitSpouse = (formData) => {
+    console.log("Inside spouse change function");
+    console.log(formData);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
@@ -444,6 +447,115 @@ const LayoutFlow = () => {
             {/* Show Collapse */}
             <div className="col-span-2">
               <Collapse defaultActiveKey={[]} items={items} />
+            </div>
+
+            {/* Submit Button */}
+            <div className="col-span-2 text-center mt-6">
+              <button
+                type="submit"
+                className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
+              >
+                Add Member
+              </button>
+            </div>
+          </form>
+        </section>
+      </Modal>
+      <Modal
+        open={isAddSpouseModalOpen}
+        onCancel={() => setIsAddSpouseModalOpen(false)}
+        width={800}
+        footer={null}
+      >
+        <section>
+          <h2 className="text-center text-2xl font-semibold">Add Spouse</h2>
+          <form
+            onSubmit={handleSubmit(onSubmitSpouse)}
+            className="grid grid-cols-2 gap-6 mt-8"
+          >
+            {/* Spouse Name */}
+            <div>
+              <label
+                htmlFor="sName"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Spouse Name
+              </label>
+              <input
+                type="text"
+                id="sName"
+                {...register("sName")}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Spouse Name"
+              />
+            </div>
+
+            {/* Spouse Gender */}
+            <div>
+              <label
+                htmlFor="sGender"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Spouse Gender
+              </label>
+              <select
+                id="sGender"
+                {...register("sGender", {
+                  validate: (value) =>
+                    !spouseName || value ? true : "Spouse gender is required",
+                })}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="" disabled>
+                  Select Gender
+                </option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+              {errors.sGender && (
+                <p className="text-red-500 text-sm">{errors.sGender.message}</p>
+              )}
+            </div>
+
+            {/* Spouse DOB */}
+            <div>
+              <label
+                htmlFor="sDOB"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Spouse DOB
+              </label>
+              <input
+                type="date"
+                id="sDOB"
+                {...register("sDOB", {
+                  validate: (value) =>
+                    !spouseName || value ? true : "Spouse DOB is required",
+                })}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              />
+              {errors.sDOB && (
+                <p className="text-red-500 text-sm">{errors.sDOB.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="id"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                ID
+              </label>
+              <input
+                type="number"
+                id="id"
+                {...register("ID")}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="ID"
+              />
+              {errors.ID && (
+                <p className="text-red-500 text-sm">{errors.ID.message}</p>
+              )}
             </div>
 
             {/* Submit Button */}
