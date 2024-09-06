@@ -62,9 +62,16 @@ const CustomEdge = ({
   );
 };
 
-const ReactFlowTree = ({ data, IDs }) => {
-  const initialNodes = getAllConnections(data);
-  const initialEdges = getAllEdges(data, initialNodes);
+const ReactFlowTree = ({ data, IDs = [] }) => {
+  let initialNodes = [];
+  let initialEdges = [];
+
+  if (Array.isArray(data) && data.length > 0) {
+    initialNodes = getAllConnections(data);
+    initialEdges = getAllEdges(data, initialNodes);
+  } else {
+    console.log("No data available or data is not an array");
+  }
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
