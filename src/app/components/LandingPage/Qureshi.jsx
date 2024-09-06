@@ -7,26 +7,22 @@ function Qureshi() {
   return (
     <section className="md:p-12 mb-8 mt-12 sm:mt-0">
       <div className={` text-[#82D026]  text-center m-4 p-4`}>
-        <h2 className="text-5xl">Qureshi</h2>
+        <h2 className="text-5xl">Shar-e-Nasb</h2>
       </div>
       <div className=" m-4 p- text-center">
-        <p className="text-md">
-          <span className="font-semibold text-[#646464]">Qureshi </span>also
-          rendered as Quraishi, Qureshy, Quraishy, Qoraishi, Qoreshi, Koraishi,
-          Kureshi, Kureshy, Kureishi, Coreishi, (Arabic/ <br />
-          Urdu: قریشی, Hindi: कुरैशी) which means member of the Quraish tribe.
-          It is a Muslim family name that originates from Arabs in <br />
-          Saudi Arabia and indicates descent from the{" "}
-          <span className="text-[#82D026]"> Quraish </span>which was the leading
-          noblest tribe in Mecca at the time of birth of <br />
-          the{" "}
-          <span className="text-[#82D026] underline">
-            {" "}
-            Holy Prophet Hazrat Muhammad ( صَلَّى اللَّهُ عَلَيْهِ وآلہ وَسَلَّم
-            )
-          </span>
-          when <span className="underline"> Prophet’s grandfather </span> was
-          the head of tribe
+        <p className="mt-4">
+          A{" "}
+          <span className="font-semibold text-[#646464]"> Shajra e Nasab</span>{" "}
+          is a family tree that traces the lineage of a family across
+          generations. It records ancestral connections, <br />
+          preserving family heritage and history. In Islamic culture, it holds
+          significance for families, especially those claiming <br /> descent
+          from notable religious or historical figures. This genealogical record
+          is often used to maintain accurate <br /> knowledge of a family’s
+          ancestry and is sometimes referred to during important events like
+          marriages. <br />
+          Families may pass down their Shajra e Nasab as a symbol of pride and
+          tradition..
         </p>
       </div>
       <div className="mt-12 grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-10 lg:gap-x-4 gap-x-4 ml-6 p-4">
