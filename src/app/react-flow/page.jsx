@@ -51,6 +51,7 @@ const LayoutFlow = () => {
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -121,6 +122,7 @@ const LayoutFlow = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    reset();
   };
 
   const fetchFatherOptions = async (searchValue) => {
@@ -175,6 +177,9 @@ const LayoutFlow = () => {
       console.log(data);
 
       if (response.ok) {
+        console.log("Spouse data");
+        console.log(data.spouses);
+
         const formattedOptions = Array.isArray(data.spouses)
           ? data.spouses.map((spouse) => ({
               value: spouse,
@@ -482,6 +487,8 @@ const LayoutFlow = () => {
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
+
+  
   return (
     <div>
       <div className="w-full flex justify-end">

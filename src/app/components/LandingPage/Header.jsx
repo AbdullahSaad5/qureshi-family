@@ -71,43 +71,17 @@ function Header() {
           >
             Login
           </div>
-
-          <div
-            onClick={() => handleNavigation("/signup")}
-            className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
-          >
-            Sign Up
-          </div>
         </div>
       </div>
 
       <div className="flex">
-        <div className="relative hidden  md:flex justify-between w-40 lg:w-48 rounded-full border border-[#82D026] p-0.5">
+        <div className="relative flex justify-center w-40 lg:w-48 rounded-full border border-[#82D026] bg-[#82D026] p-0.5 cursor-pointer">
           <div
-            className={`absolute top-0 left-0 h-full w-1/2 bg-[#82D026] rounded-full transition-transform duration-300 ${
-              active === "register" ? "translate-x-full" : "translate-x-0"
-            }`}
-          ></div>
-
-          <Link
-            href="/signin"
-            className={`flex-1 text-center relative z-10 text-xs lg:text-sm rounded-full px-4 py-2 transition-colors duration-300 ${
-              active === "login" ? "text-white" : "text-primary"
-            }`}
-            onClick={() => setActive("login")}
+            onClick={() => handleNavigation("/signin")}
+            className="text-center text-white text-sm lg:text-base rounded-full px-4 py-2 transition-colors duration-300"
           >
             Login
-          </Link>
-
-          <Link
-            href="/signup"
-            className={`flex-1 text-center relative z-10 text-xs lg:text-sm rounded-full px-4 py-2 transition-colors duration-300 ${
-              active === "register" ? "text-white" : "text-primary"
-            }`}
-            onClick={() => setActive("register")}
-          >
-            Register
-          </Link>
+          </div>
         </div>
 
         <div className="md:hidden flex items-center">

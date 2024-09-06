@@ -53,7 +53,7 @@ export default function Explore() {
                 data.map((item, index) => (
                   <>
                     <tr className="border-b">
-                      <td className="p-3 border-2 border-[#EEEEEE]">
+                      <td className="p-3 border-2 border-[#EEEEEE] flex justify-center">
                         {index + 1}
                       </td>
                       <td
