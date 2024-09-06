@@ -15,7 +15,7 @@ export default function PublicFigureTree() {
       console.log(id);
       const fetchData = async () => {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL_LOCAL}/getTreeById/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTreeById/${id}`
         );
         const result = await response.json();
 
@@ -28,7 +28,7 @@ export default function PublicFigureTree() {
 
   return (
     <>
-      <div>Public Figure Tree</div>
+      {/* <div>Public Figure Tree</div> */}
 
       {data.length > 0 && <ReactFlowTree data={data} />}
     </>

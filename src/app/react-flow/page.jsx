@@ -7,6 +7,7 @@ import { CollapseProps } from "antd";
 import { Collapse } from "antd";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { Select } from "antd";
 
 import {
   ReactFlow,
@@ -20,21 +21,42 @@ import dagre from "dagre";
 import { getAllConnections, getAllEdges } from "./helpers.js";
 import ReactFlowTree from "./ReactFlow.jsx";
 import "@xyflow/react/dist/style.css";
+import debounce from "lodash/debounce";
+import "antd/dist/reset.css";
+const { Option } = Select;
 
 const LayoutFlow = () => {
   const [data, setData] = useState([]);
   const [IDs, setIDs] = useState([]);
+
+  const [formData, setFormData] = useState({
+    spouseName: "",
+    SpouseGender: "",
+    spouseDOB: "",
+  });
+  const [errorss, setErrors] = useState({});
+
+  const [SelectedPersonID, setSelectedPersonID] = useState("");
+  const [reFetchtree, setReFetchtree] = useState(false);
+  const [fatherOptions, setFatherOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [spouseOptions, setSpouseOptions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedParentID, setSelectedParentID] = useState("");
   const [isAddSpouseModalOpen, setIsAddSpouseModalOpen] = useState(false);
+  const [showAddSpouseButton, setShowAddSpouseButton] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "onChange",
+    defaultValues: {
+      childGender: "male",
+    },
   });
 
   const today = new Date().toISOString().split("T")[0];
@@ -43,14 +65,17 @@ const LayoutFlow = () => {
   const spouseName = watch("sName");
 
   const onSubmit = async (formData) => {
+    console.log("Form submission");
+    console.log(formData);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL_LOCAL}/addChild`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/addChild`,
         formData
       );
       console.log("Success:", response.data);
 
       toast.success("Send child request for review");
+      setReFetchtree(true);
       handleOk();
     } catch (error) {
       console.error("Error:", error);
@@ -75,9 +100,10 @@ const LayoutFlow = () => {
       }
       if (
         error.response.data.message ===
-        "No possible mothers found in father's spouse IDs."
+        "Father details are required to find possible mothers."
       ) {
-        toast.error("Please add spouse Details first");
+        toast.error("Add spouse details before adding a child.");
+        setSelectedParentID(error.response.data.fatherID);
         handleOk();
         setIsAddSpouseModalOpen(true);
         return;
@@ -97,8 +123,89 @@ const LayoutFlow = () => {
     setIsModalOpen(false);
   };
 
-  const onChange = (key) => {
-    console.log(key);
+  const fetchFatherOptions = async (searchValue) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/searchbyname/${searchValue}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        const formattedOptions = data.map((person) => ({
+          value: person._id,
+          label: `
+          Name: ${person.name}
+          Father: ${person.father || "Unknown"}
+        `.trim(),
+        }));
+        setFatherOptions(formattedOptions);
+      } else {
+        console.error("Error fetching options:", data.message);
+      }
+    } catch (error) {
+      console.error("Error in fetching father options:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debouncedFetchFatherOptions = debounce(fetchFatherOptions, 500);
+
+  const fetchFatherData = async (fatherId) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFamilyDetails/${fatherId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      console.log("Data in console");
+      console.log(data);
+
+      if (response.ok) {
+        const formattedOptions = Array.isArray(data.spouses)
+          ? data.spouses.map((spouse) => ({
+              value: spouse,
+              label: spouse,
+            }))
+          : [];
+
+        if (formattedOptions.length === 0) {
+          toast.error("Add spouse details before adding a child.");
+          setSpouseOptions([]);
+          setSelectedParentID(fatherId);
+          setShowAddSpouseButton(true);
+        } else {
+          setShowAddSpouseButton(false);
+          setSpouseOptions(formattedOptions);
+        }
+
+        setValue("grandfather", data.father || "");
+        setValue("grandmother", data.mother || "");
+        setValue(
+          "fatherDOB",
+          data.dateOfBirth
+            ? new Date(data.dateOfBirth).toISOString().split("T")[0]
+            : ""
+        );
+      } else {
+        console.error("Error fetching father data:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching father data:", error);
+    }
   };
 
   const items = [
@@ -253,14 +360,73 @@ const LayoutFlow = () => {
     },
   ];
 
-  const onSubmitSpouse = (formData) => {
-    console.log("Inside spouse change function");
-    console.log(formData);
+  const handleChange = (value) => {
+    console.log("Selected value:", value);
+    setValue("motherName", value);
   };
+
+  const handleChangee = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    const { spouseName, SpouseGender, spouseDOB } = formData;
+
+    if (!spouseName) newErrors.spouseName = "Spouse Name is required";
+    if (!SpouseGender) newErrors.SpouseGender = "Spouse Gender is required";
+    if (!spouseDOB) {
+      newErrors.spouseDOB = "Spouse DOB is required";
+    } else if (new Date(spouseDOB) > new Date()) {
+      newErrors.spouseDOB = "Spouse DOB cannot be a future date";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const onSubmitSpouse = async (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      console.log("Inside spouse change function");
+      const newData = {
+        ...formData,
+        personId: selectedParentID,
+      };
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/addSpouse`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newData),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log("Spouse Added successfully");
+          toast.success("Spouse Added successfully");
+          setIsAddSpouseModalOpen(false);
+        } else {
+          console.error("Error adding spouse:", data.message);
+        }
+      } catch (error) {
+        console.error("Error adding spouse:", error);
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL_LOCAL}/members`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
       );
       const data = await response.json();
       //   const addedNodes = [];
@@ -291,7 +457,27 @@ const LayoutFlow = () => {
     };
 
     fetchData();
-  }, []);
+  }, [reFetchtree]);
+
+  useEffect(() => {
+    if (reFetchtree) {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
+          );
+          const data = await response.json();
+
+          setData(data);
+          setReFetchtree(false);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [reFetchtree]);
 
   if (data.length === 0) {
     return <div>Loading...</div>;
@@ -318,6 +504,50 @@ const LayoutFlow = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-2 gap-6 mt-8"
           >
+            {/* grand Father Name */}
+            <div>
+              <label
+                htmlFor="fatherName"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Grand Father Name
+              </label>
+              <input
+                type="text"
+                id="grandfather"
+                {...register("grandfather")}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Grand Father Name"
+              />
+              {errors.grandfather && (
+                <p className="text-red-500 text-sm">
+                  {errors.grandfather.message}
+                </p>
+              )}
+            </div>
+
+            {/* grand mother Name */}
+            <div>
+              <label
+                htmlFor="grandmother"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Grand Mother Name
+              </label>
+              <input
+                type="text"
+                id="grandmother"
+                {...register("grandmother")}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Grand Mother Name"
+              />
+              {errors.grandmother && (
+                <p className="text-red-500 text-sm">
+                  {errors.grandmother.message}
+                </p>
+              )}
+            </div>
+
             {/* Father Name */}
             <div>
               <label
@@ -326,16 +556,22 @@ const LayoutFlow = () => {
               >
                 Father Name
               </label>
-              <input
-                type="text"
-                id="fatherName"
-                {...register("fatherName", {
-                  validate: (value) =>
-                    value || motherName ? true : "Father Name is required",
-                })}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Father Name"
+              <Select
+                showSearch
+                placeholder="Select father's name"
+                filterOption={false}
+                onSearch={debouncedFetchFatherOptions}
+                options={fatherOptions}
+                loading={loading}
+                onChange={(value) => {
+                  fetchFatherData(value);
+                }}
+                style={{ width: "100%" }}
+                dropdownRender={(menu) => (
+                  <div style={{ whiteSpace: "pre-wrap" }}>{menu}</div>
+                )}
               />
+
               {errors.fatherName && (
                 <p className="text-red-500 text-sm">
                   {errors.fatherName.message}
@@ -346,26 +582,26 @@ const LayoutFlow = () => {
             {/* Mother Name */}
             <div>
               <label
-                htmlFor="motherName"
+                htmlFor="spouse"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 Mother Name
               </label>
-              <input
-                type="text"
-                id="motherName"
-                {...register("motherName", {
-                  validate: (value) =>
-                    value || fatherName ? true : "Mother Name is required",
-                })}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Mother Name"
-              />
-              {errors.motherName && (
-                <p className="text-red-500 text-sm">
-                  {errors.motherName.message}
-                </p>
-              )}
+              <Select
+                placeholder="Select Mother name"
+                defaultValue={
+                  spouseOptions.length > 0 ? spouseOptions[0].value : undefined
+                }
+                style={{ width: "100%" }}
+                onChange={handleChange}
+                loading={loading}
+              >
+                {spouseOptions.map((option) => (
+                  <Option key={option.value} value={option.value}>
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
             </div>
 
             {/* Father DOB */}
@@ -380,6 +616,7 @@ const LayoutFlow = () => {
                 type="date"
                 id="fatherDOB"
                 {...register("fatherDOB", {
+                  required: "Father's is required",
                   max: {
                     value: today,
                     message: "DOB cannot be in the future",
@@ -444,6 +681,48 @@ const LayoutFlow = () => {
               )}
             </div>
 
+            <div>
+              <label
+                htmlFor="childGender"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Child Gender
+              </label>
+              <select
+                id="childGender"
+                {...register("childGender", {
+                  required: "Child Name is required",
+                })}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="" disabled>
+                  Select Gender
+                </option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+              {errors.childGender && (
+                <p className="text-red-500 text-sm">
+                  {errors.childGender.message}
+                </p>
+              )}
+            </div>
+
+            {showAddSpouseButton && (
+              <div className="col-span-2 text-center mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCancel();
+                    setIsAddSpouseModalOpen(true);
+                  }}
+                  className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
+                >
+                  Add Spouse
+                </button>
+              </div>
+            )}
+
             {/* Show Collapse */}
             <div className="col-span-2">
               <Collapse defaultActiveKey={[]} items={items} />
@@ -470,40 +749,42 @@ const LayoutFlow = () => {
         <section>
           <h2 className="text-center text-2xl font-semibold">Add Spouse</h2>
           <form
-            onSubmit={handleSubmit(onSubmitSpouse)}
+            onSubmit={onSubmitSpouse}
             className="grid grid-cols-2 gap-6 mt-8"
           >
             {/* Spouse Name */}
             <div>
               <label
-                htmlFor="sName"
+                htmlFor="spouseName"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 Spouse Name
               </label>
               <input
                 type="text"
-                id="sName"
-                {...register("sName")}
+                id="spouseName"
+                value={formData.spouseName}
+                onChange={handleChangee}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Spouse Name"
               />
+              {errors.spouseName && (
+                <p className="text-red-500 text-sm">{errorss.spouseName}</p>
+              )}
             </div>
 
             {/* Spouse Gender */}
             <div>
               <label
-                htmlFor="sGender"
+                htmlFor="SpouseGender"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 Spouse Gender
               </label>
               <select
-                id="sGender"
-                {...register("sGender", {
-                  validate: (value) =>
-                    !spouseName || value ? true : "Spouse gender is required",
-                })}
+                id="SpouseGender"
+                value={formData.SpouseGender}
+                onChange={handleChangee}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option value="" disabled>
@@ -512,49 +793,28 @@ const LayoutFlow = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              {errors.sGender && (
-                <p className="text-red-500 text-sm">{errors.sGender.message}</p>
+              {errors.SpouseGender && (
+                <p className="text-red-500 text-sm">{errorss.SpouseGender}</p>
               )}
             </div>
 
             {/* Spouse DOB */}
             <div>
               <label
-                htmlFor="sDOB"
+                htmlFor="spouseDOB"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 Spouse DOB
               </label>
               <input
                 type="date"
-                id="sDOB"
-                {...register("sDOB", {
-                  validate: (value) =>
-                    !spouseName || value ? true : "Spouse DOB is required",
-                })}
+                id="spouseDOB"
+                value={formData.spouseDOB}
+                onChange={handleChangee}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
-              {errors.sDOB && (
-                <p className="text-red-500 text-sm">{errors.sDOB.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="id"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                ID
-              </label>
-              <input
-                type="number"
-                id="id"
-                {...register("ID")}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="ID"
-              />
-              {errors.ID && (
-                <p className="text-red-500 text-sm">{errors.ID.message}</p>
+              {errors.spouseDOB && (
+                <p className="text-red-500 text-sm">{errorss.spouseDOB}</p>
               )}
             </div>
 
@@ -564,7 +824,7 @@ const LayoutFlow = () => {
                 type="submit"
                 className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
               >
-                Add Member
+                Add Spouse
               </button>
             </div>
           </form>
