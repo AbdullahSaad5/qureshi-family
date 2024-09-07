@@ -15,17 +15,10 @@ import dagre from "dagre";
 import "@xyflow/react/dist/style.css";
 import { getAllConnections, getAllEdges } from "./helpers";
 import CustomNode from "./CustomNode";
+import WeddingNode from "./WeddingNode";
 
 // Custom Edge Component
-const CustomEdge = ({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  style = {},
-  markerEnd,
-}) => {
+const CustomEdge = ({ id, sourceX, sourceY, targetX, targetY, style = {}, markerEnd }) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -40,13 +33,7 @@ const CustomEdge = ({
 
   return (
     <>
-      <path
-        id={id}
-        style={style}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd}
-      />
+      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
       <circle cx={midpointX} cy={midpointY} r={5} fill="red" />
       <text x={labelX} y={labelY} fill="black" fontSize={12}>
         Midpoint
@@ -85,6 +72,7 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
 
   const nodeTypes = {
     custom: CustomNode,
+    wedding: WeddingNode,
   };
 
   const getLayoutedElements = useCallback(
@@ -114,14 +102,8 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
           // We are shifting the dagre node position (anchor=center center) to the top left
           // so it matches the React Flow node anchor point (top left).
           position: {
-            x:
-              node.shape === "diamond"
-                ? nodeWithPosition.x - 25
-                : nodeWithPosition.x - nodeWidth / 4,
-            y:
-              node.shape === "diamond"
-                ? nodeWithPosition.y - 25
-                : nodeWithPosition.y - nodeHeight / 4,
+            x: node.shape === "diamond" ? nodeWithPosition.x - 25 : nodeWithPosition.x - nodeWidth / 4,
+            y: node.shape === "diamond" ? nodeWithPosition.y - 25 : nodeWithPosition.y - nodeHeight / 4,
           },
         };
 
@@ -133,28 +115,18 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
     [data]
   );
 
-  const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-    initialNodes,
-    initialEdges
-  );
+  const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(initialNodes, initialEdges);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
 
   const onConnect = useCallback(
-    (params) =>
-      setEdges((eds) =>
-        addEdge(
-          { ...params, type: ConnectionLineType.SmoothStep, animated: true },
-          eds
-        )
-      ),
+    (params) => setEdges((eds) => addEdge({ ...params, type: ConnectionLineType.SmoothStep, animated: true }, eds)),
     [setEdges]
   );
   const onLayout = useCallback(
     (direction) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(nodes, edges, direction);
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges, direction);
 
       setNodes([...layoutedNodes]);
       setEdges([...layoutedEdges]);
