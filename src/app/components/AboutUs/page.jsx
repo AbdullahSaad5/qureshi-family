@@ -2,9 +2,10 @@ function About() {
   return (
     <div className="">
       <h1 className="text-[#000000]  text-xl text-center font-bold">
-        About Us
+        About Us ng out who your ancestors were and where your family came
+        from. The Internet has made
       </h1>
-      <p>
+      <p className="text-black">
         Genealogy is the hobby, the art and the science of exploring your family
         history, finding out who your ancestors were and where your family came
         from. The Internet has made it faster and easier by allowing many of us

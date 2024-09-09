@@ -58,17 +58,24 @@ function Header() {
           >
             Expand
           </div>
-          <div
+          {/* <div
             onClick={() => handleNavigation("/Endorse")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Endorse
-          </div>
+          </div> */}
           <div
             onClick={() => handleNavigation("/AboutUs")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             About Us
+          </div>
+
+          <div
+            onClick={() => handleNavigation("/profile")}
+            className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
+          >
+            Profile
           </div>
 
           <div

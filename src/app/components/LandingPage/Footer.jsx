@@ -1,6 +1,7 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTimes } from "react-icons/fa";
 import logo from "../../_assets/logo.png";
+import X from "../../_assets/X.png";
 import Image from "next/image";
 
 function Footer() {
@@ -15,23 +16,24 @@ function Footer() {
             style={{ width: "70px", height: "70px" }}
           />
           <h1 className="font-bold flex flex-col text-center m-4 justify-center text-3xl md:text-3xl lg:text-3xl">
-            <span className="font-extrabold">Qureshi </span>
+            <span className="font-extrabold">Shajra  e  </span>
             <span className="text-[#82D026] mt-4 font-extrabold text-2xl md:text-2xl lg:text-2xl">
-              Family
+              Nasab
             </span>
           </h1>
         </div>
 
-        <div className="flex flex-row md:flex-col  lg:flex-col xl:flex-row items-center border-b-2 border-white p-6 mt-16 md:mt-8 lg:mr-8">
-          <span className="font-extrabold text-md  md:text-xl lg:text-xl">
+        {/* <div className="flex flex-row md:flex-col  lg:flex-col xl:flex-row items-center border-b-2 border-white p-4 mt-16 md:mt-8 lg:mr-8">
+          <span className="font-extrabold text-md mt-2 md:text-xl lg:text-xl">
             Follow Us On :
           </span>
-          <div className="flex space-x-4 ml-4 mt-2 text-md md:text-xl lg:text-xl ">
-            <FaFacebookF />
-            <FaInstagram />
-            <FaTimes />
-          </div>
-        </div>
+          <div className="flex ml-4 mt-2 text-md md:text-xl lg:text-xl ">
+            <FaFacebookF className="mt-[10px]"/>
+            <FaInstagram className="mt-[10px] ml-4"/>
+            <Image className="w-10 h-8 md:w-12 md:h-10 " src={X} alt="X logo" />
+            {/* <FaTimes /> */}
+          {/* </div> */}
+        {/* </div> */} 
       </div>
 
       {/* Add Spacing Between First and Second Line */}
@@ -39,68 +41,62 @@ function Footer() {
 
       {/* Second Line - Table-Like Structure */}
       <div className=" flex items-center justify-center">
-        <div className=" w-[90%] flex justify-center px-4  border-b-2 border-white p-16">
+        {/* <div className=" w-[90%] flex justify-center px-4  border-b-2 border-white p-16"> */}
           {/* use the below div instead of above div if there are more then 2 items to display */}
-        {/* <div className=" w-[90%] grid grid-cols-2 sm:grid-cols-2 sm:gap-16 md:grid-cols-2 md:gap-16 lg:grid-cols-4  lg:gap-16 xl:w-[90%] xl:grid-cols-5 px-4  border-b-2 border-white p-16"></div> */}
-          <div className="px-8y">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12 items-center w-full flex flex-col  sm:flex-row gap-2 sm:gap-14 ">
+          <div className="px-">
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
-              COMPANY
+              NAVIGATION
             </h2>
             <div className="text-sm md:text-md lg:text-sm font-sm">
               <p className="py-1 md:py-2">About Us</p>
               <p className="py-1 md:py-2">Expand</p>
               <p className="py-1 md:py-2">Explore</p>
-              <p className="py-1 md:py-2">Endorse</p>
+              {/* <p className="py-1 md:py-2">Endorse</p> */}
             </div>
           </div>
 
-          <div className="px-8">
+          <div className="ml-12 sm:ml-0 mt-10 sm:mt-0 mb-9">
             <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
-              SUPPORT
+              CONTACT US
             </h2>
             <div className="text-sm md:text-md lg:text-sm font-sm">
               <p className="py-1 md:py-2">Contact Support</p>
-              {/* <p className="py-1 md:py-2">Help Center</p>
-              <p className="py-1 md:py-2">Support Devices</p>
+              <p className="py-1 md:py-2">info@shajraenasab.com</p>
+              {/* <p className="py-1 md:py-2">Support Devices</p>
               <p className="py-1 md:py-2">Activate Your Device</p>
               <p className="py-1 md:py-2">Accessibility</p> */}
             </div>
           </div>
 
-          {/* <div className="my-12 md:my-0">
-            <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
+          <div className="mr-8 sm:mr-0 mt-6 sm:mt-0">
+            <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl ml-4">
               PARTNERS
             </h2>
             <div className="text-sm md:text-md lg:text-sm font-sm">
-              <p className="py-1 md:py-2">Advertise With Us</p>
-              <p className="py-1 md:py-2">Partner With Us</p>
+              <div className="flex flex-row items-center ml-3 mb-4 mt-2">
+                <FaFacebookF size={20} className="mt-[4px] mr-[5px]"/>
+                <p className="ml-2">facebook</p>
+              </div>
+              <div className="flex flex-row items-center ml-3">
+                <FaInstagram size={20} className="mt-[4px] mr-[5px]"/>
+                <p className="ml-2">instagram</p>
+              </div>
+              <div className="flex flex-row items-center mr-8 mt-4 sm:mt-3 md:mt-0 ">
+                <Image className="w-10 h-8 md:w-12 md:h-10 " src={X} alt="X logo" />
+                <p>twitter</p>
+              </div>
             </div>
-          </div> */}
+          </div>
+            
 
-          {/* <div className="my-12 md:my-0">
-            <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
-              AVAILABLE
-            </h2>
-            <div className="text-sm md:text-md lg:text-sm font-sm">
-              <p className="py-1 md:py-2">iOS</p>
-              <p className="py-1 md:py-2">Apple</p>
-              <p className="py-1 md:py-2">Android</p>
-            </div>
-          </div> */}
-
-          {/* <div>
-            <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
-              ABOUT
-            </h2>
-            <div className="text-sm md:text-md lg:text-sm font-sm">
-              <p className="py-1 md:py-2">User Stories</p>
-              <p className="py-1 md:py-2">Become An Affiliate</p>
-            </div>
-          </div> */}
+          </div>
 
         </div>
-      </div>
 
+      </div>
+      <div className='border-b-2 border-white w-[100%] mb-4 mt-16' />
       {/* Third Line - Copyright */}
       <div className="mb-0 mt-12 md:mt-12 lg:mt-8 lg:mb-0 text-center text-sm md:text-sm lg:text-sm font-medium">
         <p className="p-3">Copyright© 2024 Qureshi Family</p>
