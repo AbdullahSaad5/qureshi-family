@@ -33,11 +33,15 @@ function Login() {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/login`,
         data
       );
+      console.log(response.data.data);
+      localStorage.setItem("userId", response.data.data._id);
+      localStorage.setItem("email", response.data.data.email);
+      localStorage.setItem("contact", response.data.data.contact);
+      localStorage.setItem("fullName", response.data.data.fullName);
       toast.success(response.data.message);
       verifyUser();
       router.push("/Explore");
     } catch (error) {
-      // Display error message based on status code
       if (error.response) {
         const message = error.response.data.message;
         toast.error(message);

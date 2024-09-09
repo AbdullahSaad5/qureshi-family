@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -14,12 +14,13 @@ const EditProfile = () => {
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
-  const id = "66df030dcaa9cf52f51ea9a1";
+  const id = localStorage.getItem("userId");
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -36,9 +37,33 @@ const EditProfile = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  const onInfoSubmit = async (e) => {
+  const onInfoSubmit = async (data) => {
     console.log("Info Submitted");
+    try {
+      console.log("Inside Info Change");
+      const response = await API.post(
+        `https://quresh-family-5b06b2823b36.herokuapp.com/api/update_profile`,
+        {
+          userID: id,
+          contact: data.contact,
+          fullName: data.name,
+        }
+      );
+      toast.success("Info Updated Sucessfully");
+      router.push("/profile");
+    } catch (error) {
+      console.error("Error details:", error);
+      if (error.response) {
+        const message = error.response.data.message;
+        toast.error(message);
+      } else if (error.request) {
+        toast.error("No response received from the server.");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
   };
+
   const onPasswordSubmit = async (data) => {
     // e.preventDefault()
     try {
@@ -65,6 +90,16 @@ const EditProfile = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const username = localStorage.getItem("fullName");
+    const contact = localStorage.getItem("contact");
+
+    if (username && contact) {
+      setValue("contact", contact);
+      setValue("name", username);
+    }
+  });
   return (
     <div className="p-6 max-w-3xl mx-auto">
       {/* Tabs navigation */}
@@ -110,10 +145,14 @@ const EditProfile = () => {
                   type="text"
                   name="name"
                   id="name"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Enter your name"
                   {...register("name", {
                     required: "Username is required",
+                    maxLength: {
+                      value: 40,
+                      message: "Name must be less than 40 characters",
+                    },
                   })}
                 />
                 {errors.name && (
@@ -141,7 +180,7 @@ const EditProfile = () => {
                 <label className="block mb-1 text-gray-700">Contact</label>
                 <input
                   type="number"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Enter your contact"
                   {...register("contact", { required: "Contact is required" })}
                 />
@@ -154,7 +193,7 @@ const EditProfile = () => {
               {/* Save Button */}
               <button
                 type="submit"
-                className=" px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                className="w-full text-white bg-[#82D026] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm py-1.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Save Changes
               </button>
@@ -277,7 +316,7 @@ const EditProfile = () => {
               </div>
               <button
                 type="submit"
-                className="w-full text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm py-1.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full text-white bg-[#82D026] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm py-1.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Update Password
               </button>

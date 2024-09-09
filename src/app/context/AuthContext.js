@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userVerified, setUserVerified] = useState(false);
+  
 
   const verifyUser = () => {
     setUserVerified(true);

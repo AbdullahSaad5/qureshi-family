@@ -35,7 +35,9 @@ function Profile() {
             <UserRound className="text-[#82D026]" size={24} />
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-700">Name</h3>
-              <p className="text-gray-600">John Doe</p>
+              <p className="text-gray-600">
+                {localStorage.getItem("fullName")}
+              </p>
             </div>
           </div>
           {/* Email Field */}
@@ -43,7 +45,7 @@ function Profile() {
             <Mail className="text-[#82D026]" size={24} />
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-700">Email</h3>
-              <p className="text-gray-600">testuser@email.com</p>
+              <p className="text-gray-600">{localStorage.getItem("email")}</p>
             </div>
           </div>
           {/* Contact Field */}
@@ -51,7 +53,7 @@ function Profile() {
             <Phone className="text-[#82D026]" size={24} />
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-700">Contact</h3>
-              <p className="text-gray-600">03*******47</p>
+              <p className="text-gray-600">{localStorage.getItem("contact")}</p>
             </div>
           </div>
         </div>
