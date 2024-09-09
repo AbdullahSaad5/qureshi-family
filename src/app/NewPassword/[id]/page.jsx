@@ -16,6 +16,7 @@ function NewPassword() {
   const { id } = params;
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
 
   const {
     register,
@@ -34,6 +35,10 @@ function NewPassword() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1(!showPassword1);
   };
 
   const onSubmit = async (data) => {
@@ -130,7 +135,7 @@ function NewPassword() {
                 </label>
                 <div className="relative">
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword1 ? "text" : "password"}
                     id="confirmPassword"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -141,13 +146,13 @@ function NewPassword() {
                     })}
                   />
                   <div
-                    onClick={togglePasswordVisibility}
+                    onClick={togglePasswordVisibility1}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                   >
-                    {showPassword ? (
-                      <FaEyeSlash className="text-gray-500" />
-                    ) : (
+                    {showPassword1 ? (
                       <FaEye className="text-gray-500" />
+                    ) : (
+                      <FaEyeSlash className="text-gray-500" />
                     )}
                   </div>
                 </div>

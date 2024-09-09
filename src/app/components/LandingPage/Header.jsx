@@ -69,47 +69,58 @@ function Header() {
             About Us
           </div>
 
-          <div
-            onClick={() => handleNavigation("/signin")}
-            className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
-          >
-            Login
-          </div>
+          {userVerified ? (
+            <div
+              onClick={() => handleNavigation("/Profile")}
+              className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
+            >
+              Profile
+            </div>
+          ) : (
+            <div
+              onClick={() => handleNavigation("/signin")}
+              className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
+            >
+              Login
+            </div>
+          )}
         </div>
       </div>
 
       {userVerified ? (
         <Avatar
-          className="cursor-pointer"
+          className="cursor-pointer hidden md:block"
           onClick={() => router.push("/Profile")}
           style={{ backgroundColor: "#87d068" }}
           icon={<UserOutlined />}
         />
       ) : (
-        <div onClick={() => handleNavigation("/signin")} className="flex">
+        <div
+          onClick={() => handleNavigation("/signin")}
+          className=" md:flex hidden"
+        >
           <div className="relative flex justify-center w-40 lg:w-48 rounded-full border border-[#82D026] bg-[#82D026] p-0.5 cursor-pointer">
             <div className="text-center text-white text-sm lg:text-base rounded-full px-4 py-2 transition-colors duration-300">
               Login
             </div>
           </div>
-
-          <div className="md:hidden flex items-center">
-            {menuOpen ? (
-              <X
-                className="text-black cursor-pointer"
-                size={28}
-                onClick={toggleMenu}
-              />
-            ) : (
-              <Menu
-                className="text-black cursor-pointer"
-                size={28}
-                onClick={toggleMenu}
-              />
-            )}
-          </div>
         </div>
       )}
+      <div className="md:hidden flex items-center">
+        {menuOpen ? (
+          <X
+            className="text-black cursor-pointer"
+            size={28}
+            onClick={toggleMenu}
+          />
+        ) : (
+          <Menu
+            className="text-black cursor-pointer"
+            size={28}
+            onClick={toggleMenu}
+          />
+        )}
+      </div>
     </div>
   );
 }
