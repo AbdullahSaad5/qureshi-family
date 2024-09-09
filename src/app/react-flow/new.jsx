@@ -61,77 +61,73 @@ const items = [
               )} */}
         </div>
 
-         {/* Spouse DOB */}
-         <div>
-              <label
-                htmlFor="sDOB"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Spouse DOB
-              </label>
-              <input
-                // onChange={handleChange}
-                type="date"
-                name="sDOB"
-                id="sDOB"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Spouse DOB"
-                required
-                // value={signupInfo.email}
-              />
-              {/* {errors.email && (
+        {/* Spouse DOB */}
+        <div>
+          <label
+            htmlFor="sDOB"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Spouse DOB
+          </label>
+          <input
+            // onChange={handleChange}
+            type="date"
+            name="sDOB"
+            id="sDOB"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Spouse DOB"
+            required
+            // value={signupInfo.email}
+          />
+          {/* {errors.email && (
                     <p className="text-red-500 text-sm">{errors.email}</p>
                   )} */}
-            </div>
-
-
+        </div>
 
         {/* <div className="border-b-2 border-black"></div> */}
 
-        
-
         {/* ID */}
         <div>
-              <label
-                htmlFor="id"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                ID
-              </label>
-              <input
-                // onChange={handleChange}
-                type="number"
-                name="id"
-                id="id"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="ID"
-                required
-                // value={signupInfo.email}
-              />
-              {/* {errors.email && (
+          <label
+            htmlFor="id"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            ID
+          </label>
+          <input
+            // onChange={handleChange}
+            type="number"
+            name="id"
+            id="id"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="ID"
+            required
+            // value={signupInfo.email}
+          />
+          {/* {errors.email && (
                     <p className="text-red-500 text-sm">{errors.email}</p>
                   )} */}
         </div>
 
         {/* Tribe */}
         <div>
-              <label
-                htmlFor="tribe"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Tribe
-              </label>
-              <input
-                // onChange={handleChange}
-                type="text"
-                name="tribe"
-                id="tribe"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Tribe"
-                required
-                // value={signupInfo.email}
-              />
-              {/* {errors.email && (
+          <label
+            htmlFor="tribe"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Tribe
+          </label>
+          <input
+            // onChange={handleChange}
+            type="text"
+            name="tribe"
+            id="tribe"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Tribe"
+            required
+            // value={signupInfo.email}
+          />
+          {/* {errors.email && (
                     <p className="text-red-500 text-sm">{errors.email}</p>
                   )} */}
         </div>
@@ -177,8 +173,6 @@ const items = [
             // value={signupInfo.aboutYou}
           />
         </div>
-
-
       </div>
     ),
   },
@@ -219,7 +213,6 @@ function Login() {
         <section className="">
           <h2 className="text-center text-2xl font-semibold">Add Child</h2>
           <form action="" className="grid grid-cols-2 gap-6 mt-8">
-
             {/* Father Name Input  */}
             <div>
               <label
@@ -401,10 +394,6 @@ function Login() {
 
 export default Login;
 
-
-
-
-
 // "use client";
 // import { useState } from "react";
 // import { useRouter } from "next/navigation";
@@ -437,7 +426,7 @@ export default Login;
 //     try {
 //       const res = await API.post("/login", loginInfo);
 //       toast.success("Logged in successfully!");
-//       localStorage.setItem("userToken", res.data.message); // Assuming you receive a token
+//       typeof window !== undefined && localStorage.setItem("userToken", res.data.message); // Assuming you receive a token
 //       setLoginInfo({ email: "", password: "" });
 //       router.push("/family-tree");
 //     } catch (error) {
