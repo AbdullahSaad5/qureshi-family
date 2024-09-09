@@ -16,6 +16,7 @@ import {
   Panel,
   useNodesState,
   useEdgesState,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import dagre from "dagre";
 import { getAllConnections, getAllEdges } from "./helpers.js";
@@ -69,10 +70,7 @@ const LayoutFlow = () => {
     console.log("Form submission");
     console.log(formData);
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/addChild`,
-        formData
-      );
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addChild`, formData);
       console.log("Success:", response.data);
 
       toast.success("Send child request for review");
@@ -93,16 +91,11 @@ const LayoutFlow = () => {
         "Multiple fathers found with the same name and date of birth. Please provide the correct MongoDB ObjectId from the list to proceed."
       ) {
         toast.success("Please select the node");
-        const fatherIDs = error.response.data.matchingFathers.map(
-          (father) => father.id
-        );
+        const fatherIDs = error.response.data.matchingFathers.map((father) => father.id);
         setIDs(fatherIDs);
         return;
       }
-      if (
-        error.response.data.message ===
-        "Father details are required to find possible mothers."
-      ) {
+      if (error.response.data.message === "Father details are required to find possible mothers.") {
         toast.error("Add spouse details before adding a child.");
         setSelectedParentID(error.response.data.fatherID);
         handleOk();
@@ -128,15 +121,12 @@ const LayoutFlow = () => {
   const fetchFatherOptions = async (searchValue) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/searchbyname/${searchValue}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/searchbyname/${searchValue}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
 
       if (response.ok) {
@@ -162,15 +152,12 @@ const LayoutFlow = () => {
 
   const fetchFatherData = async (fatherId) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFamilyDetails/${fatherId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFamilyDetails/${fatherId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
 
       console.log("Data in console");
@@ -199,12 +186,7 @@ const LayoutFlow = () => {
 
         setValue("grandfather", data.father || "");
         setValue("grandmother", data.mother || "");
-        setValue(
-          "fatherDOB",
-          data.dateOfBirth
-            ? new Date(data.dateOfBirth).toISOString().split("T")[0]
-            : ""
-        );
+        setValue("fatherDOB", data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().split("T")[0] : "");
       } else {
         console.error("Error fetching father data:", data.message);
       }
@@ -221,10 +203,7 @@ const LayoutFlow = () => {
         <div className="grid grid-cols-2 gap-6">
           {/* Spouse Name */}
           <div>
-            <label
-              htmlFor="sName"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="sName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Spouse Name
             </label>
             <input
@@ -238,17 +217,13 @@ const LayoutFlow = () => {
 
           {/* Spouse Gender */}
           <div>
-            <label
-              htmlFor="sGender"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="sGender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Spouse Gender
             </label>
             <select
               id="sGender"
               {...register("sGender", {
-                validate: (value) =>
-                  !spouseName || value ? true : "Spouse gender is required",
+                validate: (value) => (!spouseName || value ? true : "Spouse gender is required"),
               })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
@@ -258,38 +233,27 @@ const LayoutFlow = () => {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            {errors.sGender && (
-              <p className="text-red-500 text-sm">{errors.sGender.message}</p>
-            )}
+            {errors.sGender && <p className="text-red-500 text-sm">{errors.sGender.message}</p>}
           </div>
 
           {/* Spouse DOB */}
           <div>
-            <label
-              htmlFor="sDOB"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="sDOB" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Spouse DOB
             </label>
             <input
               type="date"
               id="sDOB"
               {...register("sDOB", {
-                validate: (value) =>
-                  !spouseName || value ? true : "Spouse DOB is required",
+                validate: (value) => (!spouseName || value ? true : "Spouse DOB is required"),
               })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
-            {errors.sDOB && (
-              <p className="text-red-500 text-sm">{errors.sDOB.message}</p>
-            )}
+            {errors.sDOB && <p className="text-red-500 text-sm">{errors.sDOB.message}</p>}
           </div>
 
           <div>
-            <label
-              htmlFor="id"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="id" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               ID
             </label>
             <input
@@ -299,17 +263,12 @@ const LayoutFlow = () => {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="ID"
             />
-            {errors.ID && (
-              <p className="text-red-500 text-sm">{errors.ID.message}</p>
-            )}
+            {errors.ID && <p className="text-red-500 text-sm">{errors.ID.message}</p>}
           </div>
 
           {/* Tribe */}
           <div>
-            <label
-              htmlFor="tribe"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="tribe" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Tribe
             </label>
             <input
@@ -319,17 +278,12 @@ const LayoutFlow = () => {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Tribe"
             />
-            {errors.tribe && (
-              <p className="text-red-500 text-sm">{errors.tribe.message}</p>
-            )}
+            {errors.tribe && <p className="text-red-500 text-sm">{errors.tribe.message}</p>}
           </div>
 
           {/* Address */}
           <div>
-            <label
-              htmlFor="address"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Address
             </label>
             <input
@@ -339,17 +293,12 @@ const LayoutFlow = () => {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Address"
             />
-            {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address.message}</p>
-            )}
+            {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
           </div>
 
           {/* About Input */}
           <div className="col-span-2">
-            <label
-              htmlFor="aboutYou"
-              className="block text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label htmlFor="aboutYou" className="block text-sm font-medium text-gray-900 dark:text-white">
               About
             </label>
             <textarea
@@ -402,16 +351,13 @@ const LayoutFlow = () => {
       };
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/addSpouse`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newData),
-          }
-        );
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addSpouse`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newData),
+        });
 
         const data = await response.json();
 
@@ -430,9 +376,7 @@ const LayoutFlow = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/members`);
       const data = await response.json();
       //   const addedNodes = [];
       //   data.forEach((item) => {
@@ -468,9 +412,7 @@ const LayoutFlow = () => {
     if (reFetchtree) {
       const fetchData = async () => {
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
-          );
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/members`);
           const data = await response.json();
 
           setData(data);
@@ -488,7 +430,6 @@ const LayoutFlow = () => {
     return <div>Loading...</div>;
   }
 
-  
   return (
     <div>
       <div className="w-full flex justify-end">
@@ -499,24 +440,13 @@ const LayoutFlow = () => {
           Add Member
         </button>
       </div>
-      <Modal
-        open={isModalOpen}
-        onCancel={handleCancel}
-        width={800}
-        footer={null}
-      >
+      <Modal open={isModalOpen} onCancel={handleCancel} width={800} footer={null}>
         <section>
           <h2 className="text-center text-2xl font-semibold">Add Member</h2>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-2 gap-6 mt-8"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-6 mt-8">
             {/* grand Father Name */}
             <div>
-              <label
-                htmlFor="fatherName"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="fatherName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Grand Father Name
               </label>
               <input
@@ -526,19 +456,12 @@ const LayoutFlow = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Grand Father Name"
               />
-              {errors.grandfather && (
-                <p className="text-red-500 text-sm">
-                  {errors.grandfather.message}
-                </p>
-              )}
+              {errors.grandfather && <p className="text-red-500 text-sm">{errors.grandfather.message}</p>}
             </div>
 
             {/* grand mother Name */}
             <div>
-              <label
-                htmlFor="grandmother"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="grandmother" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Grand Mother Name
               </label>
               <input
@@ -548,19 +471,12 @@ const LayoutFlow = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Grand Mother Name"
               />
-              {errors.grandmother && (
-                <p className="text-red-500 text-sm">
-                  {errors.grandmother.message}
-                </p>
-              )}
+              {errors.grandmother && <p className="text-red-500 text-sm">{errors.grandmother.message}</p>}
             </div>
 
             {/* Father Name */}
             <div>
-              <label
-                htmlFor="fatherName"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="fatherName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Father Name
               </label>
               <Select
@@ -574,31 +490,20 @@ const LayoutFlow = () => {
                   fetchFatherData(value);
                 }}
                 style={{ width: "100%" }}
-                dropdownRender={(menu) => (
-                  <div style={{ whiteSpace: "pre-wrap" }}>{menu}</div>
-                )}
+                dropdownRender={(menu) => <div style={{ whiteSpace: "pre-wrap" }}>{menu}</div>}
               />
 
-              {errors.fatherName && (
-                <p className="text-red-500 text-sm">
-                  {errors.fatherName.message}
-                </p>
-              )}
+              {errors.fatherName && <p className="text-red-500 text-sm">{errors.fatherName.message}</p>}
             </div>
 
             {/* Mother Name */}
             <div>
-              <label
-                htmlFor="spouse"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="spouse" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Mother Name
               </label>
               <Select
                 placeholder="Select Mother name"
-                defaultValue={
-                  spouseOptions.length > 0 ? spouseOptions[0].value : undefined
-                }
+                defaultValue={spouseOptions.length > 0 ? spouseOptions[0].value : undefined}
                 style={{ width: "100%" }}
                 onChange={handleChange}
                 loading={loading}
@@ -613,10 +518,7 @@ const LayoutFlow = () => {
 
             {/* Father DOB */}
             <div>
-              <label
-                htmlFor="fatherDOB"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="fatherDOB" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Father DOB
               </label>
               <input
@@ -631,19 +533,12 @@ const LayoutFlow = () => {
                 })}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
-              {errors.fatherDOB && (
-                <p className="text-red-500 text-sm">
-                  {errors.fatherDOB.message}
-                </p>
-              )}
+              {errors.fatherDOB && <p className="text-red-500 text-sm">{errors.fatherDOB.message}</p>}
             </div>
 
             {/* Child Name */}
             <div>
-              <label
-                htmlFor="childName"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="childName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Child Name
               </label>
               <input
@@ -655,19 +550,12 @@ const LayoutFlow = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Child Name"
               />
-              {errors.childName && (
-                <p className="text-red-500 text-sm">
-                  {errors.childName.message}
-                </p>
-              )}
+              {errors.childName && <p className="text-red-500 text-sm">{errors.childName.message}</p>}
             </div>
 
             {/* Child DOB */}
             <div>
-              <label
-                htmlFor="childDOB"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="childDOB" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Child DOB
               </label>
               <input
@@ -681,18 +569,11 @@ const LayoutFlow = () => {
                 })}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
-              {errors.childDOB && (
-                <p className="text-red-500 text-sm">
-                  {errors.childDOB.message}
-                </p>
-              )}
+              {errors.childDOB && <p className="text-red-500 text-sm">{errors.childDOB.message}</p>}
             </div>
 
             <div>
-              <label
-                htmlFor="childGender"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="childGender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Child Gender
               </label>
               <select
@@ -708,11 +589,7 @@ const LayoutFlow = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              {errors.childGender && (
-                <p className="text-red-500 text-sm">
-                  {errors.childGender.message}
-                </p>
-              )}
+              {errors.childGender && <p className="text-red-500 text-sm">{errors.childGender.message}</p>}
             </div>
 
             {showAddSpouseButton && (
@@ -747,24 +624,13 @@ const LayoutFlow = () => {
           </form>
         </section>
       </Modal>
-      <Modal
-        open={isAddSpouseModalOpen}
-        onCancel={() => setIsAddSpouseModalOpen(false)}
-        width={800}
-        footer={null}
-      >
+      <Modal open={isAddSpouseModalOpen} onCancel={() => setIsAddSpouseModalOpen(false)} width={800} footer={null}>
         <section>
           <h2 className="text-center text-2xl font-semibold">Add Spouse</h2>
-          <form
-            onSubmit={onSubmitSpouse}
-            className="grid grid-cols-2 gap-6 mt-8"
-          >
+          <form onSubmit={onSubmitSpouse} className="grid grid-cols-2 gap-6 mt-8">
             {/* Spouse Name */}
             <div>
-              <label
-                htmlFor="spouseName"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="spouseName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Spouse Name
               </label>
               <input
@@ -775,17 +641,12 @@ const LayoutFlow = () => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Spouse Name"
               />
-              {errors.spouseName && (
-                <p className="text-red-500 text-sm">{errorss.spouseName}</p>
-              )}
+              {errors.spouseName && <p className="text-red-500 text-sm">{errorss.spouseName}</p>}
             </div>
 
             {/* Spouse Gender */}
             <div>
-              <label
-                htmlFor="SpouseGender"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="SpouseGender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Spouse Gender
               </label>
               <select
@@ -800,17 +661,12 @@ const LayoutFlow = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              {errors.SpouseGender && (
-                <p className="text-red-500 text-sm">{errorss.SpouseGender}</p>
-              )}
+              {errors.SpouseGender && <p className="text-red-500 text-sm">{errorss.SpouseGender}</p>}
             </div>
 
             {/* Spouse DOB */}
             <div>
-              <label
-                htmlFor="spouseDOB"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+              <label htmlFor="spouseDOB" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Spouse DOB
               </label>
               <input
@@ -820,9 +676,7 @@ const LayoutFlow = () => {
                 onChange={handleChangee}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
-              {errors.spouseDOB && (
-                <p className="text-red-500 text-sm">{errorss.spouseDOB}</p>
-              )}
+              {errors.spouseDOB && <p className="text-red-500 text-sm">{errorss.spouseDOB}</p>}
             </div>
 
             {/* Submit Button */}
@@ -837,7 +691,9 @@ const LayoutFlow = () => {
           </form>
         </section>
       </Modal>
-      <ReactFlowTree data={data} IDs={IDs} />;
+      <ReactFlowProvider>
+        <ReactFlowTree data={data} IDs={IDs} />;
+      </ReactFlowProvider>
     </div>
   );
 };

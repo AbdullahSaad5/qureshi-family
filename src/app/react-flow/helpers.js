@@ -12,6 +12,7 @@ export const getAllConnections = (data) => {
       data: {
         label: item.name,
       },
+      type: "custom",
     });
 
     if (item.spouseIds?.length > 0) {
@@ -73,6 +74,7 @@ export const getAllEdges = (data, initialNodes) => {
             edges.push({
               id: edgeId1,
               source: item._id,
+              sourceHandle: "bottom",
               target: findNode.id,
               targetHandle: "left",
               type: ConnectionLineType.SmoothStep,
@@ -84,6 +86,7 @@ export const getAllEdges = (data, initialNodes) => {
             edges.push({
               id: edgeId2,
               source: spouse,
+              sourceHandle: "bottom",
               target: findNode.id,
               targetHandle: "right",
               type: ConnectionLineType.SmoothStep,

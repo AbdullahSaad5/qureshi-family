@@ -15,12 +15,12 @@ const CustomNode = ({ id, data }) => {
         padding: "10px",
         borderRadius: "4px",
         background: "#fff",
-        minWidth: "150px", // Ensuring enough space for content
-        minHeight: "50px", // Ensuring enough space for content
+        width: "150px", // Ensuring enough space for content
+        height: "50px", // Ensuring enough space for content
       }}
     >
       <div>{data.label}</div>
-      <div
+      {/* <div
         style={{
           position: "absolute",
           bottom: "10px",
@@ -37,9 +37,11 @@ const CustomNode = ({ id, data }) => {
         onClick={handleClick}
       >
         <FaPlus size={16} />
-      </div>
-      <Handle type="target" position="left" />
-      <Handle type="source" position="right" />
+      </div> */}
+      <Handle type="source" position="left" id="left" />
+      <Handle type="source" position="right" id="right" />
+      <Handle type="source" position="bottom" id="bottom" />
+      <Handle type="target" position="top" id="top" />
     </div>
   );
 };
