@@ -17,7 +17,7 @@ const EditProfile = () => {
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
-  const id = typeof window !== undefined && localStorage.getItem("userId");
+  const id = typeof window !== "undefined" && localStorage.getItem("userId");
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -96,9 +96,9 @@ const EditProfile = () => {
 
   useEffect(() => {
     const username =
-      typeof window !== undefined && localStorage.getItem("fullName");
+      typeof window !== "undefined" && localStorage.getItem("fullName");
     const contact =
-      typeof window !== undefined && localStorage.getItem("contact");
+      typeof window !== "undefined" && localStorage.getItem("contact");
 
     if (username && contact) {
       setValue("contact", contact);

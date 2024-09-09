@@ -36,7 +36,7 @@ function Profile() {
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-700">Name</h3>
               <p className="text-gray-600">
-                {typeof window !== undefined &&
+                {typeof window !== "undefined" &&
                   localStorage.getItem("fullName")}
               </p>
             </div>
@@ -47,7 +47,7 @@ function Profile() {
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-700">Email</h3>
               <p className="text-gray-600">
-                {typeof window !== undefined && localStorage.getItem("email")}
+                {typeof window !== "undefined" && localStorage.getItem("email")}
               </p>
             </div>
           </div>
@@ -57,7 +57,8 @@ function Profile() {
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-gray-700">Contact</h3>
               <p className="text-gray-600">
-                {typeof window !== undefined && localStorage.getItem("contact")}
+                {typeof window !== "undefined" &&
+                  localStorage.getItem("contact")}
               </p>
             </div>
           </div>

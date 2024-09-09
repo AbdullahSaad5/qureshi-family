@@ -34,13 +34,13 @@ function Login() {
         data
       );
       console.log(response.data.data);
-      typeof window !== undefined &&
+      typeof window !== "undefined" &&
         localStorage.setItem("userId", response.data.data._id);
-      typeof window !== undefined &&
+      typeof window !== "undefined" &&
         localStorage.setItem("email", response.data.data.email);
-      typeof window !== undefined &&
+      typeof window !== "undefined" &&
         localStorage.setItem("contact", response.data.data.contact);
-      typeof window !== undefined &&
+      typeof window !== "undefined" &&
         localStorage.setItem("fullName", response.data.data.fullName);
       toast.success(response.data.message);
       verifyUser();
@@ -191,7 +191,7 @@ export default Login;
 //       const res = await API.post("/login", data);
 //       console.log("Login successful:", res.data);
 //       toast.success("Logged in successfully!");
-//       typeof window !== undefined && localStorage.setItem("userToken", res.data.message);
+//       typeof window !== "undefined" && localStorage.setItem("userToken", res.data.message);
 //       // Redirect or perform other actions
 //       router.push("/family-tree");
 //     } catch (error) {
