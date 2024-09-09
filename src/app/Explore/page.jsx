@@ -52,7 +52,7 @@ export default function Explore() {
               {data.length > 0 ? (
                 data.map((item, index) => (
                   <>
-                    <tr className="border-b">
+                    <tr key={index} className="border-b">
                       <td className="p-3 border-2 border-[#EEEEEE] flex justify-center">
                         {index + 1}
                       </td>

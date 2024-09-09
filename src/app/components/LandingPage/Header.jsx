@@ -1,25 +1,29 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import logo from "../../_assets/logo.png";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { UserOutlined } from "@ant-design/icons";
+import { Avatar } from "antd";
+import { useAuth } from "../../context/AuthContext";
 
 function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState("login");
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const { userVerified, logoutUser } = useAuth();
 
   const handleNavigation = (path) => {
     router.push(path);
     if (window.innerWidth < 768) {
       setMenuOpen(false);
     }
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
   return (
@@ -74,32 +78,38 @@ function Header() {
         </div>
       </div>
 
-      <div className="flex">
-        <div className="relative flex justify-center w-40 lg:w-48 rounded-full border border-[#82D026] bg-[#82D026] p-0.5 cursor-pointer">
-          <div
-            onClick={() => handleNavigation("/signin")}
-            className="text-center text-white text-sm lg:text-base rounded-full px-4 py-2 transition-colors duration-300"
-          >
-            Login
+      {userVerified ? (
+        <Avatar
+          className="cursor-pointer"
+          onClick={() => router.push("/Profile")}
+          style={{ backgroundColor: "#87d068" }}
+          icon={<UserOutlined />}
+        />
+      ) : (
+        <div onClick={() => handleNavigation("/signin")} className="flex">
+          <div className="relative flex justify-center w-40 lg:w-48 rounded-full border border-[#82D026] bg-[#82D026] p-0.5 cursor-pointer">
+            <div className="text-center text-white text-sm lg:text-base rounded-full px-4 py-2 transition-colors duration-300">
+              Login
+            </div>
+          </div>
+
+          <div className="md:hidden flex items-center">
+            {menuOpen ? (
+              <X
+                className="text-black cursor-pointer"
+                size={28}
+                onClick={toggleMenu}
+              />
+            ) : (
+              <Menu
+                className="text-black cursor-pointer"
+                size={28}
+                onClick={toggleMenu}
+              />
+            )}
           </div>
         </div>
-
-        <div className="md:hidden flex items-center">
-          {menuOpen ? (
-            <X
-              className="text-black cursor-pointer"
-              size={28}
-              onClick={toggleMenu}
-            />
-          ) : (
-            <Menu
-              className="text-black cursor-pointer"
-              size={28}
-              onClick={toggleMenu}
-            />
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
