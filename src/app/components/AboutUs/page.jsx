@@ -1,6 +1,6 @@
 import Image from "next/image";
-import about1 from "../_assets/about1.jpg";
-import about2 from "../_assets/about2.jpg";
+import about1 from "../../_assets/about1.jpg";
+import about2 from "../../_assets/about2.jpg";
 export default function AboutUs() {
   return (
     <div className="min-h-screen  ">

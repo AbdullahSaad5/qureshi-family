@@ -10,10 +10,9 @@ import Image from "next/image";
 import { LockKeyhole } from "lucide-react";
 
 function ForgetPassword() {
-
   const router = useRouter();
 
-  const [loginInfo, setLoginInfo] = useState({ email: ""});
+  const [loginInfo, setLoginInfo] = useState({ email: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,35 +22,33 @@ function ForgetPassword() {
     }));
   };
 
-
   const handleForget = async (e) => {
     e.preventDefault();
+    console.log("Inside handle forget pass function");
 
-    console.log(loginInfo.email)
-
-    toast.success(`We sent an email to ${loginInfo.email} with a link to get back into your account` ,
-      {duration: 7000,});
-
-
-
-      
-
-    // try {
-    //   const res = await API.post("/login", loginInfo);
-    //   toast.success("Logged in successfully!");
-    //   localStorage.setItem("userToken", res.data.message); // Assuming you receive a token
-    //   setLoginInfo({ email: "", password: "" });
-    //   router.push("/family-tree");
-    // } catch (error) {
-    //   if (error.response?.status === 401) {
-    //     toast.error("Incorrect email or password. Please try again.");
-    //   } else {
-    //     toast.error(
-    //       error.response?.data?.message ||
-    //         "An error occurred. Please try again."
-    //     );
-    //   }
-    // }
+    try {
+      console.log("Inside on submit function");
+      const response = await API.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/forget_password`,
+        {
+          email: loginInfo.email,
+        }
+      );
+      toast.success(
+        `We sent an email to ${loginInfo.email} with a link to get back into your account`,
+        { duration: 7000 }
+      );
+    } catch (error) {
+      console.error("Error details:", error);
+      if (error.response) {
+        const message = error.response.data.message;
+        toast.error(message);
+      } else if (error.request) {
+        toast.error("No response received from the server.");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
   };
 
   return (
@@ -70,11 +67,19 @@ function ForgetPassword() {
             <div class="flex justify-center items-center">
               <LockKeyhole size={42} strokeWidth={2.25} />
             </div>
-            <h2 className="text-center text-xl font-normal">Trouble logging in?</h2>
-            
-            <p className="text-center text-xs">Enter your email, we will allow you to change your password.</p>
-            <form action="" onSubmit={handleForget} className="space-y-4 md:space-y-6">
-            <div>
+            <h2 className="text-center text-xl font-normal">
+              Trouble logging in?
+            </h2>
+
+            <p className="text-center text-xs">
+              Enter your email, we will allow you to change your password.
+            </p>
+            <form
+              action=""
+              onSubmit={handleForget}
+              className="space-y-4 md:space-y-6"
+            >
+              <div>
                 <label
                   htmlFor="email"
                   className="block mb-2 text-xs  font-medium text-gray-900 dark:text-white"
@@ -87,7 +92,7 @@ function ForgetPassword() {
                   name="email"
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
+                  placeholder="name@gmail.com"
                   required
                   value={loginInfo.email}
                 />
@@ -99,23 +104,6 @@ function ForgetPassword() {
               >
                 Send Link
               </button>
-
-              <div className="flex items-center justify-center">
-                <div className="border-b-2 border-gray-500 w-[40%]" />
-                <p className="p-2">or</p>
-                <div className="border-b-2 border-gray-500 w-[40%]" />
-              </div>
-
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Create an account? <br />
-                <button
-                  className="font-medium text-blue-600 hover:underline dark:text-primary-500"
-                  onClick={() => router.push("/signup")}
-                >
-                  Sign Up here
-                </button>
-              </p>
-
             </form>
           </div>
         </div>

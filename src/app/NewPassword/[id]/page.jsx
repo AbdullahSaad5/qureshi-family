@@ -1,72 +1,68 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import API from "../../app/axios";
+import API from "../../../app/axios";
 import { toast } from "react-hot-toast";
-
+import { useParams } from "next/navigation";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import bg from "../_assets/Rectangle 405.png";
+import bg from "../../_assets/Rectangle 405.png";
 import Image from "next/image";
 import { LockKeyhole } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 function NewPassword() {
   const router = useRouter();
+  const params = useParams();
+  const { id } = params;
 
-  const [loginInfo, setLoginInfo] = useState({
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+    mode: "onChange",
+  });
+
+  const watchPassword = watch("password");
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setLoginInfo((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1(!showPassword1);
   };
 
-  const validateForm = () => {
-    let errors = {};
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,40}$/;
-    if (!passwordRegex.test(loginInfo.password)) {
-      errors.password =
-        "Password must be 8-40 characters long, contain at least one lowercase, one uppercase letter, and one special character.";
-    }
-    if (loginInfo.password !== loginInfo.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match.";
-    }
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleForget = async (e) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      console.log(loginInfo.password);
-
-      // try {
-      //   const res = await API.post("/login", loginInfo);
-      //   toast.success("Logged in successfully!");
-      //   localStorage.setItem("userToken", res.data.message); // Assuming you receive a token
-      //   setLoginInfo({ email: "", password: "" });
-      //   router.push("/family-tree");
-      // } catch (error) {
-      //   if (error.response?.status === 401) {
-      //     toast.error("Incorrect email or password. Please try again.");
-      //   } else {
-      //     toast.error(
-      //       error.response?.data?.message ||
-      //         "An error occurred. Please try again."
-      //     );
-      //   }
-      // }
+  const onSubmit = async (data) => {
+    console.log(data.password);
+    try {
+      console.log("Inside on submit function");
+      const response = await API.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/createUser/reset_password/${id}`,
+        {
+          newPassword: data.password,
+        }
+      );
+      toast.success("Password reset Sucessfully");
+      router.push("/signin");
+    } catch (error) {
+      console.error("Error details:", error);
+      if (error.response) {
+        const message = error.response.data.message;
+        toast.error(message);
+      } else if (error.request) {
+        toast.error("No response received from the server.");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -80,20 +76,17 @@ function NewPassword() {
         className="z-0"
       />
       {/* Login form */}
-      <section className="absolute  inset-0 flex items-center justify-start ml:16 md:ml-16 lg:ml-32 z-10">
+      <section className="absolute inset-0 flex items-center justify-start ml:16 md:ml-16 lg:ml-32 z-10">
         <div className="w-[400px] ml-4 bg-white rounded-lg shadow bg-opacity-70 backdrop-blur-lg dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6  sm:p-8">
-            <div class="flex justify-center items-center">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <div className="flex justify-center items-center">
               <LockKeyhole size={42} strokeWidth={2.25} />
             </div>
             <h2 className="text-center text-xl font-normal">
               Create New Password
             </h2>
-
-            {/* <p className="text-center text-xs">Enter your email, we will allow you to change your password.</p> */}
             <form
-              action=""
-              onSubmit={handleForget}
+              onSubmit={handleSubmit(onSubmit)}
               className="space-y-4 md:space-y-6"
             >
               {/* Password Input */}
@@ -106,14 +99,13 @@ function NewPassword() {
                 </label>
                 <div className="relative">
                   <input
-                    onChange={handleChange}
                     type={showPassword ? "text" : "password"}
-                    name="password"
                     id="password"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    // value={signupInfo.password}
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
                   />
                   <div
                     onClick={togglePasswordVisibility}
@@ -127,7 +119,9 @@ function NewPassword() {
                   </div>
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
@@ -141,29 +135,30 @@ function NewPassword() {
                 </label>
                 <div className="relative">
                   <input
-                    onChange={handleChange}
-                    type={showPassword ? "text" : "password"}
-                    name="confirmPassword"
+                    type={showPassword1 ? "text" : "password"}
                     id="confirmPassword"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
-                    // value={signupInfo.confirmPassword}
+                    {...register("confirmPassword", {
+                      required: "Confirm your password",
+                      validate: (value) =>
+                        value === watchPassword || "Passwords must match",
+                    })}
                   />
                   <div
-                    onClick={togglePasswordVisibility}
+                    onClick={togglePasswordVisibility1}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                   >
-                    {showPassword ? (
-                      <FaEyeSlash className="text-gray-500" />
-                    ) : (
+                    {showPassword1 ? (
                       <FaEye className="text-gray-500" />
+                    ) : (
+                      <FaEyeSlash className="text-gray-500" />
                     )}
                   </div>
                 </div>
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-sm">
-                    {errors.confirmPassword}
+                    {errors.confirmPassword.message}
                   </p>
                 )}
               </div>
