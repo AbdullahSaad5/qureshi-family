@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import API from "../axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeftFromLine } from "lucide-react";
+
 const EditProfile = () => {
   const router = useRouter();
   // State to track the active tab
@@ -103,8 +106,12 @@ const EditProfile = () => {
   return (
     <div className="p-6 max-w-3xl mx-auto">
       {/* Tabs navigation */}
+
       <div className="flex border-b border-gray-300 mb-6">
-        {/* Tab 1: Edit Profile Info */}
+        <Link href="/Profile" className="">
+          <ArrowLeftFromLine className=" mt-3 mr-3 cursor-pointer hover:text-[#82D026] " />
+        </Link>
+
         <div
           onClick={() => handleTabChange("1")}
           className={`px-4 py-2 text-lg cursor-pointer ${
@@ -115,7 +122,7 @@ const EditProfile = () => {
         >
           Edit Profile Info
         </div>
-        {/* Tab 2: Change Password */}
+
         <div
           onClick={() => handleTabChange("2")}
           className={`px-4 py-2 text-lg cursor-pointer ${
@@ -127,7 +134,7 @@ const EditProfile = () => {
           Change Password
         </div>
       </div>
-      {/* Tab Content */}
+
       <div className="bg-white p-6 shadow-md rounded-lg h-[500px] overflow-y-auto">
         {activeTab === "1" && (
           <div>
