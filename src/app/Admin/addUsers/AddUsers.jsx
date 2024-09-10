@@ -92,7 +92,7 @@ function Signup() {
         if (res.data.status) {
           setSignupInfo({ email: "", password: "", confirmPassword: "" });
           toast.success("Signup successful!");
-          router.push("/login");
+          router.push("/Admin/login");
         } else {
           toast.error(`${res.data.message}`);
         }

@@ -122,7 +122,7 @@ const Header = (props: {
           ) : (
             <button
               onClick={() => {
-                router.push("/login");
+                router.push("/Admin/login");
               }}
             >
               LogIn
