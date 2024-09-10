@@ -10,7 +10,7 @@ function Profile() {
         <UserRoundPen size={100} className="text-[#82D026] cursor-pointer" />
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-            {" "}
+            
             <span className="text-[#82D026]">Shajra </span> e Nasab
           </h1>
         </div>

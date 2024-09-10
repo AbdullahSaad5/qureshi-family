@@ -3,10 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "../ClickOutside";
 import { useRouter } from "next/navigation";
+import ProfileUser from "../../../_assets/user-01.png";
 // @ts-ignore
-const DropdownUser = ({ stats, setStats }) => {
+const DropdownUser = ({}) => {
   interface User {
-  fullName: string;
+    fullName: string;
     designation: string;
   }
   const router = useRouter();
@@ -39,7 +40,7 @@ const DropdownUser = ({ stats, setStats }) => {
           <Image
             width={112}
             height={112}
-            src={"/images/user/user-01.png"}
+            src={ProfileUser.src}
             style={{
               width: "auto",
               height: "auto",
@@ -124,9 +125,8 @@ const DropdownUser = ({ stats, setStats }) => {
           </ul>
           <button
             onClick={() => {
-              setStats({});
               localStorage.removeItem("userToken");
-              router.push("/login");
+              router.push("/Admin/AdminLogin");
             }}
             className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
           >

@@ -1,13 +1,12 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import API from "../axios";
+import API from "../../axios";
 import { toast } from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useContext } from "react";
-import MyContext from "../context/MyContext";
-function Login() {
 
+function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -33,17 +32,16 @@ function Login() {
         toast.success("Logged in successfully!");
         const userData = res.data?.data;
         console.log(`user Data ${JSON.stringify(userData)}`);
-        typeof window !== "undefined" &&
-          localStorage.setItem("userToken", JSON.stringify(userData)); // Assuming you receive a token
+        localStorage.setItem("userToken", JSON.stringify(userData)); // Assuming you receive a token
         setLoginInfo({ email: "", password: "" });
         // Redirect or perform other actions
-        router.push("/");
+        router.push("/Admin");
       } else {
         toast.error(res.data.message);
       }
 
       // Assuming you get a token or user data on successful login
-      // You might want to save the token or user data in typeof window !== "undefined" && localStorage or state
+      // You might want to save the token or user data in localStorage or state
     } catch (error) {
       if (error.response) {
         if (error.response.status === 401) {

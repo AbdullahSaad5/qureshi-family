@@ -7,6 +7,7 @@ import Image from "next/image";
 import SidebarItem from "./SidebarItem";
 import ClickOutside from "../ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import logo from "../../../_assets/logo.png";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -46,7 +47,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Dashboard",
-        route: "/",
+        route: "/Admin",
         // children: [{ label: "eCommerce", route: "/" }],
       },
       {
@@ -72,9 +73,9 @@ const menuGroups = [
         label: "Add A Person",
         route: "#",
         children: [
-          { label: "Add A Person", route: "/add-a-person" },
-          { label: "Requests", route: "/requests" },
-          { label: "View Persons", route: "/view-persons" },
+          { label: "Add A Person", route: "/Admin/add-a-person" },
+          { label: "Requests", route: "/Admin/requests" },
+          { label: "View Persons", route: "/Admin/view-persons" },
         ],
       },
       // {
@@ -132,7 +133,7 @@ const menuGroups = [
       //   label: "Calendar",
       //   route: "/calendar",
       // },
-     
+
       {
         icon: (
           <svg
@@ -156,8 +157,8 @@ const menuGroups = [
         label: "Users",
         route: "#",
         children: [
-          { label: "Add Users", route: "/addUsers" },
-          { label: "View Users", route: "/users" },
+          { label: "Add Users", route: "/Admin/addUsers" },
+          { label: "View Users", route: "/Admin/users" },
         ],
       },
       // {
@@ -251,7 +252,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Profile",
-        route: "/profile",
+        route: "/Admin/profile",
       },
       {
         icon: (
@@ -286,7 +287,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Settings",
-        route: "/settings",
+        route: "/Admin/settings",
       },
     ],
   },
@@ -427,14 +428,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-          <Link href="/">
-            <Image
-              width={176}
-              height={32}
-              src={"/images/Logo/logo-tree.png"}
-              alt="Logo"
-              priority
-            />
+          <Link href="/Admin">
+            <Image width={176} height={32} src={logo.src} alt="Logo" priority />
           </Link>
 
           <button
