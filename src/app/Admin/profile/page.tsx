@@ -25,9 +25,11 @@ const Profile = () => {
   });
   // Load user data from local storage on component mount
   useEffect(() => {
-    const storedData = localStorage.getItem("userToken");
-    if (storedData) {
-      setUserData(JSON.parse(storedData));
+    if (typeof window !== "undefined") {
+      const storedData = localStorage.getItem("userToken");
+      if (storedData) {
+        setUserData(JSON.parse(storedData));
+      }
     }
   }, []);
   return (

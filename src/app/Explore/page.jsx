@@ -3,6 +3,9 @@ import React from "react";
 import { Pagination } from "antd";
 import { useRouter } from "next/navigation";
 
+import Header from "../components/LandingPage/Header";
+import Footer from "../components/LandingPage/Footer";
+
 import { useEffect, useState } from "react";
 
 export default function Explore() {
@@ -27,6 +30,9 @@ export default function Explore() {
   }, []);
 
   return (
+     <>
+      <Header />
+      
     <div>
       <div className="container mx-auto flex flex-col items-center my- p-6">
         <h1 className="text-3xl font-bold text-center mb-8">
@@ -108,5 +114,8 @@ export default function Explore() {
         </div>
       </div>
     </div>
+
+      <Footer />
+    </>
   );
 }
