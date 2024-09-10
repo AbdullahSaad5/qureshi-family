@@ -27,7 +27,7 @@ export default function RootLayout({
     const storedUser = localStorage.getItem("userToken");
     // console.log(JSON.stringify(storedUser, null, 2));
     if (!storedUser) {
-      router.push("Admin/login");
+      router.push("/Admin/login");
     }
     setTimeout(() => setLoading(false), 1000);
   }, [router]);
