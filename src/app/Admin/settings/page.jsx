@@ -1,12 +1,12 @@
 "use client";
 import UpdatePassword from "./UpdatePassword";
-import Breadcrumb from "../../Admin/components/BreadCrumbs/Breadcrumbs";
+import Breadcrumb from "../components/BreadCrumbs/Breadcrumbs";
 
 import Image from "next/image";
 // import { Metadata } from "next";
-import DefaultLayout from "../../Admin/components/layouts/DefaultLayout";
+import DefaultLayout from "../components/layouts/DefaultLayout";
 import { useEffect, useState } from "react";
-import validateName from "../../Admin/components/Validations/validateName";
+import validateName from "../components/Validations/validateName";
 import API from "../../axios";
 import toast from "react-hot-toast";
 

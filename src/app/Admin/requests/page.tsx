@@ -1,14 +1,13 @@
 import React from "react";
 import Breadcrumb from "../components/BreadCrumbs/Breadcrumbs";
 import DefaultLayout from "../components/layouts/DefaultLayout";
-
-import UsersList from "./users";
-function Users() {
+import Request from "./requests";
+function Requests() {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Users" />
-      <UsersList />
+      <Breadcrumb pageName="Requests" />
+      <Request />
     </DefaultLayout>
   );
 }
-export default Users;
+export default Requests;

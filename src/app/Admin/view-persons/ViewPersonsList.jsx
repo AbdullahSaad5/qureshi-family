@@ -5,8 +5,7 @@ import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
-
-const Users = () => {
+const ViewPersonsList = () => {
   const [data, setData] = useState([
     {
       id: 1,
@@ -42,37 +41,53 @@ const Users = () => {
     },
   ]);
 
-  const [userList, setUserList] = useState([]);
+  const [personList, setPersonList] = useState([]);
   const fetchData = async () => {
-    const res = await API.get("/createUser/get_all");
+    const res = await API.get("/getAllMembers");
     if (res.status) {
-      setUserList(res.data.data);
+      setPersonList(res.data);
       setLoading(false);
     }
   };
   useEffect(() => {
     fetchData();
   }, []);
+
   function removeObjectWithId(arr, id) {
-    return arr.filter((obj) => {
-      return obj._id !== id;
-    });
+    return arr.filter((obj) => obj.id !== id);
   }
   const [loading, setLoading] = useState(true);
-  const handleDelete = async () => {
+  const handleReject = async () => {
+    console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
     if (selectedRecord) {
       try {
-        const newState = removeObjectWithId(userList, selectedRecord._id);
-        setUserList(newState);
-        const res = API.delete(`/createUser/remove/${selectedRecord._id}`);
-        // fetchData();
-        closeDeleteModal();
-        toast.success("Record deleted successfully:");
+        console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
+        const newState = removeObjectWithId(state, selectedRecord.id);
+        setData(newState);
+        // await API.delete(`/Reject-endpoint/`);
+        // fetchData(); // Re-fetch data after deletion to update the table
+        closeRejectModal();
+        toast.success("Record Updated:");
       } catch (error) {
-        console.log(
-          `Catch, ${selectedRecord} and its id ${selectedRecord._id}`,
-        );
+        console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
         toast.error("Error deleting record:", error);
+        // Handle error (e.g., show a toast notification)
+      }
+    }
+  };
+  const handleUpdate = async () => {
+    if (selectedRecord) {
+      try {
+        await API.put("/addChildApprov", { ...selectedRecord, approve: true });
+        // await axios.put(`/api/update-endpoint/${selectedRecord._id}`, {
+        //   status: "approved", // Add or update the status field to 'approved'
+        // });
+        toast.success("Record Updated");
+
+        fetchData(); // Re-fetch data after updating to refresh the table
+        // closeUpdateModal();
+      } catch (error) {
+        console.error("Error updating record:", error);
         // Handle error (e.g., show a toast notification)
       }
     }
@@ -85,14 +100,13 @@ const Users = () => {
       day: "numeric",
     });
   };
-
   // Paggination
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
-  // Filter users based on search term
-  const filteredUsers = userList.filter((user) =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+
+  const filteredUsers = personList.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
   // Get the current page's users
   const indexOfLastUser = currentPage * usersPerPage;
@@ -102,18 +116,15 @@ const Users = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Handle search
-  const [sortOrder, setSortOrder] = useState("asc"); // Sort order state (ascending by default)
+  // Filter users based on search ter
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to first page when a new search is done
   };
-  // Toggle sort order between ascending and descending
-  const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
-  };
+  //modal control
   const [isViewModalOpen, setViewIsModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const openViewModal = (record) => {
     setSelectedRecord(record);
@@ -126,12 +137,12 @@ const Users = () => {
   };
   const openRejectModal = (record) => {
     setSelectedRecord(record);
-    setIsDeleteModalOpen(true);
+    setIsRejectModalOpen(true);
   };
 
-  const closeDeleteModal = () => {
+  const closeRejectModal = () => {
     setSelectedRecord(null);
-    setIsDeleteModalOpen(false);
+    setIsRejectModalOpen(false);
   };
 
   return (
@@ -145,27 +156,21 @@ const Users = () => {
             placeholder="Search users by name"
             value={searchTerm}
             onChange={handleSearch}
+            // className="mb-4 w-full rounded border px-4 py-2"
             className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
           />
-          {/* Sort Button
-      <button
-        onClick={toggleSortOrder}
-        className="px-4 py-2 bg-blue-500 text-white rounded mb-4"
-      >
-        Sort by Name ({sortOrder === "asc" ? "Ascending" : "Descending"})
-      </button> */}
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="px-4 py-4 text-left font-medium text-black dark:text-white xl:pl-11">
+                  <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Index
                   </th>
                   <th className="min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
                     Name
                   </th>
                   <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
-                    contact
+                    Gender
                   </th>
 
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
@@ -181,16 +186,15 @@ const Users = () => {
                         {key + 1 + usersPerPage * (currentPage - 1)}
                       </p>
                     </td>
-
                     <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
-                        {item.fullName}
+                        {item.name}
                       </h5>
                       {/* <p className="text-sm">${item.}</p> */}
                     </td>
                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {item.contact}
+                        {item.gender}
                       </p>
                     </td>
 
@@ -217,12 +221,6 @@ const Users = () => {
                               fill=""
                             />
                           </svg>
-                        </button>
-                        <button
-                          onClick={() => openRejectModal(item)}
-                          className="hover:text-red-900 text-red"
-                        >
-                          <ImCross />
                         </button>
                       </div>
                     </td>
@@ -257,7 +255,7 @@ const Users = () => {
             >
               &#8203;
             </span>
-            {/* View user details  */}
+
             <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
               <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
@@ -270,23 +268,23 @@ const Users = () => {
                     </h3>
                     <div className="mt-2">
                       <p className="text-gray-700   text-sm md:text-lg">
-                        Name: {selectedRecord.fullName}
+                        Name: {selectedRecord.name || `-`}
                       </p>
                       <p className="text-gray-700  text-sm md:text-lg ">
-                        Phone: {selectedRecord.contact}
+                        Gender: {selectedRecord.gender || `-`}
                       </p>
                       <p className="text-gray-700  text-sm md:text-lg ">
-                        Role: {selectedRecord.role || "admin"}
+                        Father: {selectedRecord?.father?.name || `-`}
                       </p>
                       <p className="text-gray-700  text-sm md:text-lg ">
-                        About: {selectedRecord.aboutYou}
+                        Mother: {selectedRecord?.mother?.name || `-`}
                       </p>
                       <p className="text-gray-700  text-sm md:text-lg ">
-                        Date of Joining:{" "}
+                        Date of Birth:{" "}
                         {formatDate(
-                          selectedRecord.childDateOfBirth
-                            ? selectedRecord.childDateOfBirth
-                            : `11-11-2021`,
+                          selectedRecord.dateOfBirth
+                            ? selectedRecord.dateOfBirth
+                            : `not provided`,
                         )}
                       </p>
                       {/* Add more fields as needed */}
@@ -307,7 +305,7 @@ const Users = () => {
         </div>
       )}
       {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && selectedRecord && (
+      {isRejectModalOpen && selectedRecord && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
             <div
@@ -332,11 +330,11 @@ const Users = () => {
                       className="text-gray-900 text-lg font-medium leading-6"
                       id="modal-title"
                     >
-                      Confirm Deletion
+                      Confirm Rejection
                     </h3>
                     <div className="mt-2">
                       <p className="text-gray-500 text-sm">
-                        Are you sure you want to remove this user?
+                        Are you sure you want to reject this request?
                       </p>
                     </div>
                   </div>
@@ -344,13 +342,13 @@ const Users = () => {
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
-                  onClick={handleDelete}
+                  onClick={handleReject}
                   className="inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm"
                 >
-                  Yes, Remove
+                  Yes, Reject
                 </button>
                 <button
-                  onClick={closeDeleteModal}
+                  onClick={closeRejectModal}
                   className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
                 >
                   Cancel
@@ -364,4 +362,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default ViewPersonsList;

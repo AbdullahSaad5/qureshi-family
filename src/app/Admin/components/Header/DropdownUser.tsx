@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "../ClickOutside";
 import { useRouter } from "next/navigation";
+import ProfileUser from "../../../_assets/user-01.png";
 // @ts-ignore
 const DropdownUser = ({}) => {
   interface User {
@@ -39,7 +40,7 @@ const DropdownUser = ({}) => {
           <Image
             width={112}
             height={112}
-            src={"/images/user/user-01.png"}
+            src={ProfileUser.src}
             style={{
               width: "auto",
               height: "auto",

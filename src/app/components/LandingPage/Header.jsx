@@ -88,12 +88,14 @@ function Header() {
       </div>
 
       {userVerified ? (
-        <Avatar
-          className="cursor-pointer hidden md:block"
-          onClick={() => router.push("/Profile")}
-          style={{ backgroundColor: "#87d068" }}
-          icon={<UserOutlined />}
-        />
+        <div className="cursor-pointer hidden md:block">
+          <Avatar
+            className="cursor-pointer hidden md:block"
+            onClick={() => router.push("/Profile")}
+            style={{ backgroundColor: "#87d068" }}
+            icon={<UserOutlined />}
+          />
+        </div>
       ) : (
         <div
           onClick={() => handleNavigation("/signin")}

@@ -7,6 +7,7 @@ import Image from "next/image";
 import SidebarItem from "./SidebarItem";
 import ClickOutside from "../ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import logo from "../../../_assets/logo.png";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -72,9 +73,9 @@ const menuGroups = [
         label: "Add A Person",
         route: "#",
         children: [
-          { label: "Add A Person", route: "/add-a-person" },
-          { label: "Requests", route: "/requests" },
-          { label: "View Persons", route: "/view-persons" },
+          { label: "Add A Person", route: "/Admin/add-a-person" },
+          { label: "Requests", route: "/Admin/requests" },
+          { label: "View Persons", route: "/Admin/view-persons" },
         ],
       },
       // {
@@ -132,7 +133,7 @@ const menuGroups = [
       //   label: "Calendar",
       //   route: "/calendar",
       // },
-     
+
       {
         icon: (
           <svg
@@ -156,7 +157,7 @@ const menuGroups = [
         label: "Users",
         route: "#",
         children: [
-          { label: "Add Users", route: "/addUsers" },
+          { label: "Add Users", route: "/Admin/addUsers" },
           { label: "View Users", route: "/Admin/users" },
         ],
       },
@@ -428,13 +429,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
           <Link href="/Admin">
-            <Image
-              width={176}
-              height={32}
-              src={"/images/Logo/logo-tree.png"}
-              alt="Logo"
-              priority
-            />
+            <Image width={176} height={32} src={logo.src} alt="Logo" priority />
           </Link>
 
           <button
