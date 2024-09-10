@@ -58,9 +58,11 @@ const Settings = () => {
 
   // Load user data from local storage on component mount
   useEffect(() => {
-    const storedData = localStorage.getItem("userToken");
-    if (storedData) {
-      setUserData(JSON.parse(storedData));
+    if (typeof window !== "undefined") {
+      const storedData = localStorage.getItem("userToken");
+      if (storedData) {
+        setUserData(JSON.parse(storedData));
+      }
     }
   }, []);
   // Handle form changes
@@ -90,12 +92,11 @@ const Settings = () => {
       } catch (error) {
         console.error("Error updating user:", error);
         toast.error(
-          error.response?.data?.message || "Error updating user information",
+          error.response?.data?.message || "Error updating user information"
         );
       }
     }
   };
- 
 
   const [openModal, setOpenModal] = useState(false);
   return (
@@ -329,7 +330,7 @@ const Settings = () => {
           </div>
           {/* Password Reset */}
           <div className="col-span-5 xl:col-span-2">
-            <UpdatePassword userId= {userData._id}/>
+            <UpdatePassword userId={userData._id} />
           </div>
         </div>
       </div>
