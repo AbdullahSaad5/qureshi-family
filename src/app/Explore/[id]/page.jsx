@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import ReactFlowTree from "../../react-flow/ReactFlow";
+import Header from "../../components/LandingPage/Header";
+import Footer from "../../components/LandingPage/Footer";
 
 export default function PublicFigureTree() {
   const [data, setData] = useState([]);
@@ -28,9 +30,13 @@ export default function PublicFigureTree() {
 
   return (
     <>
-      {/* <div>Public Figure Tree</div> */}
+      <>
+        <Header />
 
-      {data.length > 0 && <ReactFlowTree data={data} />}
+        {data.length > 0 && <ReactFlowTree data={data} />}
+
+        <Footer />
+      </>
     </>
   );
 }

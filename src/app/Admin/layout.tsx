@@ -5,7 +5,7 @@ import "@/css/satoshi.css";
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "./components/common/Loader/index";
-import { MyProvider } from "@/app/context/MyContext";
+
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
@@ -23,23 +23,23 @@ export default function RootLayout({
 
   // const pathname = usePathname();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("userToken");
-    // console.log(JSON.stringify(storedUser, null, 2));
-    if (!storedUser) {
-      router.push("/login");
-    }
-    setTimeout(() => setLoading(false), 1000);
-  }, [router]);
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("userToken");
+  //   // console.log(JSON.stringify(storedUser, null, 2));
+  //   if (!storedUser) {
+  //     router.push("/login");
+  //   }
+  //   setTimeout(() => setLoading(false), 1000);
+  // }, [router]);
 
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          <MyProvider>
-            <Toaster />
-            {loading ? <Loader /> : children}
-          </MyProvider>
+          
+            {/* <Toaster /> */}
+            {children}
+          
         </div>
       </body>
     </html>
