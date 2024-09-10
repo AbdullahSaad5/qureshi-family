@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 
 import Modal1 from "../components/Modals/Modal1.jsx";
 import Modal2 from "../components/Modals/Modal2.jsx";
-
+import Header from "../components/LandingPage/Header.jsx";
+import Footer from "../components/LandingPage/Footer.jsx";
 import ReactFlowTree from "./ReactFlow.jsx";
 import "@xyflow/react/dist/style.css";
 
@@ -104,26 +105,32 @@ const LayoutFlow = () => {
   }
 
   return (
-    <div>
-      <div className="w-full flex justify-end">
-        <button
-          onClick={showModal}
-          className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
-        >
-          Add Member
-        </button>
+    <>
+      <Header />
+
+      <div>
+        <div className="w-full flex justify-end">
+          <button
+            onClick={showModal}
+            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+          >
+            Add Member
+          </button>
+        </div>
+        <Modal1
+          isModalOpen={isModalOpen}
+          handleCancel={handleCancel}
+          setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
+        />
+        <Modal2
+          isAddSpouseModalOpen={isAddSpouseModalOpen}
+          setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
+        />
+        <ReactFlowTree data={data} IDs={IDs} />;
       </div>
-      <Modal1
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
-        setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
-      />
-      <Modal2
-        isAddSpouseModalOpen={isAddSpouseModalOpen}
-        setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
-      />
-      <ReactFlowTree data={data} IDs={IDs} />;
-    </div>
+
+      <Footer />
+    </>
   );
 };
 

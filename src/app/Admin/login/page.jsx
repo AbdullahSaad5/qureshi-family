@@ -129,17 +129,9 @@ function Login() {
                 >
                   Sign In
                 </button>
-                {/* <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  Don't have an account?{" "}
-                  <button
-                    className="font-medium text-blue-600 hover:underline dark:text-primary-500"
-                    onClick={() => router.push("/signup")}
-                  >
-                    Sign Up here
-                  </button>
-                </p> */}
+                
               </form>
-              {/* <ToastContainer /> */}
+             
             </div>
           </div>
         </div>

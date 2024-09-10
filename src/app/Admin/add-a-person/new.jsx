@@ -437,7 +437,6 @@ export default Login;
 //     try {
 //       const res = await API.post("/login", loginInfo);
 //       toast.success("Logged in successfully!");
-//       localStorage.setItem("userToken", res.data.message); // Assuming you receive a token
 //       setLoginInfo({ email: "", password: "" });
 //       router.push("/family-tree");
 //     } catch (error) {

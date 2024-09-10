@@ -5,7 +5,7 @@ import "@/css/satoshi.css";
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "./components/common/Loader/index";
-import { MyProvider } from "@/app/context/MyContext";
+
 import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
@@ -36,10 +36,10 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          <MyProvider>
-            <Toaster />
-            {loading ? <Loader /> : children}
-          </MyProvider>
+          
+            {/* <Toaster /> */}
+            {children}
+          
         </div>
       </body>
     </html>
