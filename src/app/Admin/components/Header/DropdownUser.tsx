@@ -4,9 +4,9 @@ import Image from "next/image";
 import ClickOutside from "../ClickOutside";
 import { useRouter } from "next/navigation";
 // @ts-ignore
-const DropdownUser = ({ stats, setStats }) => {
+const DropdownUser = ({}) => {
   interface User {
-  fullName: string;
+    fullName: string;
     designation: string;
   }
   const router = useRouter();
@@ -124,9 +124,8 @@ const DropdownUser = ({ stats, setStats }) => {
           </ul>
           <button
             onClick={() => {
-              setStats({});
               localStorage.removeItem("userToken");
-              router.push("/login");
+              router.push("/Admin/AdminLogin");
             }}
             className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
           >

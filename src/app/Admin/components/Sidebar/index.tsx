@@ -46,7 +46,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Dashboard",
-        route: "/",
+        route: "/Admin",
         // children: [{ label: "eCommerce", route: "/" }],
       },
       {
@@ -157,7 +157,7 @@ const menuGroups = [
         route: "#",
         children: [
           { label: "Add Users", route: "/addUsers" },
-          { label: "View Users", route: "/users" },
+          { label: "View Users", route: "/Admin/users" },
         ],
       },
       // {
@@ -251,7 +251,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Profile",
-        route: "/profile",
+        route: "/Admin/profile",
       },
       {
         icon: (
@@ -286,7 +286,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Settings",
-        route: "/settings",
+        route: "/Admin/settings",
       },
     ],
   },
@@ -427,7 +427,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-          <Link href="/">
+          <Link href="/Admin">
             <Image
               width={176}
               height={32}
