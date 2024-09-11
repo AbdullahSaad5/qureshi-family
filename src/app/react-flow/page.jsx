@@ -50,30 +50,6 @@ const LayoutFlow = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
       );
       const data = await response.json();
-      //   const addedNodes = [];
-      //   data.forEach((item) => {
-      //     if (addedNodes.length < 2) {
-      //       if (!item.father) {
-      //         item.father = "0";
-      //       }
-      //       if (!item.mother) {
-      //         item.mother = "1";
-      //       }
-      //       addedNodes.push(item);
-      //     }
-      //   });
-
-      //   data.push({
-      //     _id: "0",
-      //     name: "Father",
-      //     spouse: ["1"],
-      //   });
-      //   data.push({
-      //     _id: "1",
-      //     name: "Mother",
-      //     spouse: ["0"],
-      //   });
-
       setData(data);
     };
 

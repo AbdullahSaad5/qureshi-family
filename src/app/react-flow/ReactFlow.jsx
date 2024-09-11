@@ -13,8 +13,14 @@ import {
 } from "@xyflow/react";
 import dagre from "dagre";
 import "@xyflow/react/dist/style.css";
-import { getAllConnections, getAllEdges } from "./helpers";
-import CustomNode from "./CustomNode";
+import {
+  getAllConnections,
+  getAllEdges,
+  calculateLevels,
+  calculateX,
+} from "./helpers";
+
+// import CustomNode from "./CustomNode";
 
 // Custom Edge Component
 const CustomEdge = ({
@@ -73,55 +79,63 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
     console.log("No data available or data is not an array");
   }
 
-  const dagreGraph = new dagre.graphlib.Graph();
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
+  // const dagreGraph = new dagre.graphlib.Graph();
+  // dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  const nodeWidth = 172;
-  const nodeHeight = 36;
+  const nodeWidth = 200;
+  const nodeHeight = 50;
+  const nodeGap = 30;
 
-  const edgeTypes = {
-    custom: CustomEdge,
-  };
+  // const edgeTypes = {
+  //   custom: CustomEdge,
+  // };
 
-  const nodeTypes = {
-    custom: CustomNode,
-  };
+  // const nodeTypes = {
+  //   custom: CustomNode,
+  // };
+
+  const levels = calculateLevels(data, nodeHeight, nodeGap);
+
+  const X = calculateX(nodeWidth, levels);
+  console.log("X", X);
 
   const getLayoutedElements = useCallback(
     (nodes, edges, direction = "TB") => {
       const isHorizontal = direction === "LR";
-      dagreGraph.setGraph({ rankdir: direction });
+      // dagreGraph.setGraph({ rankdir: direction });
 
-      nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, {
-          width: node.shape === "diamond" ? 50 : nodeWidth,
-          height: node.shape === "diamond" ? 50 : nodeHeight,
-        });
-      });
+      // nodes.forEach((node) => {
+      //   dagreGraph.setNode(node.id, {
+      //     width: node.shape === "diamond" ? 50 : nodeWidth,
+      //     height: node.shape === "diamond" ? 50 : nodeHeight,
+      //   });
+      // });
 
-      edges.forEach((edge) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-      });
+      // edges.forEach((edge) => {
+      //   dagreGraph.setEdge(edge.source, edge.target);
+      // });
 
-      dagre.layout(dagreGraph);
+      // dagre.layout(dagreGraph);
 
       const newNodes = nodes.map((node) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
+        // const nodeWithPosition = dagreGraph.node(node.id);
         const newNode = {
           ...node,
           targetPosition: isHorizontal ? "left" : "top",
           sourcePosition: isHorizontal ? "right" : "bottom",
+          width: nodeWidth,
+          height: nodeHeight,
           // We are shifting the dagre node position (anchor=center center) to the top left
           // so it matches the React Flow node anchor point (top left).
           position: {
-            x:
-              node.shape === "diamond"
-                ? nodeWithPosition.x - 25
-                : nodeWithPosition.x - nodeWidth / 4,
-            y:
-              node.shape === "diamond"
-                ? nodeWithPosition.y - 25
-                : nodeWithPosition.y - nodeHeight / 4,
+            x: node.X,
+            // node.shape === "diamond"
+            //   ? nodeWithPosition.x - 25
+            //   : nodeWithPosition.x - nodeWidth / 4,
+            y: node.Y,
+            // node.shape === "diamond"
+            //   ? nodeWithPosition.y - 25
+            //   : nodeWithPosition.y - nodeHeight / 4,
           },
         };
 
@@ -130,11 +144,11 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
 
       return { nodes: newNodes, edges };
     },
-    [data]
+    [X]
   );
 
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-    initialNodes,
+    X,
     initialEdges
   );
 
@@ -182,8 +196,8 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        edgeTypes={edgeTypes}
-        nodeTypes={nodeTypes}
+        // edgeTypes={edgeTypes}
+        // nodeTypes={nodeTypes}
         elementsSelectable={true}
         onNodeClick={onNodeClick}
         connectionLineType={ConnectionLineType.SmoothStep}
