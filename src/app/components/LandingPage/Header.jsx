@@ -72,14 +72,14 @@ function Header() {
           {userVerified ? (
             <div
               onClick={() => handleNavigation("/Profile")}
-              className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
+              className="md:hidden text-[#000000] mb-5 text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
             >
               Profile
             </div>
           ) : (
             <div
               onClick={() => handleNavigation("/signin")}
-              className="md:hidden text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
+              className="md:hidden text-[#000000] mb-5 text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
             >
               Login
             </div>

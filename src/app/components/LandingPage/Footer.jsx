@@ -1,9 +1,13 @@
+"use client"
+
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTimes } from "react-icons/fa";
 import logo from "../../_assets/logo.png";
 import X from "../../_assets/X.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 function Footer() {
+  const router = useRouter();
   return (
     <footer className="bg-[#1B1B1B]  text-white px-6 md:px-16 pt-12">
       <div className="flex flex-col md:flex-col lg:flex-row  justify-between items-center ">
@@ -41,18 +45,33 @@ function Footer() {
         {/* use the below div instead of above div if there are more then 2 items to display */}
         <div className="grid grid-cols-12">
           <div className="col-span-12 items-center w-full flex flex-col  sm:flex-row gap-2 sm:gap-14 ">
-            <div className="px-">
+            <div className="px- mt-1">
               <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
                 NAVIGATION
               </h2>
               <div className="text-sm md:text-md lg:text-sm font-sm">
-                <p className="py-1 md:py-2">About Us</p>
-                <p className="py-1 md:py-2">Expand</p>
-                <p className="py-1 md:py-2">Explore</p>
+                <p
+                  onClick={() => router.push("/AboutUs")}
+                  className="py-1 md:py-2 cursor-pointer"
+                >
+                  About Us
+                </p>
+                <p
+                  onClick={() => router.push("/Expand")}
+                  className="py-1 md:py-2 cursor-pointer"
+                >
+                  Expand
+                </p>
+                <p
+                  onClick={() => router.push("/Explore")}
+                  className="py-1 md:py-2 cursor-pointer"
+                >
+                  Explore
+                </p>
                 {/* <p className="py-1 md:py-2">Endorse</p> */}
               </div>
             </div>
-            <div className="ml-12 sm:ml-0 mt-10 sm:mt-0 mb-9">
+            <div className="ml-12 sm:ml-0 mt-12 sm:mt-3 md:mt-1 mb-9">
               <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl">
                 CONTACT US
               </h2>
@@ -64,9 +83,9 @@ function Footer() {
               <p className="py-1 md:py-2">Accessibility</p> */}
               </div>
             </div>
-            <div className="mr-8 sm:mr-0 mt-6 sm:mt-0">
+            <div className="mr-8 sm:mr-0 mt-6 sm:mt-7 md:mt-0">
               <h2 className="font-bold mb-4 text-md md:text-xl lg:text-xl ml-4">
-                PARTNERS
+                SOCIAL LINKS
               </h2>
               <div className="text-sm md:text-md lg:text-sm font-sm">
                 <div className="flex flex-row items-center ml-3 mb-4 mt-2">

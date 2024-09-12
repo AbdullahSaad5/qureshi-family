@@ -1,9 +1,14 @@
+"use client";
+
 import React from "react";
 import { Expand } from "lucide-react";
 import Image from "next/image";
 import explore from "../../_assets/explore.png";
+import { useRouter } from "next/navigation";
 import endorse from "../../_assets/endorse.png";
 function Qureshi() {
+  const router = useRouter();
+
   return (
     <section className="md:p-12 mb-8 mt-12 sm:mt-0">
       <div className={` text-[#82D026]  text-center m-4 p-4`}>
@@ -37,7 +42,12 @@ function Qureshi() {
             Uncover stories and records from your family&#39;s past. Discover
             the rich tapestry of your family&#39;s past.
           </p>
-          <p className="text-[#82D026] cursor-pointer mt-8">Learn More</p>
+          <p
+            onClick={() => router.push("/Explore")}
+            className="text-[#82D026] cursor-pointer mt-8"
+          >
+            Learn More
+          </p>
         </div>
         <div className="flex flex-col justify-center border rounded-lg shadow-lg border-[#D2D2D2] w-[90%] xl:w-[90%] lg:w-[100%] h-[270px] md:h-[250px] p-4">
           <span className="flex items-center text-center mb-7 ml-2">
@@ -50,20 +60,30 @@ function Qureshi() {
             Grow your family tree by connecting with relatives and adding new
             branches.
           </p>
-          <p className="text-[#82D026] cursor-pointer mt-8">Learn More</p>
+          <p
+            onClick={() => router.push("/Expand")}
+            className="text-[#82D026] cursor-pointer mt-8"
+          >
+            Learn More
+          </p>
         </div>
         <div className="flex flex-col justify-center border rounded-lg shadow-lg border-[#D2D2D2] w-[90%] xl:w-[90%] lg:w-[100%] h-[270px] md:h-[250px] p-4">
           <span className="flex items-center text-center mb-4 ml-2">
             <Image src={endorse} alt="explore" className="w-[60px]" />
             <h2 className="xl:text-[18px] text-[15px] font-bold ml-2 mb-2">
-              Endorse Your Contribution
+              About Us
             </h2>
           </span>
           <p className="text-sm xl:text-md mb-2 text-[#676767]">
             Share your research and discoveries with the family. Recognize and
             celebrate everyone&#39;s research efforts.
           </p>
-          <p className="text-[#82D026] cursor-pointer mt-8">Learn More</p>
+          <p
+            onClick={() => router.push("/AboutUs")}
+            className="text-[#82D026] cursor-pointer mt-8"
+          >
+            Learn More
+          </p>
         </div>
       </div>
     </section>
