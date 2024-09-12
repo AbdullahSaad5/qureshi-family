@@ -7,41 +7,6 @@ import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
 
 const Users = () => {
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "Abdul Sami",
-      role: "Super Admin",
-      email: "asm640@gmail.com",
-      phone: "+923115485069",
-      aboutUser: "I am a Junior full stack developer",
-    },
-    {
-      id: 2,
-      name: "Adnan Anwar",
-      role: "admin",
-      email: "adnan@decimal.com",
-      phone: "+923335039696",
-      aboutUser: "I am Sqa Lead",
-    },
-    {
-      id: 3,
-      name: "Aziz Khan ",
-      role: "admin",
-      email: "aziz@decimal.com",
-      phone: "+923112029441",
-      aboutUser: "Working as a Full Stack developer",
-    },
-    {
-      id: 4,
-      name: "Abullah Saad",
-      role: "admin",
-      email: "abd@decimal.com",
-      phone: "+923469058877",
-      aboutUser: "I am the team lead here a Decimal Solution working with TRA",
-    },
-  ]);
-
   const [userList, setUserList] = useState([]);
   const fetchData = async () => {
     const res = await API.get("/createUser/get_all");
@@ -70,35 +35,29 @@ const Users = () => {
         toast.success("Record deleted successfully:");
       } catch (error) {
         console.log(
-          `Catch, ${selectedRecord} and its id ${selectedRecord._id}`,
+          `Catch, ${selectedRecord} and its id ${selectedRecord._id}`
         );
         toast.error("Error deleting record:", error);
         // Handle error (e.g., show a toast notification)
       }
     }
   };
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long", // 'short' for abbreviated month name
-      day: "numeric",
-    });
-  };
 
   // Paggination
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(10);
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   // Filter users based on search term
   const filteredUsers = userList.filter((user) =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()),
+    user.fullName.toLowerCase().includes(searchTerm.toLowerCase())
   );
   // Get the current page's users
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const indexOfLastUser = currentPage * recordsPerPage;
+  const indexOfFirstUser = indexOfLastUser - recordsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   // Change page
+  // Calculate total pages
+  const totalPages = Math.ceil(currentUsers.length / recordsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Handle search
@@ -115,6 +74,11 @@ const Users = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  // Handle the change in select for recordPerpage
+  const handleRecordsChange = (event) => {
+    setRecordsPerPage(parseInt(event.target.value));
+    setCurrentPage(1)
+  };
   const openViewModal = (record) => {
     setSelectedRecord(record);
     setViewIsModalOpen(true);
@@ -140,20 +104,36 @@ const Users = () => {
         <Loader />
       ) : (
         <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-          <input
-            type="text"
-            placeholder="Search users by name"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-          />
-          {/* Sort Button
-      <button
-        onClick={toggleSortOrder}
-        className="px-4 py-2 bg-blue-500 text-white rounded mb-4"
-      >
-        Sort by Name ({sortOrder === "asc" ? "Ascending" : "Descending"})
-      </button> */}
+          <div className="grid grid-cols-6">
+            <div className="col-span-4">
+              <input
+                type="text"
+                placeholder="Search users by name"
+                value={searchTerm}
+                onChange={handleSearch}
+                className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+              />
+            </div>
+
+            <label
+              htmlFor="recordsPerPage"
+              className="ml-1 text-sm mb-2 w-full rounded border border-stroke bg-gray py-3 text-center  text-black focus:border-primary focus-visible:outline-none  col-span-1"
+            >
+              per page:
+            </label>
+            <select
+              id="recordsPerPage"
+              value={recordsPerPage}
+              onChange={handleRecordsChange}
+              className="text-sm mb-2 w-full rounded border border-stroke bg-gray py-3  text-center text-black focus:border-primary focus-visible:outline-none  col-span-1"
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+            </select>
+            {/* This is where you'd render the records, passing `recordsPerPage` to your pagination logic */}
+          </div>
+
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
@@ -178,7 +158,7 @@ const Users = () => {
                   <tr key={key}>
                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {key + 1 + usersPerPage * (currentPage - 1)}
+                        {key + 1 + recordsPerPage * (currentPage - 1)}
                       </p>
                     </td>
 
@@ -232,17 +212,19 @@ const Users = () => {
             </table>
             {/* Pagination Buttons */}
             <Pagination
-              usersPerPage={usersPerPage}
+              totalPages={totalPages}
+              usersPerPage={recordsPerPage}
               totalUsers={filteredUsers.length}
               paginate={paginate}
               currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
             />
           </div>
         </div>
       )}
       {/* View record details  */}
       {isViewModalOpen && selectedRecord && (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
             <div
               className="fixed inset-0 transition-opacity"
@@ -280,14 +262,6 @@ const Users = () => {
                       </p>
                       <p className="text-gray-700  text-sm md:text-lg ">
                         About: {selectedRecord.aboutYou}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Date of Joining:{" "}
-                        {formatDate(
-                          selectedRecord.childDateOfBirth
-                            ? selectedRecord.childDateOfBirth
-                            : `11-11-2021`,
-                        )}
                       </p>
                       {/* Add more fields as needed */}
                     </div>
