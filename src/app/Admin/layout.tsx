@@ -21,7 +21,16 @@ export default function RootLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // const pathname = usePathname();
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userToken");
+    // console.log(JSON.stringify(storedUser, null, 2));
+    if (!storedUser) {
+      router.push("/Admin/login");
+    }
+    setTimeout(() => setLoading(false), 1000);
+  }, [router]);
 
   return (
     <html lang="en">

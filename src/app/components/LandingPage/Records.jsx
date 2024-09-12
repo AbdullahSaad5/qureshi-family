@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import family from "../../_assets/family.png";
-
 function Records() {
   return (
     <section className=" flex items-center justify-around h-[400px] md:h-[520px] lg:h-[480px]">
@@ -31,5 +30,4 @@ function Records() {
     </section>
   );
 }
-
 export default Records;
