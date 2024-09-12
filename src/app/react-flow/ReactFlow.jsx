@@ -13,54 +13,12 @@ import {
 } from "@xyflow/react";
 import dagre from "dagre";
 import "@xyflow/react/dist/style.css";
-import { getAllConnections, getAllEdges } from "./helpers";
-import CustomNode from "./CustomNode";
-
-// Custom Edge Component
-const CustomEdge = ({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  style = {},
-  markerEnd,
-}) => {
-  const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
-
-  const midpointX = (sourceX + targetX) / 2;
-  const midpointY = (sourceY + targetY) / 2;
-
-  console.log("id", id);
-
-  return (
-    <>
-      <path
-        id={id}
-        style={style}
-        className="react-flow__edge-path"
-        d={edgePath}
-        markerEnd={markerEnd}
-      />
-      <circle cx={midpointX} cy={midpointY} r={5} fill="red" />
-      <text x={labelX} y={labelY} fill="black" fontSize={12}>
-        Midpoint
-      </text>
-      <Handle
-        type="source"
-        position="bottom"
-        // id="midpoint"
-        id={id}
-        style={{ left: midpointX, top: midpointY, background: "#555" }}
-      />
-    </>
-  );
-};
+import {
+  getAllConnections,
+  getAllEdges,
+  calculateLevels,
+  calculateX,
+} from "./helpers";
 
 const ReactFlowTree = ({ data, IDs = [] }) => {
   let initialNodes = [];
@@ -73,68 +31,46 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
     console.log("No data available or data is not an array");
   }
 
-  const dagreGraph = new dagre.graphlib.Graph();
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
+  const nodeWidth = 200;
+  const nodeHeight = 50;
+  const nodeGap = 30;
 
-  const nodeWidth = 172;
-  const nodeHeight = 36;
+  const levels = calculateLevels(data, nodeHeight, nodeGap);
 
-  const edgeTypes = {
-    custom: CustomEdge,
-  };
+  const X = calculateX(nodeWidth, levels);
+  console.log("X", X);
 
-  const nodeTypes = {
-    custom: CustomNode,
-  };
+  const getLayoutedElements = useCallback((nodes, edges, direction = "TB") => {
+    const isHorizontal = direction === "LR";
 
-  const getLayoutedElements = useCallback(
-    (nodes, edges, direction = "TB") => {
-      const isHorizontal = direction === "LR";
-      dagreGraph.setGraph({ rankdir: direction });
+    const newNodes = nodes.map((node, index) => {
+      const { X, Y } = node;
 
-      nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, {
-          width: node.shape === "diamond" ? 50 : nodeWidth,
-          height: node.shape === "diamond" ? 50 : nodeHeight,
-        });
-      });
+      console.log("Node positions inside node function");
 
-      edges.forEach((edge) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-      });
+      console.log(X);
+      console.log(Y);
 
-      dagre.layout(dagreGraph);
+      const newNode = {
+        ...node,
+        targetPosition: isHorizontal ? "left" : "top",
+        sourcePosition: isHorizontal ? "right" : "bottom",
+        width: nodeWidth,
+        height: nodeHeight,
+        position: {
+          x: parseInt(X) || 0,
+          y: parseInt(Y) || 0,
+        },
+      };
 
-      const newNodes = nodes.map((node) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
-        const newNode = {
-          ...node,
-          targetPosition: isHorizontal ? "left" : "top",
-          sourcePosition: isHorizontal ? "right" : "bottom",
-          // We are shifting the dagre node position (anchor=center center) to the top left
-          // so it matches the React Flow node anchor point (top left).
-          position: {
-            x:
-              node.shape === "diamond"
-                ? nodeWithPosition.x - 25
-                : nodeWithPosition.x - nodeWidth / 4,
-            y:
-              node.shape === "diamond"
-                ? nodeWithPosition.y - 25
-                : nodeWithPosition.y - nodeHeight / 4,
-          },
-        };
+      return newNode;
+    });
 
-        return newNode;
-      });
-
-      return { nodes: newNodes, edges };
-    },
-    [data]
-  );
+    return { nodes: newNodes, edges };
+  }, []);
 
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-    initialNodes,
+    X,
     initialEdges
   );
 
@@ -150,16 +86,6 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
         )
       ),
     [setEdges]
-  );
-  const onLayout = useCallback(
-    (direction) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(nodes, edges, direction);
-
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
-    },
-    [nodes, edges, setNodes, setEdges, getLayoutedElements]
   );
 
   const onNodeClick = (event, node) => {
@@ -182,18 +108,11 @@ const ReactFlowTree = ({ data, IDs = [] }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        edgeTypes={edgeTypes}
-        nodeTypes={nodeTypes}
         elementsSelectable={true}
         onNodeClick={onNodeClick}
         connectionLineType={ConnectionLineType.SmoothStep}
         fitView
-      >
-        {/* <Panel position="top-right">
-            <button onClick={() => onLayout("TB")}>vertical layout</button>
-            <button onClick={() => onLayout("LR")}>horizontal layout</button>
-          </Panel> */}
-      </ReactFlow>
+      ></ReactFlow>
     </div>
   );
 };

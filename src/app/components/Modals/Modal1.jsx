@@ -9,16 +9,19 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { Select } from "antd";
 
-
 import "@xyflow/react/dist/style.css";
 import debounce from "lodash/debounce";
 import "antd/dist/reset.css";
 
-
-const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
-
+const Modal1 = ({
+  isModalOpen,
+  handleCancel,
+  setIsAddSpouseModalOpen,
+  setSelectedFatherID,
+  setReFetchtree,
+  reFetchtree,
+}) => {
   const [IDs, setIDs] = useState([]);
-  const [reFetchtree, setReFetchtree] = useState(false);
   const [fatherOptions, setFatherOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [spouseOptions, setSpouseOptions] = useState([]);
@@ -56,37 +59,18 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
 
       console.log("Success:", response.data);
 
-      toast.success("Send child request for review");
-      setReFetchtree(true);
-      handleOk();
+      // toast.success("Send child request for review");
+      toast.success("Child Add Successfully");
+      handleCancel();
+      reset();
+      setReFetchtree(!reFetchtree);
     } catch (error) {
       console.error("Error:", error);
-      if (
-        error.response.data.message ===
-        "Multiple fathers found with the same name. Please provide the father's date of birth to narrow down the search."
-      ) {
-        toast.error("Please Enter father's date of birth");
-        return;
-      }
 
-      if (
-        error.response.data.message ===
-        "Multiple fathers found with the same name and date of birth. Please provide the correct MongoDB ObjectId from the list to proceed."
-      ) {
-        toast.success("Please select the node");
-        const fatherIDs = error.response.data.matchingFathers.map(
-          (father) => father.id
-        );
-        setIDs(fatherIDs);
-        return;
-      }
-      if (
-        error.response.data.message ===
-        "Father details are required to find possible mothers."
-      ) {
+      if (error.response.data.message === "Mother ID is required") {
         toast.error("Add spouse details before adding a child.");
         setSelectedParentID(error.response.data.fatherID);
-        handleOk();
+        handleCancel();
         setIsAddSpouseModalOpen(true);
         return;
       }
@@ -155,10 +139,14 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
             }))
           : [];
 
+        setValue("fatherId", fatherId);
+        setSelectedFatherID(fatherId);
         if (formattedOptions.length === 0) {
           toast.error("Add spouse details before adding a child.");
           setSpouseOptions([]);
-          setSelectedParentID(fatherId);
+          setValue("");
+          setSelectedFatherID(fatherId);
+
           setShowAddSpouseButton(true);
         } else {
           setShowAddSpouseButton(false);
@@ -197,13 +185,25 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
             </label>
             <input
               type="text"
-              id="sName"
-              {...register("sName")}
+              id="spouseName"
+              {...register("spouseName", {
+                validate: (value) => {
+                  const spouseDOB = watch("spouseDOB");
+                  if (spouseDOB && !value) {
+                    return "Spouse Name is required if Spouse DOB is filled";
+                  }
+                  return true;
+                },
+              })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Spouse Name"
             />
+            {errors.spouseName && (
+              <p className="text-red-500 text-sm">
+                {errors.spouseName.message}
+              </p>
+            )}
           </div>
-
           {/* Spouse Gender */}
           <div>
             <label
@@ -213,8 +213,8 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
               Spouse Gender
             </label>
             <select
-              id="sGender"
-              {...register("sGender", {
+              id="spouseGender"
+              {...register("spouseGender", {
                 validate: (value) =>
                   !spouseName || value ? true : "Spouse gender is required",
               })}
@@ -226,8 +226,10 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            {errors.sGender && (
-              <p className="text-red-500 text-sm">{errors.sGender.message}</p>
+            {errors.spouseGender && (
+              <p className="text-red-500 text-sm">
+                {errors.spouseGender.message}
+              </p>
             )}
           </div>
 
@@ -241,15 +243,20 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
             </label>
             <input
               type="date"
-              id="sDOB"
-              {...register("sDOB", {
-                validate: (value) =>
-                  !spouseName || value ? true : "Spouse DOB is required",
+              id="spouseDOB"
+              {...register("spouseDOB", {
+                validate: (value) => {
+                  const spouseName = watch("spouseName");
+                  if (spouseName && !value) {
+                    return "Spouse DOB is required if Spouse Name is filled";
+                  }
+                  return true;
+                },
               })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
-            {errors.sDOB && (
-              <p className="text-red-500 text-sm">{errors.sDOB.message}</p>
+            {errors.spouseDOB && (
+              <p className="text-red-500 text-sm">{errors.spouseDOB.message}</p>
             )}
           </div>
 
@@ -335,8 +342,14 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
 
   const handleChange = (value) => {
     console.log("Selected value:", value);
-    setValue("motherName", value);
+    setValue("motherId", value);
   };
+
+  useEffect(() => {
+    if (spouseOptions.length > 0) {
+      setValue("motherId", spouseOptions[0].value);
+    }
+  }, [spouseOptions, setValue]);
 
   return (
     <Modal open={isModalOpen} onCancel={handleCancel} width={800} footer={null}>
@@ -425,10 +438,11 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
             </label>
             <Select
               placeholder="Select Mother name"
-              defaultValue={
-                spouseOptions.length > 0 ? spouseOptions[0].value : undefined
-              }
+              // defaultValue={
+              //   spouseOptions.length > 0 ? spouseOptions[0].value : ""
+              // }
               style={{ width: "100%" }}
+              value={spouseOptions.length > 0 ? spouseOptions[0].value : ""}
               onChange={handleChange}
               loading={loading}
             >
@@ -531,6 +545,8 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
             )}
           </div>
 
+          <input type="hidden" {...register("fatherId")} />
+
           {/* Show Add Spouse Button */}
           {showAddSpouseButton && (
             <div className="col-span-2 text-center mt-6">
@@ -556,6 +572,7 @@ const Modal1 = ({ isModalOpen, handleCancel, setIsAddSpouseModalOpen }) => {
           <div className="col-span-2 text-center mt-6">
             <button
               type="submit"
+              disabled={showAddSpouseButton}
               className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
             >
               Add Member

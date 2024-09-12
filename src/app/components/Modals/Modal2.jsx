@@ -1,82 +1,71 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Modal } from "antd";
-
 import { toast } from "react-hot-toast";
 
-
-
-import "@xyflow/react/dist/style.css";
-
-
-
-const Modal2 = ({ isAddSpouseModalOpen, setIsAddSpouseModalOpen }) => {
-  const [formData, setFormData] = useState({
-    spouseName: "",
-    SpouseGender: "",
-    spouseDOB: "",
+const Modal2 = ({
+  isAddSpouseModalOpen,
+  setIsAddSpouseModalOpen,
+  slectedFatherID,
+  reFetchtree,
+  setReFetchtree,
+}) => {
+  // Initialize react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    reset,
+  } = useForm({
+    mode: "onChange", // Validate on change
   });
-  const [errorss, setErrors] = useState({});
 
-  const handleChangee = (e) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
-  };
+  // Function to handle form submission
+  const onSubmitSpouse = async (data) => {
+    console.log("Form Submitted:", data);
 
-  const validateForm = () => {
-    const newErrors = {};
-    const { spouseName, SpouseGender, spouseDOB } = formData;
+    console.log("Father 2 ID in modal 2");
+    console.log(slectedFatherID);
 
-    if (!spouseName) newErrors.spouseName = "Spouse Name is required";
-    if (!SpouseGender) newErrors.SpouseGender = "Spouse Gender is required";
-    if (!spouseDOB) {
-      newErrors.spouseDOB = "Spouse DOB is required";
-    } else if (new Date(spouseDOB) > new Date()) {
-      newErrors.spouseDOB = "Spouse DOB cannot be a future date";
-    }
+    setValue("personId", slectedFatherID);
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const onSubmitSpouse = async (e) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      console.log("Inside spouse change function");
-      const newData = {
-        ...formData,
-        personId: selectedParentID,
-      };
-
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/addSpouse`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newData),
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log("Spouse Added successfully");
-          toast.success("Spouse Added successfully");
-          setIsAddSpouseModalOpen(false);
-        } else {
-          console.error("Error adding spouse:", data.message);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/addSpouse`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         }
-      } catch (error) {
-        console.error("Error adding spouse:", error);
+      );
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        console.log("Spouse added successfully");
+        toast.success("Spouse Added successfully");
+        setIsAddSpouseModalOpen(false);
+        reset();
+        setReFetchtree(!reFetchtree);
+      } else {
+        console.error("Error adding spouse:", responseData.message);
+        toast.error(responseData.message);
       }
+    } catch (error) {
+      console.error("Error adding spouse:", error);
+      toast.error("An error occurred while adding the spouse.");
     }
   };
+
+  useEffect(() => {
+    setValue("personId", slectedFatherID);
+  }, [slectedFatherID]);
 
   return (
     <Modal
@@ -87,7 +76,10 @@ const Modal2 = ({ isAddSpouseModalOpen, setIsAddSpouseModalOpen }) => {
     >
       <section>
         <h2 className="text-center text-2xl font-semibold">Add Spouse</h2>
-        <form onSubmit={onSubmitSpouse} className="grid grid-cols-2 gap-6 mt-8">
+        <form
+          onSubmit={handleSubmit(onSubmitSpouse)} // Use handleSubmit from react-hook-form
+          className="grid grid-cols-2 gap-6 mt-8"
+        >
           {/* Spouse Name */}
           <div>
             <label
@@ -99,13 +91,18 @@ const Modal2 = ({ isAddSpouseModalOpen, setIsAddSpouseModalOpen }) => {
             <input
               type="text"
               id="spouseName"
-              value={formData.spouseName}
-              onChange={handleChangee}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              {...register("spouseName", {
+                required: "Spouse Name is required",
+              })}
+              className={`bg-gray-50 border ${
+                errors.spouseName ? "border-red-500" : "border-gray-300"
+              } text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
               placeholder="Spouse Name"
             />
-            {errorss.spouseName && (
-              <p className="text-red-500 text-sm">{errorss.spouseName}</p>
+            {errors.spouseName && (
+              <p className="text-red-500 text-sm">
+                {errors.spouseName.message}
+              </p>
             )}
           </div>
 
@@ -119,9 +116,12 @@ const Modal2 = ({ isAddSpouseModalOpen, setIsAddSpouseModalOpen }) => {
             </label>
             <select
               id="SpouseGender"
-              value={formData.SpouseGender}
-              onChange={handleChangee}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              {...register("SpouseGender", {
+                required: "Spouse Gender is required",
+              })}
+              className={`bg-gray-50 border ${
+                errors.SpouseGender ? "border-red-500" : "border-gray-300"
+              } text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
             >
               <option value="" disabled>
                 Select Gender
@@ -129,8 +129,10 @@ const Modal2 = ({ isAddSpouseModalOpen, setIsAddSpouseModalOpen }) => {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            {errorss.SpouseGender && (
-              <p className="text-red-500 text-sm">{errorss.SpouseGender}</p>
+            {errors.SpouseGender && (
+              <p className="text-red-500 text-sm">
+                {errors.SpouseGender.message}
+              </p>
             )}
           </div>
 
@@ -145,14 +147,24 @@ const Modal2 = ({ isAddSpouseModalOpen, setIsAddSpouseModalOpen }) => {
             <input
               type="date"
               id="spouseDOB"
-              value={formData.spouseDOB}
-              onChange={handleChangee}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              {...register("spouseDOB", {
+                required: "Spouse DOB is required",
+                validate: {
+                  notFutureDate: (value) =>
+                    new Date(value) <= new Date() ||
+                    "Spouse DOB cannot be a future date",
+                },
+              })}
+              className={`bg-gray-50 border ${
+                errors.spouseDOB ? "border-red-500" : "border-gray-300"
+              } text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
             />
-            {errorss.spouseDOB && (
-              <p className="text-red-500 text-sm">{errorss.spouseDOB}</p>
+            {errors.spouseDOB && (
+              <p className="text-red-500 text-sm">{errors.spouseDOB.message}</p>
             )}
           </div>
+
+          <input type="hidden" {...register("personId")} />
 
           {/* Submit Button */}
           <div className="col-span-2 text-center mt-6">
