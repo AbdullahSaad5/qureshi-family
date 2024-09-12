@@ -127,7 +127,7 @@ function Signup() {
               onSubmit={handleSubmit(handleSignup)}
             >
               {/* Fullname Input */}
-              <div className="col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <label
                   htmlFor="fullName"
                   className="text-gray-900 block text-sm font-medium dark:text-black"
@@ -158,7 +158,7 @@ function Signup() {
               </div>
 
               {/* Contact Input */}
-              <div className="col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <label
                   htmlFor="contact"
                   className="text-gray-900 block text-sm font-medium dark:text-black"
@@ -186,7 +186,7 @@ function Signup() {
               </div>
 
               {/* Email Input */}
-              <div className="col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <label
                   htmlFor="email"
                   className="text-gray-900 block text-sm font-medium dark:text-black"
@@ -213,7 +213,7 @@ function Signup() {
               </div>
 
               {/* Reenter Email Input */}
-              <div className="col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <label
                   htmlFor="confirmEmail"
                   className="text-gray-900 block text-sm font-medium dark:text-black"
@@ -240,7 +240,7 @@ function Signup() {
               </div>
 
               {/* Password Input */}
-              <div className="col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <label
                   htmlFor="password"
                   className="text-gray-900 block text-sm font-medium dark:text-black"
@@ -281,7 +281,7 @@ function Signup() {
               </div>
 
               {/* Confirm Password Input */}
-              <div className="col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <label
                   htmlFor="confirmPassword"
                   className="text-gray-900 block text-sm font-medium dark:text-black"
