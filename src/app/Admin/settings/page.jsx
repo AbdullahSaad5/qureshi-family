@@ -1,7 +1,7 @@
 "use client";
 import UpdatePassword from "./UpdatePassword";
 import Breadcrumb from "../components/BreadCrumbs/Breadcrumbs";
-
+import { useForm } from "react-hook-form";
 import Image from "next/image";
 // import { Metadata } from "next";
 import DefaultLayout from "../components/layouts/DefaultLayout";
@@ -24,6 +24,12 @@ import toast from "react-hot-toast";
 // };
 
 const Settings = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ mode: "onChange" });
   const [userData, setUserData] = useState({
     _id: "",
     fullName: "",
@@ -33,68 +39,65 @@ const Settings = () => {
     aboutYou: "",
     profilePicture: "",
   });
-  const [errors, setErrors] = useState({});
-  const validateForm = () => {
-    let errors = {};
-    const phoneRegex = /^\+\d{12}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    validateName(userData.fullName) &&
-      (errors.fullName = validateName(userData.fullName));
+  // const validateForm = () => {
+  //   let errors = {};
+  //   const phoneRegex = /^\+\d{12}$/;
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   validateName(userData.fullName) &&
+  //     (errors.fullName = validateName(userData.fullName));
 
-    if (!emailRegex.test(userData.email)) {
-      errors.email = "Invalid email format";
-    }
-    if (!phoneRegex.test(userData.contact)) {
-      errors.contact =
-        "Phone number must start with '+' should be at least 12 digits";
-    }
-    if (userData.aboutYou.length < 25) {
-      errors.aboutYou = "Bio must be at least 25 characters";
-    }
-    console.log(errors);
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  //   if (!emailRegex.test(userData.email)) {
+  //     errors.email = "Invalid email format";
+  //   }
+  //   if (!phoneRegex.test(userData.contact)) {
+  //     errors.contact =
+  //       "Phone number must start with '+' should be at least 12 digits";
+  //   }
+  //   if (userData.aboutYou.length < 25) {
+  //     errors.aboutYou = "Bio must be at least 25 characters";
+  //   }
+  //   console.log(errors);
+  //   setErrors(errors);
+  //   return Object.keys(errors).length === 0;
+  // };
 
   // Load user data from local storage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedData = localStorage.getItem("userToken");
       if (storedData) {
+        reset(JSON.parse(storedData)); // Populate the form with localStorage data
         setUserData(JSON.parse(storedData));
       }
     }
   }, []);
-  // Handle form changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // // Handle form changes
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUserData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
   // Handle form submission (save to local storage)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      try {
-        const response = await API.patch(`/createUser/update/${userData._id}`, {
-          fullName: userData.fullName,
-          aboutYou: userData.aboutYou,
-          contact: userData.contact,
-          email: userData.email,
-        });
+  const handleSubmitUpdate = async (data) => {
+    try {
+      const response = await API.patch(`/createUser/update/${userData._id}`, {
+        fullName: data.fullName,
+        aboutYou: data.aboutYou,
+        contact: data.contact,
+        email: data.email,
+      });
 
-        if (response.status === 200) {
-          localStorage.setItem("userToken", JSON.stringify(response.data.data));
-          toast.success("User information updated successfully");
-        }
-      } catch (error) {
-        console.error("Error updating user:", error);
-        toast.error(
-          error.response?.data?.message || "Error updating user information"
-        );
+      if (response.status === 200) {
+        localStorage.setItem("userToken", JSON.stringify(response.data.data));
+        toast.success("User information updated successfully");
       }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error(
+        error.response?.data?.message || "Error updating user information"
+      );
     }
   };
 
@@ -113,7 +116,7 @@ const Settings = () => {
                 </h3>
               </div>
               <div className="p-7">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(handleSubmitUpdate)}>
                   <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
                     <div className="w-full sm:w-1/2">
                       <label
@@ -152,16 +155,28 @@ const Settings = () => {
                           className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                           type="text"
                           name="fullName"
-                          value={userData.fullName}
-                          onChange={handleChange}
+                          // value={userData.fullName}
                           required
                           id="fullName"
                           placeholder="Full Name"
-                          // defaultValue="Devid Jhon"
+                          {...register("fullName", {
+                            required: "Full Name is required",
+                            pattern: {
+                              value: /^[a-z ,.'-]+$/i,
+                              message: "Invalid Full Name",
+                            },
+                            minLength: {
+                              value: 2,
+                              message:
+                                "Full Name should be atleast 2 characters",
+                            },
+                          })}
                         />
                       </div>
                       {errors.fullName && (
-                        <p className="text-sm text-red">{errors.fullName}</p>
+                        <p className="text-sm text-red">
+                          {errors.fullName.message}
+                        </p>
                       )}
                     </div>
 
@@ -176,15 +191,24 @@ const Settings = () => {
                         className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         type="text"
                         name="contact"
-                        value={userData.contact}
-                        onChange={handleChange}
+                        // value={userData.contact}
                         required
                         id="phoneNumber"
                         placeholder="+-- --- ------- "
-                        // defaultValue="+990 3343 7865"
+                        {...register("contact", {
+                          required: "Contact is required",
+                          pattern: {
+                            value: /^\+\d{12}$/, // Starts with '+' followed by exactly 12 digits
+                            message:
+                              "Phone number must start with '+' and be exactly 12 digits",
+                          },
+                        })}
                       />
+
                       {errors.contact && (
-                        <p className="text-sm text-red">{errors.contact}</p>
+                        <p className="text-sm text-red">
+                          {errors.contact.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -226,16 +250,23 @@ const Settings = () => {
                         className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         type="email"
                         name="email"
-                        value={userData.email}
-                        onChange={handleChange}
+                        // value={userData.email}
                         required
                         id="emailAddress"
                         placeholder="Enter Email"
+                        {...register("email", {
+                          required: "Email is required",
+                          pattern: {
+                            value:
+                              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                            message: "Enter a valid email",
+                          },
+                        })}
                         // defaultValue="devidjond45@gmail.com"
                       />
                     </div>
                     {errors.email && (
-                      <p className="text-sm text-red">{errors.email}</p>
+                      <p className="text-sm text-red">{errors.email.message}</p>
                     )}
                   </div>
 
@@ -250,8 +281,7 @@ const Settings = () => {
                       className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                       type="text"
                       name="designation"
-                      value={userData.designation || "admin"}
-                      onChange={handleChange}
+                      value={"admin"}
                       required
                       id="designation"
                       placeholder="designation"
@@ -302,17 +332,31 @@ const Settings = () => {
                       <textarea
                         className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         name="aboutYou"
-                        value={userData.aboutYou}
-                        onChange={handleChange}
+                        // value={userData.aboutYou}
                         required
                         id="AboutUser"
-                        placeholder="Write your bio here"
                         rows={6}
+                        {...register("aboutYou", {
+                          required: "Introduction is required",
+                          maxLength: {
+                            value: 500,
+                            message:
+                              "Introduction cannot exceed 500 characters",
+                          },
+                          minLength: {
+                            value: 25,
+                            message:
+                              "Introduction must be at least 25 characters",
+                          },
+                        })}
+                        placeholder="Introduce yourself"
                         // defaultValue="Tell us about yourself here"
-                      ></textarea>
+                      />
                     </div>
                     {errors.aboutYou && (
-                      <p className="text-sm text-red">{errors.aboutYou}</p>
+                      <p className="text-sm text-red">
+                        {errors.aboutYou.message}
+                      </p>
                     )}
                   </div>
 
