@@ -7,33 +7,33 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import validateName from "../components/Validations/validateName";
 // import bg from "../_assets/Rectangle 405.png";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
 
 function Signup() {
+  const {
+    watch,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ mode: "onChange" });
+  const password = watch("password");
+  const email = watch("email");
   const [showPassword, setShowPassword] = useState({
     password: true,
     confirmPassword: true,
   });
   const router = useRouter();
 
-  const [signupInfo, setSignupInfo] = useState({
-    fullName: "",
-    contact: "",
-    email: "",
-    confirmEmail: "",
-    password: "",
-    confirmPassword: "",
-    aboutYou: "",
-  });
+  // const [errors, setErrors] = useState({});
 
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSignupInfo({
-      ...signupInfo,
-      [name]: value,
-    });
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setSignupInfo({
+  //     ...signupInfo,
+  //     [name]: value,
+  //   });
+  // };
 
   const togglePasswordVisibility = (pass) => {
     // setShowPassword(!showPassword[pass]);
@@ -43,67 +43,64 @@ function Signup() {
     }));
   };
 
-  const validateForm = () => {
-    let errors = {};
-    const phoneRegex = /^\+\d{12}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,40}$/;
-    validateName(signupInfo.fullName) &&
-      (errors.fullName = validateName(signupInfo.fullName));
+  // const validateForm = () => {
+  //   let errors = {};
+  //   const phoneRegex = /^\+\d{12}$/;
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,40}$/;
+  //   validateName(signupInfo.fullName) &&
+  //     (errors.fullName = validateName(signupInfo.fullName));
 
-    if (!emailRegex.test(signupInfo.email)) {
-      errors.email = "Invalid email format";
-    }
-    if (!phoneRegex.test(signupInfo.contact)) {
-      errors.contact =
-        "Phone number must start with '+' should be at least 12 digits";
-    }
+  //   if (!emailRegex.test(signupInfo.email)) {
+  //     errors.email = "Invalid email format";
+  //   }
+  //   if (!phoneRegex.test(signupInfo.contact)) {
+  //     errors.contact =
+  //       "Phone number must start with '+' should be at least 12 digits";
+  //   }
 
-    if (!passwordRegex.test(signupInfo.password)) {
-      errors.password =
-        "Password must be 8-40 characters long, contain at least one lowercase, one uppercase letter, and one special character.";
-    }
+  //   if (!passwordRegex.test(signupInfo.password)) {
+  //     errors.password =
+  //       "Password must be 8-40 characters long, contain at least one lowercase, one uppercase letter, and one special character.";
+  //   }
 
-    if (signupInfo.password !== signupInfo.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match.";
-    }
-    if (signupInfo.email !== signupInfo.confirmEmail) {
-      errors.confirmEmail = "Email do not match.";
-    }
-    console.log(errors);
-    setErrors(errors);
+  //   if (signupInfo.password !== signupInfo.confirmPassword) {
+  //     errors.confirmPassword = "Passwords do not match.";
+  //   }
+  //   if (signupInfo.email !== signupInfo.confirmEmail) {
+  //     errors.confirmEmail = "Email do not match.";
+  //   }
+  //   console.log(errors);
+  //   setErrors(errors);
 
-    return Object.keys(errors).length === 0;
-  };
+  //   return Object.keys(errors).length === 0;
+  // };
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      try {
-        const res = await API.post("/createUser/add", {
-          fullName: signupInfo.fullName,
-          contact: signupInfo.contact,
-          email: signupInfo.email,
-          password: signupInfo.password,
-          aboutYou: signupInfo.aboutYou,
-        });
-        console.log(`reponse ${res.data.status}`);
-        if (res.data.status) {
-          setSignupInfo({ email: "", password: "", confirmPassword: "" });
-          toast.success("Signup successful!");
-          router.push("/Admin/login");
-        } else {
-          toast.error(`${res.data.message}`);
-        }
-      } catch (error) {
-        console.log(`catch ${res.status}`);
-        toast.error(
-          `Signup failed: ${
-            error.response?.message || "An error occurred. Please try again."
-          }`,
-        );
+  const handleSignup = async (data) => {
+    try {
+      const res = await API.post("/createUser/add", {
+        fullName: data.fullName,
+        contact: data.contact,
+        email: data.email,
+        password: data.password,
+        aboutYou: data.aboutYou,
+      });
+      console.log(`reponse ${res.data.status}`);
+      if (res.data.status) {
+        // setSignupInfo({ email: "", password: "", confirmPassword: "" });
+        toast.success("Signup successful!");
+        reset();
+        router.push("/Admin/users");
+      } else {
+        toast.error(`${res.data.message}`);
       }
+    } catch (error) {
+      console.log(`catch ${res.status}`);
+      toast.error(
+        `Signup failed: ${
+          error.response?.message || "An error occurred. Please try again."
+        }`
+      );
     }
   };
 
@@ -125,7 +122,10 @@ function Signup() {
             <h1 className="text-gray-900 text-center text-xl font-bold leading-tight tracking-tight dark:text-black md:text-2xl">
               Create New Account
             </h1>
-            <form className="grid grid-cols-2 gap-4" onSubmit={handleSignup}>
+            <form
+              className="grid grid-cols-2 gap-4"
+              onSubmit={handleSubmit(handleSignup)}
+            >
               {/* Fullname Input */}
               <div className="col-span-1">
                 <label
@@ -135,17 +135,25 @@ function Signup() {
                   Your Full Name
                 </label>
                 <input
-                  onChange={handleChange}
                   type="text"
                   name="fullName"
                   id="fullName"
                   className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="John Doe"
-                  required
-                  value={signupInfo.fullName}
+                  placeholder="Full Name"
+                  {...register("fullName", {
+                    required: "Full Name is required",
+                    pattern: {
+                      value: /^[a-z ,.'-]+$/i,
+                      message: "Invalid Full Name",
+                    },
+                    minLength: {
+                      value: 2,
+                      message: "Full Name should be atleast 2 characters",
+                    },
+                  })}
                 />
                 {errors.fullName && (
-                  <p className="text-sm text-red">{errors.fullName}</p>
+                  <p className="text-sm text-red">{errors.fullName.message}</p>
                 )}
               </div>
 
@@ -158,17 +166,22 @@ function Signup() {
                   Your Contact Number
                 </label>
                 <input
-                  onChange={handleChange}
                   type="tel"
                   name="contact"
                   id="contact"
                   className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="+92********34"
-                  required
-                  value={signupInfo.contact}
+                  placeholder="+-- --- ------- "
+                  {...register("contact", {
+                    required: "Contact is required",
+                    pattern: {
+                      value: /^\+\d{12}$/, // Starts with '+' followed by exactly 12 digits
+                      message:
+                        "Phone number must start with '+' and be exactly 12 digits",
+                    },
+                  })}
                 />
                 {errors.contact && (
-                  <p className="text-sm text-red">{errors.contact}</p>
+                  <p className="text-sm text-red">{errors.contact.message}</p>
                 )}
               </div>
 
@@ -181,17 +194,21 @@ function Signup() {
                   Your Email
                 </label>
                 <input
-                  onChange={handleChange}
                   type="email"
                   name="email"
                   id="email"
+                  placeholder="Enter Email"
                   className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="name@company.com"
-                  required
-                  value={signupInfo.email}
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Enter a valid email",
+                    },
+                  })}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red">{errors.email}</p>
+                  <p className="text-sm text-red">{errors.email.message}</p>
                 )}
               </div>
 
@@ -204,17 +221,21 @@ function Signup() {
                   Re-enter Email
                 </label>
                 <input
-                  onChange={handleChange}
                   type="email"
                   name="confirmEmail"
                   id="confirmEmail"
                   className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="name@company.com"
-                  required
-                  value={signupInfo.confirmEmail}
+                  placeholder="confirmEmail"
+                  {...register("confirmEmail", {
+                    required: "Email is required",
+                    validate: (value) =>
+                      value === email || "Emails do not match",
+                  })}
                 />
                 {errors.confirmEmail && (
-                  <p className="text-sm text-red">{errors.confirmEmail}</p>
+                  <p className="text-sm text-red">
+                    {errors.confirmEmail.message}
+                  </p>
                 )}
               </div>
 
@@ -228,14 +249,20 @@ function Signup() {
                 </label>
                 <div className="relative">
                   <input
-                    onChange={handleChange}
                     type={showPassword.password ? "password" : "text"}
                     name="password"
                     id="password"
                     placeholder="••••••••"
                     className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    required
-                    value={signupInfo.password}
+                    {...register("password", {
+                      required: "Password is required",
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                        message:
+                          "Must contain 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character",
+                      },
+                    })}
                   />
                   <div
                     onClick={() => togglePasswordVisibility("password")}
@@ -249,7 +276,7 @@ function Signup() {
                   </div>
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-red">{errors.password}</p>
+                  <p className="text-sm text-red">{errors.password.message}</p>
                 )}
               </div>
 
@@ -263,14 +290,16 @@ function Signup() {
                 </label>
                 <div className="relative">
                   <input
-                    onChange={handleChange}
                     type={showPassword.confirmPassword ? "password" : "text"}
                     name="confirmPassword"
                     id="confirmPassword"
                     placeholder="••••••••"
                     className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    required
-                    value={signupInfo.confirmPassword}
+                    {...register("confirmPassword", {
+                      required: "Please confirm your password",
+                      validate: (value) =>
+                        value === password || "Passwords do not match",
+                    })}
                   />
                   <div
                     onClick={() => togglePasswordVisibility("confirmPassword")}
@@ -284,7 +313,9 @@ function Signup() {
                   </div>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-sm text-red">{errors.confirmPassword}</p>
+                  <p className="text-sm text-red">
+                    {errors.confirmPassword.message}
+                  </p>
                 )}
               </div>
 
@@ -297,14 +328,26 @@ function Signup() {
                   About
                 </label>
                 <textarea
-                  onChange={handleChange}
                   name="aboutYou"
                   id="aboutYou"
                   rows="3"
                   className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   placeholder="Tell us about yourself"
-                  value={signupInfo.aboutYou}
+                  {...register("aboutYou", {
+                    required: "Introduction is required",
+                    maxLength: {
+                      value: 500,
+                      message: "Introduction cannot exceed 500 characters",
+                    },
+                    minLength: {
+                      value: 25,
+                      message: "Introduction must be at least 25 characters",
+                    },
+                  })}
                 />
+                {errors.aboutYou && (
+                  <p className="text-sm text-red">{errors.aboutYou.message}</p>
+                )}
               </div>
 
               {/* Submit Button */}
