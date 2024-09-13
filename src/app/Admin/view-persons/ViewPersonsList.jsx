@@ -6,41 +6,6 @@ import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
 const ViewPersonsList = () => {
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "Abdul Sami",
-      role: "Super Admin",
-      email: "asm640@gmail.com",
-      phone: "+923115485069",
-      aboutUser: "I am a Junior full stack developer",
-    },
-    {
-      id: 2,
-      name: "Adnan Anwar",
-      role: "admin",
-      email: "adnan@decimal.com",
-      phone: "+923335039696",
-      aboutUser: "I am Sqa Lead",
-    },
-    {
-      id: 3,
-      name: "Aziz Khan ",
-      role: "admin",
-      email: "aziz@decimal.com",
-      phone: "+923112029441",
-      aboutUser: "Working as a Full Stack developer",
-    },
-    {
-      id: 4,
-      name: "Abullah Saad",
-      role: "admin",
-      email: "abd@decimal.com",
-      phone: "+923469058877",
-      aboutUser: "I am the team lead here a Decimal Solution working with TRA",
-    },
-  ]);
-
   const [personList, setPersonList] = useState([]);
   const fetchData = async () => {
     const res = await API.get("/getAllMembers");
@@ -63,7 +28,6 @@ const ViewPersonsList = () => {
       try {
         console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
         const newState = removeObjectWithId(state, selectedRecord.id);
-        setData(newState);
         // await API.delete(`/Reject-endpoint/`);
         // fetchData(); // Re-fetch data after deletion to update the table
         closeRejectModal();
@@ -113,7 +77,10 @@ const ViewPersonsList = () => {
   const indexOfFirstUser = indexOfLastUser - recordsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   // Calculate total pages
-  const totalPages = Math.ceil(currentUsers.length / recordsPerPage);
+  // console.log(
+  //   ` current userlength/ recoordsPerPage${filteredUsers.length} / ${recordsPerPage}`
+  // );
+  const totalPages = Math.ceil(filteredUsers.length / recordsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Handle the change in select for recordPerpage

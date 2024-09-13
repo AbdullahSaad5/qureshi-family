@@ -55,9 +55,9 @@ const Users = () => {
   const indexOfLastUser = currentPage * recordsPerPage;
   const indexOfFirstUser = indexOfLastUser - recordsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  // Change page
   // Calculate total pages
-  const totalPages = Math.ceil(currentUsers.length / recordsPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / recordsPerPage);
+  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Handle search
@@ -77,7 +77,7 @@ const Users = () => {
   // Handle the change in select for recordPerpage
   const handleRecordsChange = (event) => {
     setRecordsPerPage(parseInt(event.target.value));
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
   const openViewModal = (record) => {
     setSelectedRecord(record);
