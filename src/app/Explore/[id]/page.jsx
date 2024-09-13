@@ -1,8 +1,10 @@
 "use client";
 
+
 const Genogram = dynamic(() => import("../../Expand/Geogram"), { ssr: false });
+
 import dynamic from "next/dynamic";
-import "./genogram.css";
+import "@/app/Expand/genogram.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Header from "../../components/LandingPage/Header";
@@ -18,9 +20,7 @@ export default function PublicFigureTree() {
     if (id) {
       console.log(id);
       const fetchData = async () => {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTreeById/${id}`
-        );
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTreeById/${id}`);
         const result = await response.json();
 
         setData(result);
