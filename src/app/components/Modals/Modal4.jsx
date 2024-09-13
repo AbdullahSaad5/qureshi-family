@@ -3,7 +3,17 @@ import { Button, Divider, Modal } from "antd";
 
 const DetailsModal = ({ isModalOpen, handleOk, handleCancel, data }) => {
   return (
-    <Modal title="Person Details" centered open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+    <Modal
+      footer={[
+        <Button key="submit" type="primary" onClick={handleOk}>
+          Close
+        </Button>,
+      ]}
+      title="Person Details"
+      centered
+      open={isModalOpen}
+      onOk={handleOk}
+    >
       <Divider
         orientation="left"
         style={{
