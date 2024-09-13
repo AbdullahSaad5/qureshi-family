@@ -32,15 +32,15 @@ function Header() {
         onClick={() => router.push("/")}
         className="flex items-center gap-2 cursor-pointer"
       >
-        <Image src={logo} alt="logo" width={70} height={50} />
-        <div className="flex flex-col gap-1">
+        <Image src={logo} alt="logo" width={80} height={80} />
+        {/* <div className="flex flex-col gap-1">
           <h1 className="text-[#82D026] text-2xl md:text-xl lg:text-2xl font-semibold">
             Shajra e
           </h1>
           <h3 className="text-[#000000] text-xl md:text-lg lg:text-xl text-center font-semibold">
             Nasb
           </h3>
-        </div>
+        </div> */}
       </div>
 
       <div
@@ -56,7 +56,7 @@ function Header() {
             Explore
           </div>
           <div
-            onClick={() => handleNavigation("/react-flow")}
+            onClick={() => handleNavigation("/Expand")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
             Expand

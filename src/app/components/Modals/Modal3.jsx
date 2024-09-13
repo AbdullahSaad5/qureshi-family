@@ -158,10 +158,10 @@ const Modal3 = ({
         <h2 className="text-center text-2xl font-semibold">Add Spouse</h2>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-2 gap-6 mt-8"
+          className="grid grid-cols-12 gap-6 mt-8"
         >
           {/* Grand Father Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="grandfather"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -182,7 +182,7 @@ const Modal3 = ({
           </div>
 
           {/* Grand Mother Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="mother"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -203,7 +203,7 @@ const Modal3 = ({
           </div>
 
           {/* Father Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="Name"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -226,7 +226,7 @@ const Modal3 = ({
           </div>
 
           {/* Father DOB */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="DOB"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -246,7 +246,7 @@ const Modal3 = ({
           </div>
 
           {/* Child Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="SpouseName"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -270,7 +270,7 @@ const Modal3 = ({
           </div>
 
           {/* Child DOB */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="spouseDOB"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -293,7 +293,7 @@ const Modal3 = ({
             )}
           </div>
 
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="spouseGender"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -324,7 +324,7 @@ const Modal3 = ({
           />
 
           {/* Submit Button */}
-          <div className="col-span-2 text-center mt-6">
+          <div className="col-span-12 text-center mt-6">
             <button
               type="submit"
               className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"

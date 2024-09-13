@@ -78,10 +78,10 @@ const Modal2 = ({
         <h2 className="text-center text-2xl font-semibold">Add Spouse</h2>
         <form
           onSubmit={handleSubmit(onSubmitSpouse)} // Use handleSubmit from react-hook-form
-          className="grid grid-cols-2 gap-6 mt-8"
+          className="grid grid-cols-12 gap-6 mt-8"
         >
           {/* Spouse Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="spouseName"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -107,7 +107,7 @@ const Modal2 = ({
           </div>
 
           {/* Spouse Gender */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="SpouseGender"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -137,7 +137,7 @@ const Modal2 = ({
           </div>
 
           {/* Spouse DOB */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="spouseDOB"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -167,7 +167,7 @@ const Modal2 = ({
           <input type="hidden" {...register("personId")} />
 
           {/* Submit Button */}
-          <div className="col-span-2 text-center mt-6">
+          <div className="col-span-12 text-center mt-6">
             <button
               type="submit"
               className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
