@@ -1,7 +1,7 @@
 "use client";
 
 // import Genogram from "./Geogram";
-const Genogram = dynamic(() => import("./Geogram"), { ssr: false });
+const Genogram = dynamic(() => import("./Genogram"), { ssr: false });
 import dynamic from "next/dynamic";
 import "./genogram.css";
 import { useForm } from "react-hook-form";
