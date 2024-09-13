@@ -1,8 +1,10 @@
 "use client";
 
+const Genogram = dynamic(() => import("./Geogram"), { ssr: false });
+import dynamic from "next/dynamic";
+import "./genogram.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import ReactFlowTree from "../../react-flow/ReactFlow";
 import Header from "../../components/LandingPage/Header";
 import Footer from "../../components/LandingPage/Footer";
 
@@ -28,12 +30,42 @@ export default function PublicFigureTree() {
     }
   }, [id]);
 
+  let modifiedData =
+    data.map((member) => {
+      const newMember = {
+        key: member._id,
+        n: member.name,
+        s: member.gender.toUpperCase().charAt(0),
+        spouses: member.spouseIds,
+        f: member.father,
+        m: member.mother,
+        dob: new Date(member.dateOfBirth).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+      };
+      if (!newMember.f) {
+        delete newMember.f;
+      }
+      if (!newMember.m) {
+        delete newMember.m;
+      }
+
+      return newMember;
+    }) || [];
+  console.log(modifiedData);
+
+  if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
+
   return (
     <>
       <>
         <Header />
 
-        {data.length > 0 && <ReactFlowTree data={data} />}
+        <div className="genogram">
+          <Genogram Genogram={modifiedData} />
+        </div>
 
         <Footer />
       </>
