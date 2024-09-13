@@ -56,8 +56,7 @@ const Modal3 = ({
 
       console.log("Success:", response.data);
 
-      // toast.success("Send child request for review");
-      toast.success("Spouse Add Successfully");
+      toast.success("Spouse Add request send for review");
       reset();
       setIsAddSpouseButtonClick(false);
     } catch (error) {
@@ -217,7 +216,10 @@ const Modal3 = ({
               onSearch={debouncedFetchFatherOptions}
               options={fatherOptions}
               loading={loading}
-              onChange={(value) => fetchFatherData(value)}
+              onChange={(value) => {
+                setValue("Name", value);
+                fetchFatherData(value);
+              }}
               style={{ width: "100%" }}
             />
             {errors.Name && (
@@ -257,10 +259,10 @@ const Modal3 = ({
               type="text"
               id="spouseName"
               {...register("spouseName", {
-                required: "Child Name is required",
+                required: "Spouse Name is required",
               })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
-              placeholder="Child Name"
+              placeholder="Spouse Name"
             />
             {errors.spouseName && (
               <p className="text-rose-500 text-sm">

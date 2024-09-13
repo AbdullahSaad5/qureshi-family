@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTimes } from "react-icons/fa";
@@ -88,21 +88,21 @@ function Footer() {
                 SOCIAL LINKS
               </h2>
               <div className="text-sm md:text-md lg:text-sm font-sm">
-                <div className="flex flex-row items-center ml-3 mb-4 mt-2">
+                <div className="flex flex-row  ml-3 mb-4 mt-2">
                   <FaFacebookF size={20} className="mt-[4px] mr-[5px]" />
-                  <p className="ml-2">facebook</p>
+                  <p className="ml-2 mt-1">facebook</p>
                 </div>
-                <div className="flex flex-row items-center ml-3">
+                <div className="flex flex-row  ml-3">
                   <FaInstagram size={20} className="mt-[4px] mr-[5px]" />
-                  <p className="ml-2">instagram</p>
+                  <p className="ml-2 mt-1">instagram</p>
                 </div>
-                <div className="flex flex-row items-center mr-8 mt-4 sm:mt-3 md:mt-0 ">
+                <div className="flex flex-row  mr-8 mt-4 sm:mt-3 md:mt-0 ">
                   <Image
                     className="w-10 h-8 md:w-12 md:h-10 "
                     src={X}
                     alt="X logo"
                   />
-                  <p>twitter</p>
+                  <p className="mt-2">twitter</p>
                 </div>
               </div>
             </div>

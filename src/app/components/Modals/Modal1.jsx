@@ -28,6 +28,7 @@ const Modal1 = ({
   const [selectedParentID, setSelectedParentID] = useState("");
   const [showAddSpouseButton, setShowAddSpouseButton] = useState(false);
   const [selctedWife, setSelectedWife] = useState("");
+  const [selctedFather, setSelectedFather] = useState("");
 
   const {
     register,
@@ -62,10 +63,13 @@ const Modal1 = ({
 
       console.log("Success:", response.data);
 
-      // toast.success("Send child request for review");
-      toast.success("Child Add Successfully");
+      toast.success("Send child request for review");
       handleCancel();
       reset();
+      setSpouseOptions([]);
+      setSelectedWife("");
+      setFatherOptions([]);
+      setSelectedFather("");
       setReFetchtree(!reFetchtree);
     } catch (error) {
       console.error("Error:", error);
@@ -144,6 +148,7 @@ const Modal1 = ({
 
         setValue("fatherId", fatherId);
         setSelectedFatherID(fatherId);
+        setSelectedFather(data.name);
         if (formattedOptions.length === 0) {
           toast.error("Add spouse details before adding a child.");
           setSpouseOptions([]);
@@ -153,6 +158,7 @@ const Modal1 = ({
           setShowAddSpouseButton(true);
         } else {
           setShowAddSpouseButton(false);
+        
           setSpouseOptions(formattedOptions);
         }
 
@@ -323,8 +329,8 @@ const Modal1 = ({
               About
             </label>
             <textarea
-              id="aboutYou"
-              {...register("aboutYou")}
+              id="about"
+              {...register("about")}
               rows="3"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Tell us about yourself..."
@@ -421,6 +427,7 @@ const Modal1 = ({
               onSearch={debouncedFetchFatherOptions}
               options={fatherOptions}
               loading={loading}
+              value={selctedFather}
               onChange={(value) => {
                 setValue("fatherName", value);
                 fetchFatherData(value);
@@ -512,6 +519,7 @@ const Modal1 = ({
               type="date"
               id="childDOB"
               {...register("childDOB", {
+                required: "Child DOB is required",
                 max: { value: today, message: "DOB cannot be in the future" },
               })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"

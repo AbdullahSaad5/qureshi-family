@@ -12,7 +12,7 @@ function Qureshi() {
   return (
     <section className="md:p-12 mb-8 mt-12 sm:mt-0">
       <div className={` text-[#82D026]  text-center m-4 p-4`}>
-        <h2 className="text-5xl">Shar-e-Nasb</h2>
+        <h2 className="text-5xl">Shajra-e-Nasb</h2>
       </div>
       <div className=" m-4 p- text-center">
         <p className="mt-4">

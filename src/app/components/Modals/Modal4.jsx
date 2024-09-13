@@ -5,6 +5,7 @@ const DetailsModal = ({ isModalOpen, handleOk, handleCancel, data }) => {
   console.log(data);
   return (
     <Modal
+      footer={false}
       title="Person Details"
       centered
       open={isModalOpen}
