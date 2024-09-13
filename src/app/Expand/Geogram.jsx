@@ -75,6 +75,38 @@ function initDiagram() {
     }),
   });
 
+  // diagram.add(
+  //   $(
+  //     go.Node,
+  //     "Auto",
+  //     { location: new go.Point(0, 0), locationSpot: go.Spot.TopCenter },
+  //     $(go.TextBlock, {
+  //       text: "Discover Your Family Tree",
+  //       font: "bold 18px sans-serif",
+  //       textAlign: "center",
+  //       margin: 10,
+  //     })
+  //   )
+  // );
+
+  // diagram.nodeTemplate = $(
+  //   go.Node,
+  //   "Auto",
+  //   $(
+  //     go.Shape,
+  //     "Rectangle",
+  //     { strokeWidth: 0 },
+  //     new go.Binding("fill", "color")
+  //   ),
+  //   $(go.TextBlock, { margin: 5 }, new go.Binding("text", "key"))
+  // );
+
+  // diagram.linkTemplate = $(
+  //   go.Link,
+  //   $(go.Shape),
+  //   $(go.Shape, { toArrow: "OpenTriangle" })
+  // );
+
   // THIS IS THE TOOLTIP THAT IS BEING SHOWN ON THE HOVER
 
   let nodeToolTip = $(
@@ -637,25 +669,29 @@ const Genogram = (props) => {
 
     <>
       <div id="genogram">
-        <div className="ml-3 mb-3 flex gap-4">
-          <button
-            onClick={zoomIn}
-            className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            <FaPlus className="text-xl" />
-          </button>
-          <button
-            onClick={zoomOut}
-            className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            <FaMinus className="text-xl" />
-          </button>
-          <button
-            onClick={fullView}
-            className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            <BiFullscreen className="text-xl" />
-          </button>
+        <div className="flex justify-between">
+          <div className="ml-3 mb-3 flex gap-4">
+            <button
+              onClick={zoomIn}
+              className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              <FaPlus className="text-xl" />
+            </button>
+            <button
+              onClick={zoomOut}
+              className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              <FaMinus className="text-xl" />
+            </button>
+            <button
+              onClick={fullView}
+              className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded hover:bg-green-600"
+            >
+              <BiFullscreen className="text-xl" />
+            </button>
+          </div>
+          <h2>Discover Your Family Tree</h2>
+          <div></div>
         </div>
         <ReactDiagram
           initDiagram={initDiagramWithModal}
