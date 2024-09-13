@@ -11,10 +11,10 @@ const SPOUSE_SPACING = 30;
 const NODE_WIDTH = 200;
 const NODE_HEIGHT = 80;
 
-const MALE_BACKGROUND = "#85c1e9";
-const FEMALE_BACKGROUND = "#f5b7b1";
+const MALE_BACKGROUND = "#afd5ef";
+const FEMALE_BACKGROUND = "#f5dad7";
 const LINK_COLOR = "#424242";
-const MARRIAGE_COLOR = "#2ecc71";
+const MARRIAGE_COLOR = "#000000";
 
 function initDiagram() {
   const $ = go.GraphObject.make;
@@ -29,6 +29,8 @@ function initDiagram() {
     allowDragOut: false,
     allowLink: false,
     allowRelink: false,
+    minScale: 0.2,
+    maxScale: 1,
     // "clickCreatingTool.archetypeNodeData": {
     //   text: "new node",
     //   color: "lightblue",
