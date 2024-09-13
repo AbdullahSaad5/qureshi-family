@@ -1,6 +1,8 @@
 "use client";
 
-const Genogram = dynamic(() => import("@/app/Expand/Geogram"), { ssr: false });
+
+const Genogram = dynamic(() => import("../../Expand/Geogram"), { ssr: false });
+
 import dynamic from "next/dynamic";
 import "@/app/Expand/genogram.css";
 import { useEffect, useState } from "react";

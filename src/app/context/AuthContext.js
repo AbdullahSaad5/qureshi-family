@@ -1,12 +1,11 @@
 "use client";
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userVerified, setUserVerified] = useState(false);
-  
 
   const verifyUser = () => {
     setUserVerified(true);
@@ -16,8 +15,20 @@ export const AuthProvider = ({ children }) => {
     setUserVerified(false);
   };
 
+  useEffect(() => {
+    const userId =
+      typeof window !== "undefined" && localStorage.getItem("userId");
+    if (userId) {
+      verifyUser();
+    } else {
+      setUserVerified(false);
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ userVerified, verifyUser, logoutUser }}>
+    <AuthContext.Provider
+      value={{ userVerified, verifyUser, logoutUser, setUserVerified }}
+    >
       {children}
     </AuthContext.Provider>
   );

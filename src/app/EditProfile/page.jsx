@@ -55,7 +55,7 @@ const EditProfile = () => {
         }
       );
       toast.success("Info Updated Sucessfully");
-      router.push("/profile");
+      router.push("/Profile");
     } catch (error) {
       console.error("Error details:", error);
       if (error.response) {

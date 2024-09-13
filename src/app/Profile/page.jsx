@@ -6,9 +6,11 @@ import Link from "next/link";
 import Header from "../components/LandingPage/Header";
 import Footer from "../components/LandingPage/Footer";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 function Profile() {
   const router = useRouter();
+  const { setUserVerified } = useAuth();
 
   const [fullName, setFullName] = useState("");
   const [email, setemail] = useState("");
@@ -84,6 +86,7 @@ function Profile() {
                 localStorage.removeItem("email");
                 localStorage.removeItem("contact");
                 localStorage.removeItem("userId");
+                setUserVerified(false);
                 router.push("/signin");
               }}
               className="w-full text-white bg-[#82D026] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm py-1.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"

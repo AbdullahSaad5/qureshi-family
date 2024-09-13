@@ -60,6 +60,13 @@ function Header() {
           </div>
 
           <div
+            onClick={() => handleNavigation("/Search")}
+            className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
+          >
+            Search
+          </div>
+
+          <div
             onClick={() => handleNavigation("/AboutUs")}
             className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"
           >
