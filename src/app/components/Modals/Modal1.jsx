@@ -357,15 +357,21 @@ const Modal1 = ({
   }, [childGender, setValue]);
 
   return (
-    <Modal open={isModalOpen} onCancel={handleCancel} width={800} footer={null}>
+    <Modal
+      className="ml-20 mr-20 md:ml-0 md:mr-0"
+      open={isModalOpen}
+      onCancel={handleCancel}
+      width={800}
+      footer={null}
+    >
       <section>
         <h2 className="text-center text-2xl font-semibold">Add Member</h2>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-2 gap-6 mt-8"
+          className="grid grid-cols-12 gap-6 mt-8"
         >
           {/* Grand Father Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="grandfather"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -383,7 +389,7 @@ const Modal1 = ({
           </div>
 
           {/* Grand Mother Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="grandmother"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -401,7 +407,7 @@ const Modal1 = ({
           </div>
 
           {/* Father Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="fatherName"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -415,7 +421,10 @@ const Modal1 = ({
               onSearch={debouncedFetchFatherOptions}
               options={fatherOptions}
               loading={loading}
-              onChange={(value) => fetchFatherData(value)}
+              onChange={(value) => {
+                setValue("fatherName", value);
+                fetchFatherData(value);
+              }}
               style={{ width: "100%" }}
             />
             {errors.fatherName && (
@@ -426,7 +435,7 @@ const Modal1 = ({
           </div>
 
           {/* Mother Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="spouse"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -453,7 +462,7 @@ const Modal1 = ({
           </div>
 
           {/* Father DOB */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="fatherDOB"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -470,7 +479,7 @@ const Modal1 = ({
           </div>
 
           {/* Child Name */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="childName"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -492,7 +501,7 @@ const Modal1 = ({
           </div>
 
           {/* Child DOB */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="childDOB"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -513,7 +522,7 @@ const Modal1 = ({
           </div>
 
           {/* Child Gender */}
-          <div>
+          <div className="col-span-12 md:col-span-6">
             <label
               htmlFor="childGender"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -557,7 +566,7 @@ const Modal1 = ({
 
           {/* Show Add Spouse Button */}
           {showAddSpouseButton && (
-            <div className="col-span-2 text-center mt-6">
+            <div className="col-span-12 text-center mt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -572,12 +581,12 @@ const Modal1 = ({
           )}
 
           {/* Show Collapse */}
-          <div className="col-span-2">
+          <div className="col-span-12">
             <Collapse defaultActiveKey={[]} items={items} />
           </div>
 
           {/* Submit Button */}
-          <div className="col-span-2 text-center mt-6">
+          <div className="col-span-12  text-center mt-6">
             <button
               type="submit"
               disabled={showAddSpouseButton}
