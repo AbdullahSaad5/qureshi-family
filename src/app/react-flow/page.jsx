@@ -30,10 +30,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
-      );
-      console.log(response);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/members`);
       const data = await response.json();
       setData(data);
     };
@@ -66,7 +63,6 @@ const App = () => {
 
       return newMember;
     }) || [];
-  console.log(modifiedData);
 
   if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
 

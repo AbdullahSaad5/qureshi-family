@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 
-var genoData;
+let genoData;
 
 const SPOUSE_SPACING = 30;
 const NODE_WIDTH = 200;
@@ -24,16 +24,21 @@ function initDiagram() {
     initialViewportSpot: go.Spot.Bottom,
     "undoManager.isEnabled": true, // must be set to allow for model change listening
     initialAutoScale: go.Diagram.Uniform,
-    click: (e) => {
-      // if (e.diagram.selection.count === 0) {
-      // e.diagram.clearHighlighteds();
-      // }
-      console.log(e.diagram.selection.count);
-    },
+    allowMove: false,
+    allowDragOut: false,
+    allowLink: false,
+    allowRelink: false,
     // "clickCreatingTool.archetypeNodeData": {
     //   text: "new node",
     //   color: "lightblue",
     // },
+
+    click: (e) => {
+      const part = e.diagram.findPartAt(e.documentPoint, true);
+      if (part instanceof go.Node) {
+        console.log(part.data);
+      }
+    },
     model: $(go.GraphLinksModel, {
       linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
     }),
@@ -65,146 +70,6 @@ function initDiagram() {
     }),
   });
 
-  function toggleLinksVisibility(node) {
-    node.findLinksConnected().each((link) => {
-      link.visible = !link.visible;
-    });
-  }
-
-  diagram.nodeTemplateMap.add(
-    "M", // male
-    $(
-      go.Node,
-      "Auto",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "SHAPE",
-        selectionObjectName: "SHAPE",
-        layerName: "Foreground",
-        click: (e, node) => {
-          // toggleLinksVisibility(node);
-          console.log(node.data);
-        },
-      },
-      $(go.Shape, "RoundedRectangle", {
-        name: "SHAPE",
-        fill: MALE_BACKGROUND,
-        stroke: "#919191",
-        strokeWidth: 2,
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        parameter1: 10, // corner radius
-        portId: "",
-      }),
-
-      $(
-        go.Panel,
-        "Horizontal",
-        { margin: 5 },
-        $(
-          go.Panel,
-          "Vertical",
-          { alignment: go.Spot.Left },
-          $(
-            go.TextBlock,
-            { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "n")
-          ),
-          $(
-            go.TextBlock,
-            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding(
-              "text",
-              "",
-              (data) => `${data.dob || "N/A"} | Age: ${data.age || "N/A"}`
-            )
-          )
-        ),
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { width: 15, height: 15, margin: 1, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", maleGeometry)
-              )
-            ),
-            margin: new go.Margin(0, 0, 0, 10),
-            alignment: go.Spot.TopRight,
-          },
-          new go.Binding("itemArray", "a")
-        )
-      )
-    )
-  );
-
-  diagram.nodeTemplateMap.add(
-    "F", // female
-    $(
-      go.Node,
-      "Auto",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "SHAPE",
-        selectionObjectName: "SHAPE",
-        layerName: "Foreground",
-      },
-      $(go.Shape, "RoundedRectangle", {
-        name: "SHAPE",
-        fill: FEMALE_BACKGROUND,
-        stroke: "#a1a1a1",
-        strokeWidth: 2,
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        parameter1: 10, // corner radius
-        portId: "",
-      }),
-      $(
-        go.Panel,
-        "Horizontal",
-        { margin: 5 },
-        $(
-          go.Panel,
-          "Vertical",
-          { alignment: go.Spot.Left },
-          $(
-            go.TextBlock,
-            { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "n")
-          ),
-          $(
-            go.TextBlock,
-            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding(
-              "text",
-              "",
-              (data) => `${data.dob || "N/A"} | Age: ${data.age || "N/A"}`
-            )
-          )
-        ),
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { width: 15, height: 15, margin: 1, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", femaleGeometry)
-              )
-            ),
-            margin: new go.Margin(0, 0, 0, 10),
-            alignment: go.Spot.TopRight,
-          },
-          new go.Binding("itemArray", "a")
-        )
-      )
-    )
-  );
   var nodeToolTip = $(
     go.Adornment,
     "Auto",
@@ -217,19 +82,11 @@ function initDiagram() {
       go.Panel,
       "Vertical",
       { margin: 8 },
-      $(
-        go.TextBlock,
-        { font: "bold 14px sans-serif", margin: 2 },
-        new go.Binding("text", "n")
-      ),
+      $(go.TextBlock, { font: "bold 14px sans-serif", margin: 2 }, new go.Binding("text", "n")),
       $(
         go.TextBlock,
         { font: "12px sans-serif", margin: 2 },
-        new go.Binding(
-          "text",
-          "",
-          (data) => `Date of Birth: ${data.dob || "N/A"}`
-        )
+        new go.Binding("text", "", (data) => `Date of Birth: ${data.dob || "N/A"}`)
       ),
       $(
         go.TextBlock,
@@ -239,23 +96,45 @@ function initDiagram() {
       $(
         go.TextBlock,
         { font: "12px sans-serif", margin: 2 },
-        new go.Binding(
-          "text",
-          "",
-          (data) => `Occupation: ${data.occupation || "N/A"}`
-        )
+        new go.Binding("text", "", (data) => `Occupation: ${data.occupation || "N/A"}`)
       ),
       $(
         go.TextBlock,
         { font: "12px sans-serif", margin: 2 },
-        new go.Binding(
-          "text",
-          "",
-          (data) => `Address: ${data.address || "N/A"}`
-        )
+        new go.Binding("text", "", (data) => `Address: ${data.address || "N/A"}`)
       )
     )
   );
+
+  // function toggleChildrenVisibility(node) {
+  //   diagram.startTransaction("toggle visibility");
+
+  //   const descendants = new Set();
+  //   findAllDescendants(node, descendants);
+
+  //   // Toggle visibility of all child nodes
+  //   descendants.forEach((childNode) => {
+  //     childNode.visible = !childNode.visible;
+  //   });
+
+  //   // Toggle visibility of marriage links
+  //   diagram.links.each((link) => {
+  //     if (link.category === "Marriage" && (descendants.has(link.fromNode) || descendants.has(link.toNode))) {
+  //       link.visible = !link.visible;
+  //     }
+  //   });
+
+  //   diagram.layoutDiagram(true); // Recalculate layout
+  //   diagram.commitTransaction("toggle visibility");
+  // }
+
+  // // Recursively find all descendants of a node
+  // function findAllDescendants(node, descendants) {
+  //   node.findTreeChildrenNodes().each((child) => {
+  //     descendants.add(child);
+  //     findAllDescendants(child, descendants); // Recursively add children
+  //   });
+  // }
 
   function nodeTemplate(gender) {
     return $(
@@ -267,6 +146,9 @@ function initDiagram() {
         selectionObjectName: "SHAPE",
         layerName: "Foreground",
         toolTip: nodeToolTip, // Add the tooltip to the node
+        click: (e, node) => {
+          toggleChildrenVisibility(node);
+        },
       },
       $(go.Shape, "RoundedRectangle", {
         name: "SHAPE",
@@ -275,7 +157,7 @@ function initDiagram() {
         strokeWidth: 2,
         width: NODE_WIDTH,
         height: NODE_HEIGHT,
-        parameter1: 10,
+        parameter1: gender === "M" ? 5 : 20, // corner radius
         portId: "",
       }),
       $(
@@ -294,33 +176,13 @@ function initDiagram() {
           $(
             go.TextBlock,
             { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding(
-              "text",
-              "",
-              (data) => `${data.dob || "N/A"} | Age: ${data.age || "N/A"}`
-            )
+            new go.Binding("text", "", (data) => `${data.dob || "N/A"} | Age: ${data.age || "N/A"}`)
+          ),
+          $(
+            go.TextBlock,
+            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
+            new go.Binding("text", "", (data) => `Occupation: ${data.occupation || "N/A"}`)
           )
-        ),
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { width: 15, height: 15, margin: 1, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding(
-                  "geometry",
-                  "",
-                  gender === "M" ? maleGeometry : femaleGeometry
-                )
-              )
-            ),
-            margin: new go.Margin(0, 0, 0, 10),
-            alignment: go.Spot.TopRight,
-          },
-          new go.Binding("itemArray", "a")
         )
       )
     );
@@ -328,303 +190,6 @@ function initDiagram() {
 
   diagram.nodeTemplateMap.add("M", nodeTemplate("M"));
   diagram.nodeTemplateMap.add("F", nodeTemplate("F"));
-
-  function attrFill(a) {
-    switch (a) {
-      case "A":
-        return "#00af54"; // green
-      case "B":
-        return "#f27935"; // orange
-      case "C":
-        return "#d4071c"; // red
-      case "D":
-        return "#70bdc2"; // cyan
-      case "E":
-        return "#fcf384"; // gold
-      case "F":
-        return "#e69aaf"; // pink
-      case "G":
-        return "#08488f"; // blue
-      case "H":
-        return "#866310"; // brown
-      case "I":
-        return "#9270c2"; // purple
-      case "J":
-        return "#a3cf62"; // chartreuse
-      case "K":
-        return "#91a4c2"; // lightgray bluish
-      case "L":
-        return "#af70c2"; // magenta
-      case "S":
-        return "#000000"; // black
-      case "M":
-        return "#d4071c"; // red
-      default:
-        return "transparent";
-    }
-  }
-  var tlsq = go.Geometry.parse("F M1 1 l19 0 0 19 -19 0z");
-  var trsq = go.Geometry.parse("F M20 1 l19 0 0 19 -19 0z");
-  var brsq = go.Geometry.parse("F M20 20 l19 0 0 19 -19 0z");
-  var blsq = go.Geometry.parse("F M1 20 l19 0 0 19 -19 0z");
-  var slash = go.Geometry.parse(
-    "F M38 0 L40 0 40 2 2 40 0 40 0 38z" + "F M40 38 L40 40 38 40 0 2 0 0 2 0z"
-  );
-  var plus = go.Geometry.parse(
-    "F M18 2 L20 0 22 2 22 38 20 40 18 38z" +
-      "F M2 22 L0 20 2 18 38 18 40 20 38 22z"
-  );
-  function maleGeometry(a) {
-    switch (a) {
-      case "A":
-        return tlsq;
-      case "B":
-        return tlsq;
-      case "C":
-        return tlsq;
-      case "D":
-        return trsq;
-      case "E":
-        return trsq;
-      case "F":
-        return trsq;
-      case "G":
-        return brsq;
-      case "H":
-        return brsq;
-      case "I":
-        return brsq;
-      case "J":
-        return blsq;
-      case "K":
-        return blsq;
-      case "L":
-        return blsq;
-      case "S":
-        return slash;
-      case "M":
-        return plus;
-      default:
-        return tlsq;
-    }
-  }
-  var tlarc = go.Geometry.parse("F M20 20 B 180 90 20 20 19 19 z");
-  var trarc = go.Geometry.parse("F M20 20 B 270 90 20 20 19 19 z");
-  var brarc = go.Geometry.parse("F M20 20 B 0 90 20 20 19 19 z");
-  var blarc = go.Geometry.parse("F M20 20 B 90 90 20 20 19 19 z");
-  function femaleGeometry(a) {
-    switch (a) {
-      case "A":
-        return tlarc;
-      case "B":
-        return tlarc;
-      case "C":
-        return tlarc;
-      case "D":
-        return trarc;
-      case "E":
-        return trarc;
-      case "F":
-        return trarc;
-      case "G":
-        return brarc;
-      case "H":
-        return brarc;
-      case "I":
-        return brarc;
-      case "J":
-        return blarc;
-      case "K":
-        return blarc;
-      case "L":
-        return blarc;
-      case "S":
-        return slash;
-      case "M":
-        return plus;
-      default:
-        return tlarc;
-    }
-  }
-
-  diagram.nodeTemplateMap.add(
-    "M", // male
-    $(
-      go.Node,
-      "Auto",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "SHAPE",
-        selectionObjectName: "SHAPE",
-        layerName: "Foreground",
-      },
-      $(go.Shape, "RoundedRectangle", {
-        name: "SHAPE",
-        fill: MALE_BACKGROUND,
-        stroke: "#919191",
-        strokeWidth: 2,
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        parameter1: 10, // corner radius
-        portId: "",
-      }),
-      $(
-        go.Panel,
-        "Horizontal",
-        { margin: 5 },
-        $(
-          go.Panel,
-          "Vertical",
-          { alignment: go.Spot.Left },
-          $(
-            go.TextBlock,
-            { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "n")
-          ),
-          $(
-            go.TextBlock,
-            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "", (data) => `DOB: ${data.dob || "N/A"}`)
-          )
-        ),
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { width: 15, height: 15, margin: 1, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", maleGeometry)
-              )
-            ),
-            margin: new go.Margin(0, 0, 0, 10),
-            alignment: go.Spot.TopRight,
-          },
-          new go.Binding("itemArray", "a")
-        )
-      )
-    )
-  );
-
-  diagram.nodeTemplateMap.add(
-    "F", // female
-    $(
-      go.Node,
-      "Auto",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "SHAPE",
-        selectionObjectName: "SHAPE",
-        layerName: "Foreground",
-      },
-      $(go.Shape, "RoundedRectangle", {
-        name: "SHAPE",
-        fill: FEMALE_BACKGROUND,
-        stroke: "#a1a1a1",
-        strokeWidth: 2,
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        parameter1: 10, // corner radius
-        portId: "",
-      }),
-      $(
-        go.Panel,
-        "Horizontal",
-        { margin: 5 },
-        $(
-          go.Panel,
-          "Vertical",
-          { alignment: go.Spot.Left },
-          $(
-            go.TextBlock,
-            { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "n")
-          ),
-          $(
-            go.TextBlock,
-            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "", (data) => `DOB: ${data.dob || "N/A"}`)
-          )
-        ),
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { width: 15, height: 15, margin: 1, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", femaleGeometry)
-              )
-            ),
-            margin: new go.Margin(0, 0, 0, 10),
-            alignment: go.Spot.TopRight,
-          },
-          new go.Binding("itemArray", "a")
-        )
-      )
-    )
-  );
-
-  diagram.nodeTemplateMap.add(
-    "N", // Miscarriage
-    $(
-      go.Node,
-      "Vertical",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "ICON",
-        selectionObjectName: "ICON",
-      },
-      $(
-        go.Panel,
-        { name: "ICON" },
-        $(go.Shape, "Triangle", {
-          width: 40,
-          height: 40,
-          strokeWidth: 2,
-          fill: "white",
-          stroke: "#a1a1a1",
-          portId: "",
-        }),
-        $(
-          go.Panel,
-          {
-            // for each attribute show a Shape at a particular place in the overall circle
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { stroke: null, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", femaleGeometry)
-              )
-            ),
-            margin: 1,
-          },
-          new go.Binding("itemArray", "a")
-        )
-      ),
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
-        new go.Binding("text", "n")
-      )
-    )
-  );
-
-  diagram.nodeTemplateMap.add(
-    "LinkLabel",
-    $(go.Node, {
-      selectable: false,
-      width: 1,
-      height: 1,
-      fromEndSegmentLength: 20,
-    })
-  );
 
   setupDiagram(diagram, genoData, 4 /* focus on this person */);
 
@@ -646,7 +211,9 @@ function initDiagram() {
     "Marriage", // for marriage relationships
     $(
       go.Link,
-      { selectable: false },
+      {
+        selectable: false,
+      },
       $(go.Shape, { strokeWidth: 2.5, stroke: MARRIAGE_COLOR /* blue */ })
     )
   );
@@ -655,13 +222,15 @@ function initDiagram() {
   diagram.nodeTemplate = $(
     go.Node,
     "Auto", // the Shape will go around the TextBlock
-    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
-      go.Point.stringify
-    ),
+    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
     $(
       go.Shape,
       "Rectangle",
-      { name: "SHAPE", fill: "white", strokeWidth: 0 },
+      {
+        name: "SHAPE",
+        fill: "white",
+        strokeWidth: 1,
+      },
       // Shape.fill is bound to Node.data.color
       new go.Binding("fill", "color")
     ),
@@ -702,11 +271,7 @@ function setupMarriages(diagram, nodeMap) {
   const marriageLinks = new Set();
 
   nodeMap.forEach((data, key) => {
-    const spouses = Array.isArray(data.spouses)
-      ? data.spouses
-      : data.spouses
-      ? [data.spouses]
-      : [];
+    const spouses = Array.isArray(data.spouses) ? data.spouses : data.spouses ? [data.spouses] : [];
 
     spouses.forEach((spouse) => {
       if (key === spouse) return; // Skip reflexive marriages
@@ -813,18 +378,9 @@ GenogramLayout.prototype.add = function (net, coll, nonmemberonly) {
       // create vertex representing both husband and wife
       var vertex = net.addNode(node);
       // now define the vertex size to be big enough to hold both spouses
-      vertex.width =
-        spouseA.actualBounds.width +
-        this.spouseSpacing +
-        spouseB.actualBounds.width;
-      vertex.height = Math.max(
-        spouseA.actualBounds.height,
-        spouseB.actualBounds.height
-      );
-      vertex.focus = new go.Point(
-        spouseA.actualBounds.width + this.spouseSpacing / 2,
-        vertex.height / 2
-      );
+      vertex.width = spouseA.actualBounds.width + this.spouseSpacing + spouseB.actualBounds.width;
+      vertex.height = Math.max(spouseA.actualBounds.height, spouseB.actualBounds.height);
+      vertex.focus = new go.Point(spouseA.actualBounds.width + this.spouseSpacing / 2, vertex.height / 2);
     } else {
       // don't add a vertex for any married person!
       // instead, code above adds label node for marriage link
@@ -972,21 +528,14 @@ GenogramLayout.prototype.commitNodes = function () {
     // see if the parents are on the desired sides, to avoid a link crossing
     var aParentsNode = layout.findParentsMarriageLabelNode(spouseA);
     var bParentsNode = layout.findParentsMarriageLabelNode(spouseB);
-    if (
-      aParentsNode !== null &&
-      bParentsNode !== null &&
-      aParentsNode.position.x > bParentsNode.position.x
-    ) {
+    if (aParentsNode !== null && bParentsNode !== null && aParentsNode.position.x > bParentsNode.position.x) {
       // swap the spouses
       var temp = spouseA;
       spouseA = spouseB;
       spouseB = temp;
     }
     spouseA.position = new go.Point(v.x, v.y);
-    spouseB.position = new go.Point(
-      v.x + spouseA.actualBounds.width + layout.spouseSpacing,
-      v.y
-    );
+    spouseB.position = new go.Point(v.x + spouseA.actualBounds.width + layout.spouseSpacing, v.y);
     if (spouseA.opacity === 0) {
       var pos = new go.Point(v.centerX - spouseA.actualBounds.width / 2, v.y);
       spouseA.position = pos;
@@ -1034,7 +583,7 @@ GenogramLayout.prototype.findParentsMarriageLabelNode = function (node) {
 };
 
 function handleModelChange(e) {
-  console.log(e);
+  // console.log(e);
 }
 
 const Genogram = (props) => {
@@ -1042,11 +591,7 @@ const Genogram = (props) => {
 
   return (
     <div id="genogram">
-      <ReactDiagram
-        initDiagram={initDiagram}
-        divClassName="diagram-component"
-        onModelChange={handleModelChange}
-      />
+      <ReactDiagram initDiagram={initDiagram} divClassName="diagram-component" onModelChange={handleModelChange} />
     </div>
   );
 };
