@@ -14,21 +14,28 @@ export default function AboutUs() {
             <h2 className="text-3xl font-semibold">About Us</h2>
             <div className="border-2 border-[#82D026] w-[15%] mb-4" />
             <p className="text-sm">
-              Welcome to the Qureshi Family website, where we celebrate our
-              shared <br />
-              heritage. Our mission is to connect family members and preserve
-              our <br />
-              rich history. Discover your roots, trace our familys journey, and{" "}
+              Welcome to the{" "}
+              <span className="font-semibold text-[#646464]">
+                {" "}
+                Shajra e Nasab{" "}
+              </span>{" "}
+              of the Holy Prophet Hazrat Muhammad <br />
+              (SAW), a dedicated platform to honor and preserve the sacred
+              lineage <br />
+              of the Prophet s (SAW) family. Our website provides an opportunity{" "}
               <br />
-              explore generations of stories. With easy-to-use tools, you can{" "}
+              for individuals to trace their connection to the Prophet s (SAW){" "}
               <br />
-              learn about significant milestones and traditions. Join a global{" "}
+              noble ancestry and explore the rich history of his descendants.{" "}
               <br />
-              community of Qureshis as we honor our past and embrace the future.{" "}
+              Through this platform, we aim to share stories, historical <br />
+              milestones, and the profound legacy that spans generations.
+              Discover <br />
+              the roots of this blessed lineage, and learn about the family that{" "}
               <br />
-              Together, we continue the legacy of the Qureshi family for <br />
-              generations to come.
+              continues to inspire Muslims worldwide.
             </p>
+            <p></p>
           </div>
           <Image
             src={about1}
@@ -46,17 +53,27 @@ export default function AboutUs() {
             <h2 className="text-3xl font-semibold">Our Mission</h2>
             <div className="border-2 border-[#82D026] w-[15%] mb-4" />
             <p className="text-sm">
-              Our mission is to unite the Qureshi family by preserving our rich{" "}
+              Our mission is to unite descendants of the Holy Prophet Hazrat{" "}
               <br />
-              heritage and fostering connections across generations. We aim to{" "}
+              Muhammad (SAW) by preserving the sacred{" "}
+              <span className="font-semibold text-[#646464]">
+                {" "}
+                Shajra e Nasab{" "}
+              </span>{" "}
+              and fostering <br />
+              connections across generations. We aim to make this noble family{" "}
               <br />
-              make family history accessible and meaningful, helping every
-              member <br />
-              trace their roots, discover untold stories, and celebrate the
-              values <br />
-              and traditions that define us. Together, we strive to keep the{" "}
+              history accessible and meaningful, helping every individual trace{" "}
               <br />
-              Qureshi legacy alive and thriving for future generations.
+              their lineage, uncover untold stories, and celebrate the values
+              and <br />
+              traditions that define the Prophet’s (SAW) blessed legacy.
+              Together, <br />
+              we strive to honor and preserve the Holy Prophet’s (SAW) lineage,{" "}
+              <br />
+              ensuring it remains a source of inspiration and guidance for
+              future <br />
+              generations.
             </p>
           </div>
         </div>

@@ -112,10 +112,8 @@ function Footer() {
       <div className="border-b-2 border-white w-[100%] mb-4 mt-16" />
       {/* Third Line - Copyright */}
       <div className="mb-0 mt-12 md:mt-12 lg:mt-8 lg:mb-0 text-center text-sm md:text-sm lg:text-sm font-medium">
-        <p className="p-3">Copyright© 2024 Qureshi Family</p>
-        <p className="">
-          Qureshi Family Is A Registered Trademark All Rights Reserved
-        </p>
+        <p className="p-3">Copyright© 2024 Shar e Nasb</p>
+        <p className="">Design and Develope by decimal solutions</p>
       </div>
     </footer>
   );
