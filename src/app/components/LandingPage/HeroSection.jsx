@@ -43,7 +43,7 @@ const HeroSection = () => {
           billions of historical records with a{" "}
           <span className="text-[#82D026]"> FREE trial. </span>
         </h3>
-        <div className="grid grid-cols-12">
+        {/* <div className="grid grid-cols-12">
           <div className="flex items-center col-span-5 mt-4">
             <input
               type="text"
@@ -57,7 +57,7 @@ const HeroSection = () => {
               Search
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

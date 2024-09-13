@@ -7,6 +7,7 @@ import "./genogram.css";
 import { useForm } from "react-hook-form";
 import Modal1 from "../components/Modals/Modal1.jsx";
 import Modal2 from "../components/Modals/Modal2.jsx";
+import Modal3 from "../components/Modals/Modal3";
 import Header from "../components/LandingPage/Header.jsx";
 import Footer from "../components/LandingPage/Footer.jsx";
 import { useEffect, useState } from "react";
@@ -14,8 +15,8 @@ import { useEffect, useState } from "react";
 const App = () => {
   const [data, setData] = useState([]);
   const [reFetchtree, setReFetchtree] = useState(false);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddSpouseButtonClick, setIsAddSpouseButtonClick] = useState(false);
 
   const [isAddSpouseModalOpen, setIsAddSpouseModalOpen] = useState(false);
   const [slectedFatherID, setSelectedFatherID] = useState("");
@@ -76,6 +77,13 @@ const App = () => {
       <div>
         <div className="w-full flex justify-end">
           <button
+            onClick={() => setIsAddSpouseButtonClick(true)}
+            className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+          >
+            Add Spouse
+          </button>
+
+          <button
             onClick={showModal}
             className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
           >
@@ -95,6 +103,12 @@ const App = () => {
         isAddSpouseModalOpen={isAddSpouseModalOpen}
         setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
         slectedFatherID={slectedFatherID}
+        setReFetchtree={setReFetchtree}
+        reFetchtree={reFetchtree}
+      />
+      <Modal3
+        isAddSpouseButtonClick={isAddSpouseButtonClick}
+        setIsAddSpouseButtonClick={setIsAddSpouseButtonClick}
         setReFetchtree={setReFetchtree}
         reFetchtree={reFetchtree}
       />

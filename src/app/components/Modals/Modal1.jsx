@@ -27,6 +27,7 @@ const Modal1 = ({
   const [spouseOptions, setSpouseOptions] = useState([]);
   const [selectedParentID, setSelectedParentID] = useState("");
   const [showAddSpouseButton, setShowAddSpouseButton] = useState(false);
+  const [selctedWife, setSelectedWife] = useState("");
 
   const {
     register,
@@ -44,6 +45,8 @@ const Modal1 = ({
       fatherDOB: "",
     },
   });
+
+  const childGender = watch("childGender");
 
   const today = new Date().toISOString().split("T")[0];
   const spouseName = watch("sName");
@@ -212,25 +215,17 @@ const Modal1 = ({
             >
               Spouse Gender
             </label>
-            <select
+            <input
+              type="text"
               id="spouseGender"
               {...register("spouseGender", {
                 validate: (value) =>
                   !spouseName || value ? true : "Spouse gender is required",
               })}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option value="" disabled>
-                Select Gender
-              </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-            {errors.spouseGender && (
-              <p className="text-red-500 text-sm">
-                {errors.spouseGender.message}
-              </p>
-            )}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+              placeholder="Spouse Gender"
+              readOnly
+            />
           </div>
 
           {/* Spouse DOB */}
@@ -248,7 +243,7 @@ const Modal1 = ({
                 validate: (value) => {
                   const spouseName = watch("spouseName");
                   if (spouseName && !value) {
-                    return "Spouse DOB is required if Spouse Name is filled";
+                    return "Spouse DOB is required";
                   }
                   return true;
                 },
@@ -343,13 +338,23 @@ const Modal1 = ({
   const handleChange = (value) => {
     console.log("Selected value:", value);
     setValue("motherId", value);
+    setSelectedWife(value);
   };
 
   useEffect(() => {
     if (spouseOptions.length > 0) {
       setValue("motherId", spouseOptions[0].value);
+      setSelectedWife(spouseOptions[0].value);
     }
   }, [spouseOptions, setValue]);
+
+  useEffect(() => {
+    if (childGender === "male") {
+      setValue("spouseGender", "female");
+    } else if (childGender === "female") {
+      setValue("spouseGender", "male");
+    }
+  }, [childGender, setValue]);
 
   return (
     <Modal open={isModalOpen} onCancel={handleCancel} width={800} footer={null}>
@@ -373,12 +378,8 @@ const Modal1 = ({
               {...register("grandfather")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
               placeholder="Grand Father Name"
+              readOnly
             />
-            {errors.grandfather && (
-              <p className="text-red-500 text-sm">
-                {errors.grandfather.message}
-              </p>
-            )}
           </div>
 
           {/* Grand Mother Name */}
@@ -395,12 +396,8 @@ const Modal1 = ({
               {...register("grandmother")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
               placeholder="Grand Mother Name"
+              readOnly
             />
-            {errors.grandmother && (
-              <p className="text-red-500 text-sm">
-                {errors.grandmother.message}
-              </p>
-            )}
           </div>
 
           {/* Father Name */}
@@ -422,7 +419,7 @@ const Modal1 = ({
               style={{ width: "100%" }}
             />
             {errors.fatherName && (
-              <p className="text-red-500 text-sm">
+              <p className="text-rose-500 text-sm">
                 {errors.fatherName.message}
               </p>
             )}
@@ -438,11 +435,8 @@ const Modal1 = ({
             </label>
             <Select
               placeholder="Select Mother name"
-              // defaultValue={
-              //   spouseOptions.length > 0 ? spouseOptions[0].value : ""
-              // }
               style={{ width: "100%" }}
-              value={spouseOptions.length > 0 ? spouseOptions[0].value : ""}
+              value={selctedWife}
               onChange={handleChange}
               loading={loading}
             >
@@ -452,6 +446,10 @@ const Modal1 = ({
                 </Select.Option>
               ))}
             </Select>
+
+            {errors.motherId && (
+              <p className="text-rose-500 text-sm">{errors.motherId.message}</p>
+            )}
           </div>
 
           {/* Father DOB */}
@@ -465,15 +463,10 @@ const Modal1 = ({
             <input
               type="date"
               id="fatherDOB"
-              {...register("fatherDOB", {
-                required: "Father's DOB is required",
-                max: { value: today, message: "DOB cannot be in the future" },
-              })}
+              {...register("fatherDOB")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+              readOnly
             />
-            {errors.fatherDOB && (
-              <p className="text-red-500 text-sm">{errors.fatherDOB.message}</p>
-            )}
           </div>
 
           {/* Child Name */}
@@ -492,7 +485,9 @@ const Modal1 = ({
               placeholder="Child Name"
             />
             {errors.childName && (
-              <p className="text-red-500 text-sm">{errors.childName.message}</p>
+              <p className="text-rose-500 text-sm">
+                {errors.childName.message}
+              </p>
             )}
           </div>
 
@@ -513,7 +508,7 @@ const Modal1 = ({
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
             />
             {errors.childDOB && (
-              <p className="text-red-500 text-sm">{errors.childDOB.message}</p>
+              <p className="text-rose-500 text-sm">{errors.childDOB.message}</p>
             )}
           </div>
 
@@ -539,13 +534,26 @@ const Modal1 = ({
               <option value="female">Female</option>
             </select>
             {errors.childGender && (
-              <p className="text-red-500 text-sm">
+              <p className="text-rose-500 text-sm">
                 {errors.childGender.message}
               </p>
             )}
           </div>
 
           <input type="hidden" {...register("fatherId")} />
+          <input
+            type="hidden"
+            {...register("fatherName", {
+              required: "Father Name is required",
+            })}
+          />
+
+          <input
+            type="hidden"
+            {...register("motherId", {
+              required: "Mother Name is required",
+            })}
+          />
 
           {/* Show Add Spouse Button */}
           {showAddSpouseButton && (
