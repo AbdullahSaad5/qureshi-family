@@ -5,6 +5,7 @@ const Pagination = ({
   currentPage,
   setCurrentPage,
   totalPages,
+  handleRecordsChange,
 }) => {
   const pageNumbers = [];
 
@@ -35,8 +36,10 @@ const Pagination = ({
           <button
             onClick={prevPage}
             disabled={currentPage === 1}
-            className={`rounded border px-4 py-2 ${currentPage>1 && 'active:bg-blue-400'}`}
-            >
+            className={`rounded border px-4 py-2 ${
+              currentPage > 1 && "active:bg-blue-400 bg-blue-300"
+            }`}
+          >
             Prev
           </button>
         </li>
@@ -58,10 +61,24 @@ const Pagination = ({
           <button
             onClick={nextPage}
             disabled={currentPage === totalPages}
-            className={`rounded border px-4 py-2 ${currentPage !== totalPages && 'active:bg-blue-400'}`}
+            className={`rounded border px-4 py-2 ${
+              currentPage !== totalPages && "active:bg-blue-400  bg-blue-300"
+            }`}
           >
             Next
           </button>
+        </li>
+        <li>
+          <select
+            id="recordsPerPage"
+            value={usersPerPage}
+            onChange={handleRecordsChange}
+            className=" rounded border border-graydark ml-1 px-4 py-2 text-center text-black focus:border-primary focus-visible:outline-none"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={30}>30</option>
+          </select>
         </li>
       </ul>
     </nav>
