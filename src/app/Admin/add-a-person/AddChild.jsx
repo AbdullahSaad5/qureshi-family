@@ -5,11 +5,11 @@ const Genogram = dynamic(() => import("./Geogram.jsx"), { ssr: false });
 import dynamic from "next/dynamic";
 import "./genogram.css";
 import { useForm } from "react-hook-form";
-import Modal1 from "../components/Modals/Modal1.jsx";
-import Modal2 from "../components/Modals/Modal2.jsx";
-import Modal3 from "../components/Modals/Modal3.jsx";
-import Header from "../components/LandingPage/Header.jsx";
-import Footer from "../components/LandingPage/Footer.jsx";
+import Modal1 from "../../components/Modals/Modal1.jsx";
+import Modal2 from "../../components/Modals/Modal2.jsx";
+import Modal3 from "../../components/Modals/Modal3.jsx";
+import Header from "../../components/LandingPage/Header.jsx";
+import Footer from "../../components/LandingPage/Footer.jsx";
 import { useEffect, useState } from "react";
 
 const App = () => {
@@ -31,7 +31,9 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/members`);
+      const response = await fetch(
+        `${"https://quresh-family-5b06b2823b36.herokuapp.com/api"}/members`
+      );
       console.log(response);
       const data = await response.json();
       setData(data);
@@ -50,9 +52,6 @@ const App = () => {
         spouses: member.spouseIds,
         f: member.father,
         m: member.mother,
-        tribe: member.tribe,
-        biography: member.biography,
-        address: member.address,
         dob: new Date(member.dateOfBirth).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
@@ -73,20 +72,20 @@ const App = () => {
   if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
 
   return (
-    <div className=" h-full min-h-[calc(170vh-112px)] flex-col flex items-stretch justify-stretch">
-      <Header />
+    <>
+      {/* <Header /> */}
       <div>
-        <div className="w-full flex justify-end py-4">
+        <div className="w-full flex justify-end">
           <button
             onClick={() => setIsAddSpouseButtonClick(true)}
-            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+            className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
           >
             Add Spouse
           </button>
 
           <button
             onClick={showModal}
-            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+            className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
           >
             Add Member
           </button>
@@ -117,8 +116,8 @@ const App = () => {
       <div className="genogram">
         <Genogram Genogram={modifiedData} />
       </div>
-      <Footer />
-    </div>
+      {/* <Footer /> */}
+    </>
   );
 };
 
@@ -174,7 +173,7 @@ export default App;
 //   useEffect(() => {
 //     const fetchData = async () => {
 //       const response = await fetch(
-//         `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
+//         `$https://quresh-family-5b06b2823b36.herokuapp.com/api}/members`
 //       );
 //       const data = await response.json();
 //       setData(data);
@@ -188,7 +187,7 @@ export default App;
 //       const fetchData = async () => {
 //         try {
 //           const response = await fetch(
-//             `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
+//             `$https://quresh-family-5b06b2823b36.herokuapp.com/api}/members`
 //           );
 //           const data = await response.json();
 

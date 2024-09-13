@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useContext } from "react";
 import MyContext from "@/app/context/MyContext";
 import { useRouter } from "next/navigation";
+import logo from "../../../_assets/logo-icon.svg";
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -63,13 +64,8 @@ const Header = (props: {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
-            <Image
-              width={32}
-              height={32}
-              src={"/images/logo/logo-icon.svg"}
-              alt="Logo"
-            />
+          <Link className="block flex-shrink-0 lg:hidden" href="/Admin">
+            <Image width={32} height={32} src={logo.src} alt="Logo" />
           </Link>
         </div>
         <div className=""></div>
