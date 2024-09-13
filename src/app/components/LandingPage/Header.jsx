@@ -27,11 +27,8 @@ function Header() {
   };
 
   return (
-    <div className="p-5 w-full bg-[#FFFFFF] flex flex-row justify-between items-center px-6 lg:px-10 relative">
-      <div
-        onClick={() => router.push("/")}
-        className="flex items-center gap-2 cursor-pointer"
-      >
+    <div className="p-5 w-full bg-[#FFFFFF] flex flex-row justify-between items-center px-6 lg:px-10 relative shadow-md">
+      <div onClick={() => router.push("/")} className="flex items-center gap-2 cursor-pointer">
         <Image src={logo} alt="logo" width={80} height={80} />
         {/* <div className="flex flex-col gap-1">
           <h1 className="text-[#82D026] text-2xl md:text-xl lg:text-2xl font-semibold">
@@ -97,10 +94,7 @@ function Header() {
           />
         </div>
       ) : (
-        <div
-          onClick={() => handleNavigation("/signin")}
-          className=" md:flex hidden"
-        >
+        <div onClick={() => handleNavigation("/signin")} className=" md:flex hidden">
           <div className="relative flex justify-center w-40 lg:w-48 rounded-full border border-[#82D026] bg-[#82D026] p-0.5 cursor-pointer">
             <div className="text-center text-white text-sm lg:text-base rounded-full px-4 py-2 transition-colors duration-300">
               Login
@@ -110,17 +104,9 @@ function Header() {
       )}
       <div className="md:hidden flex items-center">
         {menuOpen ? (
-          <X
-            className="text-black cursor-pointer"
-            size={28}
-            onClick={toggleMenu}
-          />
+          <X className="text-black cursor-pointer" size={28} onClick={toggleMenu} />
         ) : (
-          <Menu
-            className="text-black cursor-pointer"
-            size={28}
-            onClick={toggleMenu}
-          />
+          <Menu className="text-black cursor-pointer" size={28} onClick={toggleMenu} />
         )}
       </div>
     </div>

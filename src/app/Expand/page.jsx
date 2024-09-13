@@ -73,20 +73,20 @@ const App = () => {
   if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
 
   return (
-    <>
+    <div className=" h-full min-h-[calc(170vh-112px)] flex-col flex items-stretch justify-stretch">
       <Header />
       <div>
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-end py-4">
           <button
             onClick={() => setIsAddSpouseButtonClick(true)}
-            className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
           >
             Add Spouse
           </button>
 
           <button
             onClick={showModal}
-            className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
           >
             Add Member
           </button>
@@ -118,7 +118,7 @@ const App = () => {
         <Genogram Genogram={modifiedData} />
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
