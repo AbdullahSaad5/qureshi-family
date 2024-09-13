@@ -43,8 +43,8 @@ function initDiagram() {
     model: $(go.GraphLinksModel, {
       linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
     }),
-    "toolManager.hoverDelay": 400, // 100 milliseconds instead of the default 850
-    "toolManager.toolTipDuration": 60000, // 60 seconds instead of the default 5 seconds
+    "toolManager.hoverDelay": 400,
+    "toolManager.toolTipDuration": 10000,
 
     // nodeSelectionAdornmentTemplate: $(
     //   go.Adornment,
@@ -59,8 +59,8 @@ function initDiagram() {
       go.Adornment,
       "Auto",
       { layerName: "Grid" }, // the predefined layer that is behind everything else
-      $(go.Shape, { stroke: "red", strokeWidth: 2, fill: null }),
-      $(go.Placeholder, { margin: 2 })
+      $(go.Shape, "RoundedRectangle", { stroke: "#0066c635", strokeWidth: 2, fill: null }),
+      $(go.Placeholder, { margin: 0 })
     ),
 
     // use a custom layout, defined below
@@ -76,51 +76,49 @@ function initDiagram() {
   let nodeToolTip = $(
     go.Adornment,
     "Auto",
-    $(go.Shape, "Rectangle", {
-      fill: "whitesmoke",
+    $(go.Shape, "RoundedRectangle", {
+      fill: "white",
       stroke: "black",
-      strokeWidth: 2,
+      strokeWidth: 1,
     }),
     $(
       go.Panel,
       "Vertical",
       { margin: 8 },
+      $(go.TextBlock, { font: "bold 14px sans-serif", margin: 2 }, new go.Binding("text", "n")),
       $(
         go.TextBlock,
-        { font: "bold 14px sans-serif", margin: 2 },
-        new go.Binding("text", "n")
+        {
+          font: "12px sans-serif",
+          margin: 2,
+          visible: false, // Set to false by default
+        },
+        new go.Binding("text", "", (data) => `Date of Birth: ${data.dob || "N/A"}`),
+        new go.Binding("visible", "dob", (dob) => Boolean(dob))
       ),
       $(
         go.TextBlock,
-        { font: "12px sans-serif", margin: 2 },
-        new go.Binding(
-          "text",
-          "",
-          (data) => `Date of Birth: ${data.dob || "N/A"}`
-        )
+        { font: "12px sans-serif", margin: 2, visible: false },
+        new go.Binding("text", "", (data) => `Age: ${data.age || "N/A"}`),
+        new go.Binding("visible", "age", (age) => Boolean(age))
       ),
       $(
         go.TextBlock,
-        { font: "12px sans-serif", margin: 2 },
-        new go.Binding("text", "", (data) => `Age: ${data.age || "N/A"}`)
+        { font: "12px sans-serif", margin: 2, visible: false },
+        new go.Binding("text", "", (data) => `Occupation: ${data.occupation || "N/A"}`),
+        new go.Binding("visible", "occupation", (occupation) => Boolean(occupation))
       ),
       $(
         go.TextBlock,
-        { font: "12px sans-serif", margin: 2 },
-        new go.Binding(
-          "text",
-          "",
-          (data) => `Occupation: ${data.occupation || "N/A"}`
-        )
+        { font: "12px sans-serif", margin: 2, visible: false },
+        new go.Binding("text", "", (data) => `Address: ${data.address || "N/A"}`),
+        new go.Binding("visible", "address", (address) => Boolean(address))
       ),
       $(
         go.TextBlock,
-        { font: "12px sans-serif", margin: 2 },
-        new go.Binding(
-          "text",
-          "",
-          (data) => `Address: ${data.address || "N/A"}`
-        )
+        { font: "12px sans-serif", margin: 2, visible: false },
+        new go.Binding("text", "", (data) => `Biography: ${data.biography || "N/A"}`),
+        new go.Binding("visible", "biography", (biography) => Boolean(biography))
       )
 
       // ADD MORE FIELDS HERE
@@ -170,23 +168,16 @@ function initDiagram() {
             { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
             new go.Binding("text", "n")
           ),
+          // Add a blank line after the name
           $(
             go.TextBlock,
             { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding(
-              "text",
-              "",
-              (data) => `${data.dob || "N/A"} | Age: ${data.age || "N/A"}`
-            )
+            new go.Binding("text", "", (data) => `DOB: ${data.dob || "Unknown"}`)
           ),
           $(
             go.TextBlock,
             { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding(
-              "text",
-              "",
-              (data) => `Occupation: ${data.occupation || "N/A"}`
-            )
+            new go.Binding("text", "", (data) => `Tribe: ${data.tribe || "Unknown"}`)
           )
         )
       )
@@ -227,9 +218,7 @@ function initDiagram() {
   diagram.nodeTemplate = $(
     go.Node,
     "Auto", // the Shape will go around the TextBlock
-    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
-      go.Point.stringify
-    ),
+    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
     $(
       go.Shape,
       "Rectangle",
@@ -240,12 +229,12 @@ function initDiagram() {
       },
       // Shape.fill is bound to Node.data.color
       new go.Binding("fill", "color")
-    ),
-    $(
-      go.TextBlock,
-      { margin: 8, editable: true }, // some room around the text
-      new go.Binding("text").makeTwoWay()
     )
+    // $(
+    //   go.TextBlock,
+    //   { margin: 8, editable: true }, // some room around the text
+    //   new go.Binding("text").makeTwoWay()
+    // )
   );
 
   return diagram;
@@ -278,11 +267,7 @@ function setupMarriages(diagram, nodeMap) {
   const marriageLinks = new Set();
 
   nodeMap.forEach((data, key) => {
-    const spouses = Array.isArray(data.spouses)
-      ? data.spouses
-      : data.spouses
-      ? [data.spouses]
-      : [];
+    const spouses = Array.isArray(data.spouses) ? data.spouses : data.spouses ? [data.spouses] : [];
 
     spouses.forEach((spouse) => {
       if (key === spouse) return; // Skip reflexive marriages
@@ -389,18 +374,9 @@ GenogramLayout.prototype.add = function (net, coll, nonmemberonly) {
       // create vertex representing both husband and wife
       let vertex = net.addNode(node);
       // now define the vertex size to be big enough to hold both spouses
-      vertex.width =
-        spouseA.actualBounds.width +
-        this.spouseSpacing +
-        spouseB.actualBounds.width;
-      vertex.height = Math.max(
-        spouseA.actualBounds.height,
-        spouseB.actualBounds.height
-      );
-      vertex.focus = new go.Point(
-        spouseA.actualBounds.width + this.spouseSpacing / 2,
-        vertex.height / 2
-      );
+      vertex.width = spouseA.actualBounds.width + this.spouseSpacing + spouseB.actualBounds.width;
+      vertex.height = Math.max(spouseA.actualBounds.height, spouseB.actualBounds.height);
+      vertex.focus = new go.Point(spouseA.actualBounds.width + this.spouseSpacing / 2, vertex.height / 2);
     } else {
       // don't add a vertex for any married person!
       // instead, code above adds label node for marriage link
@@ -548,21 +524,14 @@ GenogramLayout.prototype.commitNodes = function () {
     // see if the parents are on the desired sides, to avoid a link crossing
     let aParentsNode = layout.findParentsMarriageLabelNode(spouseA);
     let bParentsNode = layout.findParentsMarriageLabelNode(spouseB);
-    if (
-      aParentsNode !== null &&
-      bParentsNode !== null &&
-      aParentsNode.position.x > bParentsNode.position.x
-    ) {
+    if (aParentsNode !== null && bParentsNode !== null && aParentsNode.position.x > bParentsNode.position.x) {
       // swap the spouses
       let temp = spouseA;
       spouseA = spouseB;
       spouseB = temp;
     }
     spouseA.position = new go.Point(v.x, v.y);
-    spouseB.position = new go.Point(
-      v.x + spouseA.actualBounds.width + layout.spouseSpacing,
-      v.y
-    );
+    spouseB.position = new go.Point(v.x + spouseA.actualBounds.width + layout.spouseSpacing, v.y);
     if (spouseA.opacity === 0) {
       let pos = new go.Point(v.centerX - spouseA.actualBounds.width / 2, v.y);
       spouseA.position = pos;
@@ -644,12 +613,7 @@ const Genogram = (props) => {
         divClassName="diagram-component"
         onModelChange={handleModelChange}
       />
-      <Modal4
-        data={data}
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
-        handleOk={handleOk}
-      />
+      <Modal4 data={data} isModalOpen={isModalOpen} handleCancel={handleCancel} handleOk={handleOk} />
     </div>
   );
 };
