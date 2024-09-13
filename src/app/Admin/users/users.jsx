@@ -105,7 +105,7 @@ const Users = () => {
       ) : (
         <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
           <div className="grid grid-cols-6">
-            <div className="col-span-4">
+            <div className="col-span-6">
               <input
                 type="text"
                 placeholder="Search users by name"
@@ -115,23 +115,6 @@ const Users = () => {
               />
             </div>
 
-            <label
-              htmlFor="recordsPerPage"
-              className="ml-1 text-sm mb-2 w-full rounded border border-stroke bg-gray py-3 text-center  text-black focus:border-primary focus-visible:outline-none  col-span-1"
-            >
-              per page:
-            </label>
-            <select
-              id="recordsPerPage"
-              value={recordsPerPage}
-              onChange={handleRecordsChange}
-              className="text-sm mb-2 w-full rounded border border-stroke bg-gray py-3  text-center text-black focus:border-primary focus-visible:outline-none  col-span-1"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-            </select>
-            {/* This is where you'd render the records, passing `recordsPerPage` to your pagination logic */}
           </div>
 
           <div className="max-w-full overflow-x-auto">
@@ -218,6 +201,7 @@ const Users = () => {
               paginate={paginate}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
+              handleRecordsChange={handleRecordsChange}
             />
           </div>
         </div>
