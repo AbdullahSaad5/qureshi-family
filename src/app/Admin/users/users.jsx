@@ -42,6 +42,7 @@ const Users = () => {
       }
     }
   };
+ 
 
   // Paggination
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,6 +72,7 @@ const Users = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
   const [isViewModalOpen, setViewIsModalOpen] = useState(false);
+ 
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -97,6 +99,7 @@ const Users = () => {
     setSelectedRecord(null);
     setIsDeleteModalOpen(false);
   };
+ 
 
   return (
     <div className="mx-auto">
@@ -114,7 +117,6 @@ const Users = () => {
                 className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
               />
             </div>
-
           </div>
 
           <div className="max-w-full overflow-x-auto">
@@ -187,6 +189,7 @@ const Users = () => {
                         >
                           <ImCross />
                         </button>
+                        
                       </div>
                     </td>
                   </tr>
@@ -318,6 +321,7 @@ const Users = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };
