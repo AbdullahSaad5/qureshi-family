@@ -1,5 +1,6 @@
 "use client";
 import { ImCross } from "react-icons/im";
+import { MdDeleteForever } from "react-icons/md";
 import API from "../../axios";
 import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
@@ -187,7 +188,7 @@ const Users = () => {
                           onClick={() => openRejectModal(item)}
                           className="hover:text-red-900 text-red"
                         >
-                          <ImCross />
+                          <MdDeleteForever />
                         </button>
                         
                       </div>
