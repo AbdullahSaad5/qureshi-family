@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import API from "../../axios";
 import { toast } from "react-hot-toast";
@@ -71,6 +71,14 @@ function Login() {
       setLoadingButton(false);
     }
   };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userToken");
+    // console.log(JSON.stringify(storedUser, null, 2));
+    if (storedUser) {
+      router.push("/Admin");
+    }
+    setTimeout(() => setLoading(false), 1000);
+  }, [router]);
 
   return (
     <div>

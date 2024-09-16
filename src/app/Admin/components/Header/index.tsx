@@ -114,17 +114,7 @@ const Header = (props: {
           </ul>
 
           {/* <!-- User Area --> */}
-          {storedUser ? (
-            <DropdownUser />
-          ) : (
-            <button
-              onClick={() => {
-                router.push("/Admin/login");
-              }}
-            >
-              LogIn
-            </button>
-          )}
+          {storedUser && <DropdownUser />}
           {/* <!-- User Area --> */}
         </div>
       </div>
