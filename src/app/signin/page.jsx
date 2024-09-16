@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-
+import { FaPlus, FaMinus } from "react-icons/fa";
 import Header from "../components/LandingPage/Header";
 import Footer from "../components/LandingPage/Footer";
 
@@ -45,9 +45,15 @@ function Login() {
         localStorage.setItem("contact", response.data.data.contact);
       typeof window !== "undefined" &&
         localStorage.setItem("fullName", response.data.data.fullName);
+      typeof window !== "undefined" &&
+        localStorage.setItem("userToken", JSON.stringify(response.data.data));
       toast.success(response.data.message);
       verifyUser();
-      router.push("/Explore");
+      if (response.data.data.isAdmin === true) {
+        router.push("/Admin");
+      } else {
+        router.push("/Explore");
+      }
     } catch (error) {
       if (error.response) {
         const message = error.response.data.message;

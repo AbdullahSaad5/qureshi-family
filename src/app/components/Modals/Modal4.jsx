@@ -4,13 +4,12 @@ import { Button, Divider, Modal } from "antd";
 const DetailsModal = ({ isModalOpen, handleOk, handleCancel, data }) => {
   return (
     <Modal
-
       footer={false}
-
       title="Person Details"
       centered
       open={isModalOpen}
-      onOk={handleOk}
+      onOk={handleCancel}
+      onCancel={handleCancel}
     >
       <Divider
         orientation="left"
@@ -23,16 +22,23 @@ const DetailsModal = ({ isModalOpen, handleOk, handleCancel, data }) => {
         <span className="font-semibold">Name:</span> {data?.n}
       </p>
       <p>
-        <span className="font-semibold">Gender:</span> {data?.s === "F" ? "Female" : "Male"}{" "}
+        <span className="font-semibold">Gender:</span>{" "}
+        {data?.s === "F" ? "Female" : "Male"}{" "}
       </p>
       <p>
         <span className="font-semibold">DOB:</span> {data?.dob}
       </p>
       <p>
-        <span className="font-semibold">Address:</span> {data?.address || "Unknown"}
+        <span className="font-semibold">Ancestor Chain:</span>{" "}
+        {data?.ancestorChain}
       </p>
       <p>
-        <span className="font-semibold">Biography:</span> {data?.biography || "Unknown"}
+        <span className="font-semibold">Address:</span>{" "}
+        {data?.address || "Unknown"}
+      </p>
+      <p>
+        <span className="font-semibold">Biography:</span>{" "}
+        {data?.biography || "Unknown"}
       </p>
     </Modal>
   );

@@ -1,11 +1,19 @@
 // import '../App.css';
-import React, { Component, useCallback, useState, useRef } from "react";
+import React, {
+  Component,
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 import { BiFullscreen } from "react-icons/bi";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 import Modal4 from "../components/Modals/Modal4";
+import male from "../_assets/male.png";
+import female from "../_assets/female.png";
 
 let genoData;
 
@@ -33,10 +41,6 @@ function initDiagram() {
     allowRelink: false,
     minScale: 0.2,
     maxScale: 1,
-    // "clickCreatingTool.archetypeNodeData": {
-    //   text: "new node",
-    //   color: "lightblue",
-    // },
 
     click: (e) => {
       const part = e.diagram.findPartAt(e.documentPoint, true);
@@ -50,24 +54,19 @@ function initDiagram() {
     "toolManager.hoverDelay": 400,
     "toolManager.toolTipDuration": 10000,
 
-    // nodeSelectionAdornmentTemplate: $(
-    //   go.Adornment,
-    //   "Auto",
-    //   { layerName: "Grid" }, // the predefined layer that is behind everything else
-    //   $(go.Shape, "Circle", { fill: "#c1cee3", stroke: null }),
-    //   $(go.Placeholder, { margin: 2 })
-    // ),
-
     // Make highlighted nodes stand out with red stroke
     nodeSelectionAdornmentTemplate: $(
       go.Adornment,
       "Auto",
       { layerName: "Grid" }, // the predefined layer that is behind everything else
-      $(go.Shape, "RoundedRectangle", { stroke: "#0066c635", strokeWidth: 2, fill: null }),
+      $(go.Shape, "RoundedRectangle", {
+        stroke: "#0066c635",
+        strokeWidth: 2,
+        fill: null,
+      }),
       $(go.Placeholder, { margin: 0 })
     ),
 
-    // use a custom layout, defined below
     layout: $(GenogramLayout, {
       direction: 90,
       layerSpacing: 30,
@@ -75,37 +74,102 @@ function initDiagram() {
     }),
   });
 
-  // diagram.add(
-  //   $(
-  //     go.Node,
-  //     "Auto",
-  //     { location: new go.Point(0, 0), locationSpot: go.Spot.TopCenter },
-  //     $(go.TextBlock, {
-  //       text: "Discover Your Family Tree",
-  //       font: "bold 18px sans-serif",
-  //       textAlign: "center",
-  //       margin: 10,
-  //     })
-  //   )
-  // );
+  function makeExpanderButton(color) {
+    return $(
+      "PanelExpanderButton",
+      "BUTTON",
+      {
+        width: 20,
+        height: 20,
+        alignment: go.Spot.TopRight,
+        alignmentFocus: go.Spot.Center,
+        visible: false,
+      },
+      $(go.Shape, "Circle", { fill: color, stroke: null }),
+      $(go.Shape, "PlusLine", { stroke: "white", strokeWidth: 2 })
+    );
+  }
 
-  // diagram.nodeTemplate = $(
-  //   go.Node,
-  //   "Auto",
-  //   $(
-  //     go.Shape,
-  //     "Rectangle",
-  //     { strokeWidth: 0 },
-  //     new go.Binding("fill", "color")
-  //   ),
-  //   $(go.TextBlock, { margin: 5 }, new go.Binding("text", "key"))
-  // );
+  diagram.nodeTemplate = $(
+    go.Node,
+    "Auto",
+    {
+      isTreeExpanded: false,
+      selectionObjectName: "SHAPE",
+    },
+    $(
+      go.Shape,
+      "RoundedRectangle",
+      {
+        name: "SHAPE",
+        fill: "white",
+        strokeWidth: 2,
+        stroke: "#80b6fc",
+        portId: "",
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
+        parameter1: 10,
+      },
+      new go.Binding("fill", "s", (s) =>
+        s === "M" ? MALE_BACKGROUND : FEMALE_BACKGROUND
+      )
+    ),
+    $(
+      go.Panel,
+      "Vertical",
+      $(
+        go.TextBlock,
+        {
+          font: "bold 14px sans-serif",
+          margin: 5,
+          alignment: go.Spot.TopLeft,
+          maxSize: new go.Size(NODE_WIDTH - 30, NaN),
+        },
+        new go.Binding("text", "n")
+      ),
+      $(
+        go.TextBlock,
+        {
+          font: "12px sans-serif",
+          margin: 5,
+          alignment: go.Spot.TopLeft,
+        },
+        new go.Binding("text", "dob", (dob) => `DOB: ${dob || "Unknown"}`)
+      ),
+      $(
+        go.TextBlock,
+        {
+          font: "12px sans-serif",
+          margin: 5,
+          alignment: go.Spot.TopLeft,
+        },
+        new go.Binding(
+          "text",
+          "tribe",
+          (tribe) => `Tribe: ${tribe || "Unknown"}`
+        )
+      )
+    ),
+    makeExpanderButton("#80b6fc"),
+    {
+      click: (e, obj) => {
+        e.diagram.startTransaction("toggled expand/collapse");
+        const node = obj.part;
+        if (node) {
+          node.isTreeExpanded = !node.isTreeExpanded;
+        }
+        e.diagram.commitTransaction("toggled expand/collapse");
+      },
+    },
+    new go.Binding("isTreeExpanded").makeTwoWay(),
+    new go.Binding("wasTreeExpanded").makeTwoWay()
+  );
 
-  // diagram.linkTemplate = $(
-  //   go.Link,
-  //   $(go.Shape),
-  //   $(go.Shape, { toArrow: "OpenTriangle" })
-  // );
+  diagram.linkTemplate = $(
+    go.Link,
+    { routing: go.Link.Orthogonal, corner: 5 },
+    $(go.Shape, { strokeWidth: 2, stroke: LINK_COLOR })
+  );
 
   // THIS IS THE TOOLTIP THAT IS BEING SHOWN ON THE HOVER
 
@@ -121,7 +185,11 @@ function initDiagram() {
       go.Panel,
       "Vertical",
       { margin: 8 },
-      $(go.TextBlock, { font: "bold 14px sans-serif", margin: 2 }, new go.Binding("text", "n")),
+      $(
+        go.TextBlock,
+        { font: "bold 14px sans-serif", margin: 2 },
+        new go.Binding("text", "n")
+      ),
       $(
         go.TextBlock,
         {
@@ -129,7 +197,11 @@ function initDiagram() {
           margin: 2,
           visible: false, // Set to false by default
         },
-        new go.Binding("text", "", (data) => `Date of Birth: ${data.dob || "N/A"}`),
+        new go.Binding(
+          "text",
+          "",
+          (data) => `Date of Birth: ${data.dob || "N/A"}`
+        ),
         new go.Binding("visible", "dob", (dob) => Boolean(dob))
       ),
       $(
@@ -141,26 +213,46 @@ function initDiagram() {
       $(
         go.TextBlock,
         { font: "12px sans-serif", margin: 2, visible: false },
-        new go.Binding("text", "", (data) => `Occupation: ${data.occupation || "N/A"}`),
-        new go.Binding("visible", "occupation", (occupation) => Boolean(occupation))
+        new go.Binding(
+          "text",
+          "",
+          (data) => `Occupation: ${data.occupation || "N/A"}`
+        ),
+        new go.Binding("visible", "occupation", (occupation) =>
+          Boolean(occupation)
+        )
       ),
       $(
         go.TextBlock,
         { font: "12px sans-serif", margin: 2, visible: false },
-        new go.Binding("text", "", (data) => `Address: ${data.address || "N/A"}`),
+        new go.Binding(
+          "text",
+          "",
+          (data) => `Address: ${data.address || "N/A"}`
+        ),
         new go.Binding("visible", "address", (address) => Boolean(address))
       ),
       $(
         go.TextBlock,
         { font: "12px sans-serif", margin: 2, visible: false },
-        new go.Binding("text", "", (data) => `Biography: ${data.biography || "N/A"}`),
-        new go.Binding("visible", "biography", (biography) => Boolean(biography))
+        new go.Binding(
+          "text",
+          "",
+          (data) => `Biography: ${data.biography || "N/A"}`
+        ),
+        new go.Binding("visible", "biography", (biography) =>
+          Boolean(biography)
+        )
       )
 
       // ADD MORE FIELDS HERE
     )
   );
+
   function nodeTemplate(gender) {
+    const maleImage = "https://www.w3schools.com/howto/img_avatar.png"; // Male avatar
+    const femaleImage = "https://www.w3schools.com/howto/img_avatar2.png"; // Female avatar
+
     return $(
       go.Node,
       "Auto",
@@ -172,7 +264,6 @@ function initDiagram() {
         cursor: "pointer",
         toolTip: nodeToolTip, // Add the tooltip to the node
         click: (e, node) => {
-          // toggleChildrenVisibility(node);
           const showModal = node.diagram.model.modelData.showModal;
           const setData = node.diagram.model.modelData.setData;
           if (showModal && setData) {
@@ -193,32 +284,162 @@ function initDiagram() {
       }),
       $(
         go.Panel,
-        "Horizontal",
+        "Vertical",
         { margin: 5 },
+        // Image panel
         $(
           go.Panel,
-          "Vertical",
-          { alignment: go.Spot.Left },
+          "Position",
+          { alignment: go.Spot.TopCenter, alignmentFocus: go.Spot.TopCenter },
+          $(go.Picture, {
+            source: gender === "M" ? maleImage : femaleImage,
+            width: 48, // set width
+            height: 48, // set height
+            imageStretch: go.GraphObject.UniformToFill, // similar to object-fit: cover
+            alignment: go.Spot.TopCenter,
+            margin: new go.Margin(-12, 0, 0, 0), // position the image with half above the node
+          })
+        ),
+        $(
+          go.Panel,
+          "Horizontal",
+          { margin: 5 },
           $(
-            go.TextBlock,
-            { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "n")
-          ),
-          // Add a blank line after the name
-          $(
-            go.TextBlock,
-            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "", (data) => `DOB: ${data.dob || "Unknown"}`)
-          ),
-          $(
-            go.TextBlock,
-            { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-            new go.Binding("text", "", (data) => `Tribe: ${data.tribe || "Unknown"}`)
+            go.Panel,
+            "Vertical",
+            { alignment: go.Spot.Left },
+            $(
+              go.TextBlock,
+              { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
+              new go.Binding("text", "n")
+            ),
+            $(
+              go.TextBlock,
+              { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
+              new go.Binding(
+                "text",
+                "",
+                (data) => `DOB: ${data.dob || "Unknown"}`
+              )
+            ),
+            $(
+              go.TextBlock,
+              { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
+              new go.Binding(
+                "text",
+                "",
+                (data) => `Tribe: ${data.tribe || "Unknown"}`
+              )
+            )
           )
         )
       )
     );
   }
+
+  // console.log(go.TreeExpanderButton);
+
+  // Define the node template with TreeExpanderButton
+  // diagram.nodeTemplate = $(
+  //   go.Node,
+  //   "Horizontal",
+  //   {
+  //     locationSpot: go.Spot.Center,
+  //     locationObjectName: "SHAPE",
+  //     selectionObjectName: "SHAPE",
+  //     layerName: "Foreground",
+  //     cursor: "pointer",
+  //     toolTip: nodeToolTip,
+  //     click: (e, node) => {
+  //       const showModal = node.diagram.model.modelData.showModal;
+  //       const setData = node.diagram.model.modelData.setData;
+  //       if (showModal && setData) {
+  //         setData(node.data);
+  //         showModal();
+  //       }
+  //     },
+  //   },
+  //   $(go.Shape, "Ellipse", {
+  //     name: "SHAPE",
+  //     fill: "white",
+  //     strokeWidth: 1,
+  //   }),
+  //   $(go.TextBlock, { margin: 5 }, new go.Binding("text", "key")),
+  //   $(
+  //     go.Panel,
+  //     "Horizontal",
+  //     { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left },
+  //     $(go.TreeExpanderButton)
+  //   )
+  // );
+
+  // function nodeTemplate(gender) {
+  //   return $(
+  //     go.Node,
+  //     "Auto",
+  //     {
+  //       locationSpot: go.Spot.Center,
+  //       locationObjectName: "SHAPE",
+  //       selectionObjectName: "SHAPE",
+  //       layerName: "Foreground",
+  //       cursor: "pointer",
+  //       toolTip: nodeToolTip, // Add the tooltip to the node
+  //       click: (e, node) => {
+  //         // toggleChildrenVisibility(node);
+  //         const showModal = node.diagram.model.modelData.showModal;
+  //         const setData = node.diagram.model.modelData.setData;
+  //         if (showModal && setData) {
+  //           setData(node.data);
+  //           showModal();
+  //         }
+  //       },
+  //     },
+  //     $(go.Shape, "RoundedRectangle", {
+  //       name: "SHAPE",
+  //       fill: gender === "M" ? MALE_BACKGROUND : FEMALE_BACKGROUND,
+  //       stroke: gender === "M" ? "#5dade2" : "#f09e97",
+  //       strokeWidth: 2,
+  //       width: NODE_WIDTH,
+  //       height: NODE_HEIGHT,
+  //       parameter1: gender === "M" ? 5 : 10, // corner radius
+  //       portId: "",
+  //     }),
+  //     $(
+  //       go.Panel,
+  //       "Horizontal",
+  //       { margin: 5 },
+  //       $(
+  //         go.Panel,
+  //         "Vertical",
+  //         { alignment: go.Spot.Left },
+  //         $(
+  //           go.TextBlock,
+  //           { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
+  //           new go.Binding("text", "n")
+  //         ),
+  //         // Add a blank line after the name
+  //         $(
+  //           go.TextBlock,
+  //           { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
+  //           new go.Binding(
+  //             "text",
+  //             "",
+  //             (data) => `DOB: ${data.dob || "Unknown"}`
+  //           )
+  //         ),
+  //         $(
+  //           go.TextBlock,
+  //           { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
+  //           new go.Binding(
+  //             "text",
+  //             "",
+  //             (data) => `Tribe: ${data.tribe || "Unknown"}`
+  //           )
+  //         )
+  //       )
+  //     )
+  //   );
+  // }
 
   diagram.nodeTemplateMap.add("M", nodeTemplate("M"));
   diagram.nodeTemplateMap.add("F", nodeTemplate("F"));
@@ -254,7 +475,9 @@ function initDiagram() {
   diagram.nodeTemplate = $(
     go.Node,
     "Auto", // the Shape will go around the TextBlock
-    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
+      go.Point.stringify
+    ),
     $(
       go.Shape,
       "Rectangle",
@@ -266,6 +489,7 @@ function initDiagram() {
       // Shape.fill is bound to Node.data.color
       new go.Binding("fill", "color")
     )
+
     // $(
     //   go.TextBlock,
     //   { margin: 8, editable: true }, // some room around the text
@@ -275,6 +499,7 @@ function initDiagram() {
 
   return diagram;
 }
+
 function setupDiagram(diagram, array, focusId) {
   const model = go.GraphObject.make(go.GraphLinksModel, {
     linkLabelKeysProperty: "labelKeys",
@@ -303,7 +528,11 @@ function setupMarriages(diagram, nodeMap) {
   const marriageLinks = new Set();
 
   nodeMap.forEach((data, key) => {
-    const spouses = Array.isArray(data.spouses) ? data.spouses : data.spouses ? [data.spouses] : [];
+    const spouses = Array.isArray(data.spouses)
+      ? data.spouses
+      : data.spouses
+      ? [data.spouses]
+      : [];
 
     spouses.forEach((spouse) => {
       if (key === spouse) return; // Skip reflexive marriages
@@ -394,29 +623,37 @@ GenogramLayout.prototype.makeNetwork = function (coll) {
 // by a single LayeredDigraphVertex corresponding to the label Node on the marriage Link
 GenogramLayout.prototype.add = function (net, coll, nonmemberonly) {
   let multiSpousePeople = new go.Set();
-  // consider all Nodes in the given collection
   let it = coll.iterator;
   while (it.next()) {
     let node = it.value;
     if (!(node instanceof go.Node)) continue;
     if (!node.isLayoutPositioned || !node.isVisible()) continue;
     if (nonmemberonly && node.containingGroup !== null) continue;
-    // if it's an unmarried Node, or if it's a Link Label Node, create a LayoutVertex for it
     if (node.isLinkLabel) {
-      // get marriage Link
       let link = node.labeledLink;
       let spouseA = link.fromNode;
       let spouseB = link.toNode;
-      // create vertex representing both husband and wife
+
+      // Ensure spouseA and spouseB are not null
+      if (spouseA === null || spouseB === null) {
+        console.error("Invalid link with null spouse nodes", link);
+        continue;
+      }
+
       let vertex = net.addNode(node);
-      // now define the vertex size to be big enough to hold both spouses
-      vertex.width = spouseA.actualBounds.width + this.spouseSpacing + spouseB.actualBounds.width;
-      vertex.height = Math.max(spouseA.actualBounds.height, spouseB.actualBounds.height);
-      vertex.focus = new go.Point(spouseA.actualBounds.width + this.spouseSpacing / 2, vertex.height / 2);
+      vertex.width =
+        spouseA.actualBounds.width +
+        this.spouseSpacing +
+        spouseB.actualBounds.width;
+      vertex.height = Math.max(
+        spouseA.actualBounds.height,
+        spouseB.actualBounds.height
+      );
+      vertex.focus = new go.Point(
+        spouseA.actualBounds.width + this.spouseSpacing / 2,
+        vertex.height / 2
+      );
     } else {
-      // don't add a vertex for any married person!
-      // instead, code above adds label node for marriage link
-      // assume a marriage Link has a label Node
       let marriages = 0;
       node.linksConnected.each(function (l) {
         if (l.isLabeledLink) marriages++;
@@ -428,28 +665,22 @@ GenogramLayout.prototype.add = function (net, coll, nonmemberonly) {
       }
     }
   }
-  // now do all Links
+
   it.reset();
   while (it.next()) {
     let link = it.value;
     if (!(link instanceof go.Link)) continue;
     if (!link.isLayoutPositioned || !link.isVisible()) continue;
     if (nonmemberonly && link.containingGroup !== null) continue;
-    // if it's a parent-child link, add a LayoutEdge for it
     if (!link.isLabeledLink) {
-      let parent = net.findVertex(link.fromNode); // should be a label node
+      let parent = net.findVertex(link.fromNode);
       let child = net.findVertex(link.toNode);
       if (child !== null) {
-        // an unmarried child
         net.linkVertexes(parent, child, link);
       } else {
-        // a married child
         link.toNode.linksConnected.each(function (l) {
-          if (!l.isLabeledLink) return; // if it has no label node, it's a parent-child link
-          // found the Marriage Link, now get its label Node
+          if (!l.isLabeledLink) return;
           let mlab = l.labelNodes.first();
-          // parent-child link should connect with the label node,
-          // so the LayoutEdge should connect with the LayoutVertex representing the label node
           let mlabvert = net.findVertex(mlab);
           if (mlabvert !== null) {
             net.linkVertexes(parent, mlabvert, link);
@@ -460,11 +691,9 @@ GenogramLayout.prototype.add = function (net, coll, nonmemberonly) {
   }
 
   while (multiSpousePeople.count > 0) {
-    // find all collections of people that are indirectly married to each other
     let node = multiSpousePeople.first();
     let cohort = new go.Set();
     this.extendCohort(cohort, node);
-    // then encourage them all to be the same generation by connecting them all with a common vertex
     let dummyvert = net.createVertex();
     net.addVertex(dummyvert);
     let marriages = new go.Set();
@@ -474,14 +703,12 @@ GenogramLayout.prototype.add = function (net, coll, nonmemberonly) {
       });
     });
     marriages.each(function (link) {
-      // find the vertex for the marriage link (i.e. for the label node)
       let mlab = link.labelNodes.first();
       let v = net.findVertex(mlab);
       if (v !== null) {
         net.linkVertexes(dummyvert, v, null);
       }
     });
-    // done with these people, now see if there are any other multiple-married people
     multiSpousePeople.removeAll(cohort);
   }
 };
@@ -560,14 +787,21 @@ GenogramLayout.prototype.commitNodes = function () {
     // see if the parents are on the desired sides, to avoid a link crossing
     let aParentsNode = layout.findParentsMarriageLabelNode(spouseA);
     let bParentsNode = layout.findParentsMarriageLabelNode(spouseB);
-    if (aParentsNode !== null && bParentsNode !== null && aParentsNode.position.x > bParentsNode.position.x) {
+    if (
+      aParentsNode !== null &&
+      bParentsNode !== null &&
+      aParentsNode.position.x > bParentsNode.position.x
+    ) {
       // swap the spouses
       let temp = spouseA;
       spouseA = spouseB;
       spouseB = temp;
     }
     spouseA.position = new go.Point(v.x, v.y);
-    spouseB.position = new go.Point(v.x + spouseA.actualBounds.width + layout.spouseSpacing, v.y);
+    spouseB.position = new go.Point(
+      v.x + spouseA.actualBounds.width + layout.spouseSpacing,
+      v.y
+    );
     if (spouseA.opacity === 0) {
       let pos = new go.Point(v.centerX - spouseA.actualBounds.width / 2, v.y);
       spouseA.position = pos;
@@ -618,6 +852,63 @@ function handleModelChange(e) {
   // console.log(e);
 }
 
+// const focusOnFirstNode = (diagram) => {
+//   const firstNode = diagram.nodes.first(); // Get the first node
+//   if (firstNode) {
+//     // Get the bounds of the first node
+//     const nodeBounds = firstNode.actualBounds;
+
+//     // Adjust zoom level to control how much zoomed in you want to be
+//     const zoomFactor = 1.2; // Adjust this value to zoom in more or less
+//     const viewportWidth = diagram.viewportBounds.width;
+//     const viewportHeight = diagram.viewportBounds.height;
+
+//     // Calculate the rectangle to zoom into with an adjusted size
+//     const zoomRect = nodeBounds
+//       .copy()
+//       .inflate(
+//         nodeBounds.width * (zoomFactor - 1),
+//         nodeBounds.height * (zoomFactor - 1)
+//       );
+
+//     // Center the rectangle within the viewport
+//     const centerX = zoomRect.centerX;
+//     const centerY = zoomRect.centerY;
+//     const newScale = Math.min(
+//       viewportWidth / zoomRect.width,
+//       viewportHeight / zoomRect.height
+//     );
+
+//     // Set the scale and center the view on the adjusted rectangle
+//     diagram.scale = Math.min(Math.max(newScale, 0.2), 1); // Set scale within bounds
+//     diagram.centerRect(zoomRect);
+//   }
+// };
+
+const focusOnNodeByKey = (diagram, key) => {
+  const node = diagram.findNodeForKey(key);
+  if (node) {
+    const nodeBounds = node.actualBounds;
+    const zoomFactor = 1.2;
+    const viewportWidth = diagram.viewportBounds.width;
+    const viewportHeight = diagram.viewportBounds.height;
+
+    const zoomRect = nodeBounds
+      .copy()
+      .inflate(
+        nodeBounds.width * (zoomFactor - 1),
+        nodeBounds.height * (zoomFactor - 1)
+      );
+    const newScale = Math.min(
+      viewportWidth / zoomRect.width,
+      viewportHeight / zoomRect.height
+    );
+
+    diagram.scale = Math.min(Math.max(newScale, 0.2), 1);
+    diagram.centerRect(zoomRect);
+  }
+};
+
 const Genogram = (props) => {
   const diagramRef = useRef(null);
 
@@ -665,8 +956,22 @@ const Genogram = (props) => {
     }
   };
 
-  return (
+  useEffect(() => {
+    const diagram = diagramRef.current?.getDiagram();
+    if (diagram) {
+      const handleLayoutCompleted = () => {
+        focusOnNodeByKey(diagram, "66d97923b3f4dc6c629e7e5b");
+      };
 
+      diagram.addDiagramListener("LayoutCompleted", handleLayoutCompleted);
+
+      return () => {
+        diagram.removeDiagramListener("LayoutCompleted", handleLayoutCompleted);
+      };
+    }
+  }, [diagramRef]);
+
+  return (
     <>
       <div id="genogram">
         <div className="flex justify-between">
@@ -707,7 +1012,6 @@ const Genogram = (props) => {
         />
       </div>
     </>
-
   );
 };
 

@@ -39,6 +39,10 @@ export default function PublicFigureTree() {
         spouses: member.spouseIds,
         f: member.father,
         m: member.mother,
+        tribe: member.tribe || "Unknown",
+        biography: member.biography || "Unknown",
+        address: member.address || "Unknown",
+        ancestorChain: member.ancestorChain || "Unknown",
         dob: new Date(member.dateOfBirth).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
