@@ -1,6 +1,7 @@
 "use client";
 import { ImCross } from "react-icons/im";
 import { FaUserEdit } from "react-icons/fa";
+
 import { FaCrown } from "react-icons/fa";
 import API from "../../axios";
 import toast from "react-hot-toast";
@@ -12,6 +13,7 @@ import EditModal from "../../components/Modals/EditModal";
 const ViewPersonsList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = (item) => {
+    console.log(`item data: ${JSON.stringify(item, null, 2)}`);
     setSelectedRecord(item);
     setIsModalOpen(true);
   };
@@ -36,6 +38,7 @@ const ViewPersonsList = () => {
     return arr.filter((obj) => obj.id !== id);
   }
   const [loading, setLoading] = useState(true);
+  // delete user :not being used
   const handelDelete = async () => {
     if (selectedRecord) {
       try {
@@ -47,6 +50,7 @@ const ViewPersonsList = () => {
       }
     }
   };
+  // update user :not being used
   const handleUpdate = async () => {
     if (selectedRecord) {
       try {
@@ -68,7 +72,6 @@ const ViewPersonsList = () => {
     if (selectedRecord) {
       try {
         const res = await API.post(`/makePublicFigure/${selectedRecord._id}`);
-        console.log(`response ${JSON.stringify(res, null, 2)}`);
         toast.success(res.data?.message);
         closePublicFigureModal();
         fetchData();
@@ -232,7 +235,7 @@ const ViewPersonsList = () => {
                             />
                           </svg>
                         </button>
-                        {/* Delete button  */}
+                        {/* Edit button  */}
                         <button
                           onClick={() => showModal(item)}
                           className="hover:text-red-900 text-red"
@@ -340,16 +343,15 @@ const ViewPersonsList = () => {
           </div>
         </div>
       )}
-      {/* Delete Confirmation Modal */}
-      <EditModal
-        isModalOpen={isModalOpen}
-        data={selectedRecord}
-        handleCancel={handleCancel}
-        // setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
-        // setSelectedFatherID={setSelectedFatherID}
-        // setReFetchtree={setReFetchtree}
-        // reFetchtree={reFetchtree}
-      />
+      {/* Edit Modal */}
+      {selectedRecord && isModalOpen && (
+        <EditModal
+          isModalOpen={isModalOpen}
+          data={selectedRecord}
+          handleCancel={handleCancel}
+          fetchData={fetchData}
+        />
+      )}
       {/* Add as Public Figure */}
       {isPublicFigureModalOpen && selectedRecord && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
