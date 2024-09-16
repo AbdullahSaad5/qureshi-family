@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
-import Modal1 from "../../components/Modals/Modal1";
 import EditModal from "../../components/Modals/EditModal";
 const ViewPersonsList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -382,9 +381,9 @@ const ViewPersonsList = () => {
                     </h3>
                     <div className="mt-2">
                       <p className="text-gray-500 text-sm">
-                        {selectedRecord.selectedRecord
-                          ? `Are you sure you want to remove from Famous Personality`
-                          : ` Are you sure you want to add this user as Famous Personality`}
+                        {selectedRecord?.isProminentFigure
+                          ? `Are you sure you want to remove this person from Famous Personality`
+                          : `Are you sure you want to add this person as Famous Personality`}
                       </p>
                     </div>
                   </div>
