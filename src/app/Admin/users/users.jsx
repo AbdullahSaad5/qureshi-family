@@ -284,7 +284,7 @@ const Users = () => {
               )}
             </Descriptions.Item>
             <Descriptions.Item label="Role">
-              {selectedRecord?.role || 'Admin'}
+              {selectedRecord?.role || "Admin"}
             </Descriptions.Item>
             <Descriptions.Item label="Date of Joining">
               {new Date(selectedRecord?.date_time).toLocaleDateString()}
@@ -333,7 +333,7 @@ const Users = () => {
                   disabled={loadingButton}
                   onClick={handleDelete}
                   className={`inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
-                    loadingButton ? "cursor-not-allowed" : ""
+                    loadingButton && "cursor-not-allowed"
                   }`}
                 >
                   <span> Yes, Remove</span>
