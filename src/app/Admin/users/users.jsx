@@ -1,5 +1,6 @@
 "use client";
 import { ImCross } from "react-icons/im";
+import { MdDeleteForever } from "react-icons/md";
 import API from "../../axios";
 import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
@@ -42,6 +43,7 @@ const Users = () => {
       }
     }
   };
+ 
 
   // Paggination
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,6 +73,7 @@ const Users = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
   const [isViewModalOpen, setViewIsModalOpen] = useState(false);
+ 
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -97,6 +100,7 @@ const Users = () => {
     setSelectedRecord(null);
     setIsDeleteModalOpen(false);
   };
+ 
 
   return (
     <div className="mx-auto">
@@ -114,7 +118,6 @@ const Users = () => {
                 className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
               />
             </div>
-
           </div>
 
           <div className="max-w-full overflow-x-auto">
@@ -185,8 +188,9 @@ const Users = () => {
                           onClick={() => openRejectModal(item)}
                           className="hover:text-red-900 text-red"
                         >
-                          <ImCross />
+                          <MdDeleteForever />
                         </button>
+                        
                       </div>
                     </td>
                   </tr>
@@ -318,6 +322,7 @@ const Users = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

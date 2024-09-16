@@ -1,11 +1,27 @@
 "use client";
 import { ImCross } from "react-icons/im";
+import { FaUserEdit } from "react-icons/fa";
+
+import { FaCrown } from "react-icons/fa";
 import API from "../../axios";
 import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
+import Modal1 from "../../components/Modals/Modal1";
+import EditModal from "../../components/Modals/EditModal";
 const ViewPersonsList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = (item) => {
+    console.log(`item data: ${JSON.stringify(item, null, 2)}`);
+    setSelectedRecord(item);
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const [personList, setPersonList] = useState([]);
   const fetchData = async () => {
     const res = await API.get("/getAllMembers");
@@ -22,23 +38,19 @@ const ViewPersonsList = () => {
     return arr.filter((obj) => obj.id !== id);
   }
   const [loading, setLoading] = useState(true);
-  const handleReject = async () => {
-    console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
+  // delete user :not being used
+  const handelDelete = async () => {
     if (selectedRecord) {
       try {
-        console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
-        const newState = removeObjectWithId(state, selectedRecord.id);
-        // await API.delete(`/Reject-endpoint/`);
-        // fetchData(); // Re-fetch data after deletion to update the table
-        closeRejectModal();
-        toast.success("Record Updated:");
+        await API.delete(`/member/${selectedRecord._id}`);
+        closeDeleteModal();
+        toast.success("Record Deleted Successfully");
       } catch (error) {
-        console.log(`here, ${selectedRecord} and its id ${selectedRecord.id}`);
         toast.error("Error deleting record:", error);
-        // Handle error (e.g., show a toast notification)
       }
     }
   };
+  // update user :not being used
   const handleUpdate = async () => {
     if (selectedRecord) {
       try {
@@ -52,6 +64,22 @@ const ViewPersonsList = () => {
         // closeUpdateModal();
       } catch (error) {
         console.error("Error updating record:", error);
+        // Handle error (e.g., show a toast notification)
+      }
+    }
+  };
+  const handleFmousPersonality = async () => {
+    if (selectedRecord) {
+      try {
+        const res = await API.post(`/makePublicFigure/${selectedRecord._id}`);
+        toast.success(res.data?.message);
+        closePublicFigureModal();
+        fetchData();
+      } catch (error) {
+        console.log(
+          `Catch, ${selectedRecord} and its id ${selectedRecord._id}`
+        );
+        toast.error("Error updating record:", error);
         // Handle error (e.g., show a toast notification)
       }
     }
@@ -96,8 +124,18 @@ const ViewPersonsList = () => {
   //modal control
   const [isViewModalOpen, setViewIsModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeletModal] = useState(false);
+  const [isPublicFigureModalOpen, sePublicFigureModal] = useState(false);
 
+  const openDeleteModal = (record) => {
+    setSelectedRecord(record);
+    setIsDeletModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setSelectedRecord(null);
+    setIsDeletModal(false);
+  };
   const openViewModal = (record) => {
     setSelectedRecord(record);
     setViewIsModalOpen(true);
@@ -107,14 +145,14 @@ const ViewPersonsList = () => {
     setSelectedRecord(null);
     setViewIsModalOpen(false);
   };
-  const openRejectModal = (record) => {
-    setSelectedRecord(record);
-    setIsRejectModalOpen(true);
-  };
 
-  const closeRejectModal = () => {
+  const openPublicFigureModal = (record) => {
+    setSelectedRecord(record);
+    sePublicFigureModal(true);
+  };
+  const closePublicFigureModal = () => {
     setSelectedRecord(null);
-    setIsRejectModalOpen(false);
+    sePublicFigureModal(false);
   };
 
   return (
@@ -133,24 +171,6 @@ const ViewPersonsList = () => {
                 className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
               />
             </div>
-
-            {/* <label
-              htmlFor="recordsPerPage"
-              className=" text-center ml-1 text-sm mb-2 w-full rounded border border-stroke bg-gray py-3   text-black focus:border-primary focus-visible:outline-none  col-span-1"
-            >
-              per page:
-            </label> */}
-            {/* <select
-              id="recordsPerPage"
-              value={recordsPerPage}
-              onChange={handleRecordsChange}
-              className="text-sm mb-2 w-full rounded border border-stroke bg-gray py-3 text-center text-black focus:border-primary focus-visible:outline-none  col-span-1"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-            </select> */}
-            {/* This is where you'd render the records, passing `recordsPerPage` to your pagination logic */}
           </div>
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
@@ -215,6 +235,23 @@ const ViewPersonsList = () => {
                             />
                           </svg>
                         </button>
+                        {/* Edit button  */}
+                        <button
+                          onClick={() => showModal(item)}
+                          className="hover:text-red-900 text-red"
+                        >
+                          <FaUserEdit />
+                        </button>
+                        <button
+                          // disabled={item.isProminentFigure}
+                          onClick={() => openPublicFigureModal(item)}
+                          className={`hover:text-red ${
+                            item.isProminentFigure &&
+                            `text-meta-6 hover:text-meta-6`
+                          } `}
+                        >
+                          <FaCrown />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -232,7 +269,6 @@ const ViewPersonsList = () => {
                 setCurrentPage={setCurrentPage}
                 handleRecordsChange={handleRecordsChange}
               />
-              
             </div>
           </div>
         </div>
@@ -279,6 +315,10 @@ const ViewPersonsList = () => {
                         Mother: {selectedRecord?.mother?.name || `-`}
                       </p>
                       <p className="text-gray-700  text-sm md:text-lg ">
+                        Prominent Figure :{" "}
+                        {selectedRecord?.isProminentFigure.toString() || `-`}
+                      </p>
+                      <p className="text-gray-700  text-sm md:text-lg ">
                         Date of Birth:{" "}
                         {formatDate(
                           selectedRecord.dateOfBirth
@@ -303,8 +343,17 @@ const ViewPersonsList = () => {
           </div>
         </div>
       )}
-      {/* Delete Confirmation Modal */}
-      {isRejectModalOpen && selectedRecord && (
+      {/* Edit Modal */}
+      {selectedRecord && isModalOpen && (
+        <EditModal
+          isModalOpen={isModalOpen}
+          data={selectedRecord}
+          handleCancel={handleCancel}
+          fetchData={fetchData}
+        />
+      )}
+      {/* Add as Public Figure */}
+      {isPublicFigureModalOpen && selectedRecord && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
             <div
@@ -329,11 +378,13 @@ const ViewPersonsList = () => {
                       className="text-gray-900 text-lg font-medium leading-6"
                       id="modal-title"
                     >
-                      Confirm Rejection
+                      Update Famous Personality
                     </h3>
                     <div className="mt-2">
                       <p className="text-gray-500 text-sm">
-                        Are you sure you want to reject this request?
+                        {selectedRecord.selectedRecord
+                          ? `Are you sure you want to remove from Famous Personality`
+                          : ` Are you sure you want to add this user as Famous Personality`}
                       </p>
                     </div>
                   </div>
@@ -341,13 +392,13 @@ const ViewPersonsList = () => {
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
-                  onClick={handleReject}
-                  className="inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={handleFmousPersonality}
+                  className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm"
                 >
-                  Yes, Reject
+                  Yes
                 </button>
                 <button
-                  onClick={closeRejectModal}
+                  onClick={closePublicFigureModal}
                   className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
                 >
                   Cancel

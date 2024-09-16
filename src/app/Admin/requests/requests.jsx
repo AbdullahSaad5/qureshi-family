@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ImCheckmark2 } from "react-icons/im";
 import Loader from "../components/common/Loader/index";
+import { useRouter } from "next/navigation";
 const Requests = () => {
+  const router = useRouter();
   const [data, setData] = useState();
   const [loading, setLoading] = useState(true);
   const fetchData = async () => {
@@ -14,7 +16,7 @@ const Requests = () => {
       const response = await API.get("/getPendingReq");
       setData(response.data.requests);
       console.log(
-        `fetched data  : ${JSON.stringify(response.data.requests, null, 2)}`,
+        `fetched data  : ${JSON.stringify(response.data.requests, null, 2)}`
       );
       setLoading(false);
     } catch (error) {
@@ -143,8 +145,8 @@ const Requests = () => {
                           packageItem.status === "Paid"
                             ? "bg-success text-success"
                             : packageItem.status === "Unpaid"
-                              ? "bg-danger text-danger"
-                              : "bg-warning text-warning"
+                            ? "bg-danger text-danger"
+                            : "bg-warning text-warning"
                         }`}
                       >
                         {packageItem.status}
@@ -174,7 +176,7 @@ const Requests = () => {
                             />
                           </svg>
                         </button>
-                        <button
+                        {/* <button
                           onClick={() => openRejectModal(packageItem)}
                           className="hover:text-red-900 text-red"
                         >
@@ -187,7 +189,7 @@ const Requests = () => {
                           className="text-green-600 hover:text-green-900"
                         >
                           <ImCheckmark2 />
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>
@@ -246,9 +248,17 @@ const Requests = () => {
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   onClick={closeModal}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
+                  className="border-red text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
                 >
                   Close
+                </button>
+                <button
+                  onClick={() =>
+                    router.push(`/Admin/requests/${selectedRecord._id}`)
+                  }
+                  className=" mx-1 border-green-500 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
+                >
+                  Approve Request
                 </button>
               </div>
             </div>
