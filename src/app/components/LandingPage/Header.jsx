@@ -113,7 +113,7 @@ function Header() {
         </div>
       ) : (
         <div
-          onClick={() => handleNavigation("/sigin")}
+          onClick={() => handleNavigation("/signin")}
           className=" md:flex hidden"
         >
           <div className="relative flex justify-center w-40 lg:w-48 rounded-full border border-[#82D026] bg-[#82D026] p-0.5 cursor-pointer">
