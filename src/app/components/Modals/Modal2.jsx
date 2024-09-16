@@ -49,7 +49,8 @@ const Modal2 = ({
 
       if (response.ok) {
         console.log("Spouse added successfully");
-        toast.success("Spouse Added successfully");
+        toast.success("Spouse add request send for review");
+
         setIsAddSpouseModalOpen(false);
         reset();
         setReFetchtree(!reFetchtree);

@@ -1,8 +1,109 @@
-import React from "react";
+"use client";
+
+import React, { useCallback, useEffect, useState } from "react";
 import { LuSearchCheck } from "react-icons/lu";
 import bg from "../../_assets/Rectangle404.png";
+import { useForm } from "react-hook-form";
+import debounce from "lodash/debounce";
+import { Select } from "antd";
+
+import { useRouter } from "next/navigation";
 
 function SearchMember() {
+  const [fatherOptions, setFatherOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selctedFather, setSelectedFather] = useState("");
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      fatherName: "",
+    },
+  });
+
+  const onSubmit = async (formData) => {
+    console.log("Form submission");
+    console.log(formData);
+    router.push(`/Explore/${selctedFather}`);
+  };
+
+  const fetchFatherOptions = async (searchValue) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/searchbyname/${searchValue}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        const formattedOptions = data.map((person) => ({
+          value: person._id,
+          label: `
+          Name: ${person.name}
+          Father: ${person.father || "Unknown"}
+        `.trim(),
+        }));
+        setFatherOptions(formattedOptions);
+      } else {
+        console.error("Error fetching options:", data.message);
+      }
+    } catch (error) {
+      console.error("Error in fetching father options:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debouncedFetchFatherOptions = debounce(fetchFatherOptions, 500);
+
+  const fetchFatherData = async (fatherId) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFamilyDetails/${fatherId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      console.log("Data in console-----");
+      console.log(data);
+
+      if (response.ok) {
+        console.log("Spouse data");
+        console.log(data.spouses);
+
+        setValue("fatherName", fatherId);
+        setSelectedFather(fatherId);
+        setValue("grandfather", data.father || "");
+        setValue("grandmother", data.mother || "");
+      } else {
+        console.error("Error fetching father data:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching father data:", error);
+    }
+  };
+
+
+
   return (
     <section
       className="relative flex items-center w-full min-h-screen bg-cover bg-center"
@@ -32,27 +133,84 @@ function SearchMember() {
             Family in Couple of Minutes
           </p>
         </div>
-        <form action="" className="flex flex-col items-center mt-2">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col items-center mt-2"
+        >
+          <div className="w-full">
+            <label
+              htmlFor="fatherName"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Father Name
+            </label>
+            <Select
+              showSearch
+              placeholder="Select father's name"
+              filterOption={false}
+              onSearch={debouncedFetchFatherOptions}
+              options={fatherOptions}
+              loading={loading}
+              value={selctedFather}
+              onChange={(value) => {
+                setValue("fatherName", value);
+                fetchFatherData(value);
+              }}
+              style={{ width: "100%" }}
+            />
+            {errors.fatherName && (
+              <p className="text-rose-500 text-sm">
+                {errors.fatherName.message}
+              </p>
+            )}
+          </div>
+          <div className="w-full">
+            <label
+              htmlFor="grandfather"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Grand Father Name
+            </label>
+            <input
+              type="text"
+              id="grandfather"
+              {...register("grandfather")}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+              placeholder="Grand Father Name"
+              readOnly
+            />
+          </div>
+
           <input
-            type="text"
-            placeholder="Member Name"
-            className="bg-[#FBF7F7] text-sm rounded-lg w-[80%] m-4 p-2 border-2 border-[#CACACA]"
+            type="hidden"
+            {...register("fatherName", {
+              required: "Father Name is required",
+            })}
           />
-          <input
-            type="text"
-            placeholder="Grandparent Name"
-            className="bg-[#FBF7F7] text-sm rounded-lg w-[80%] m-2 p-2 border-2 border-[#CACACA]"
-          />
-          <input
-            type="text"
-            placeholder="Parent Name (Mother/Father)"
-            className="bg-[#FBF7F7] text-sm rounded-lg w-[80%] m-4 p-2 border-2 border-[#CACACA]"
-          />
-          <input
-            type="button"
-            value="Search Family Member"
-            className="cursor-pointer w-[80%] rounded-lg m-4 p-2 font-semibold text-white bg-[#82D026]"
-          />
+
+          {/* Grand Mother Name */}
+          <div className="w-full">
+            <label
+              htmlFor="grandmother"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Grand Mother Name
+            </label>
+            <input
+              type="text"
+              id="grandmother"
+              {...register("grandmother")}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+              placeholder="Grand Mother Name"
+              readOnly
+            />
+          </div>
+          <button
+            type="submit"
+            className="cursor-pointer w-full rounded-lg m-4 p-2 font-semibold text-white bg-[#82D026]"
+          >
+            Search
+          </button>
         </form>
       </div>
     </section>
