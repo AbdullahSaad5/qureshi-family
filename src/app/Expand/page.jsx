@@ -31,7 +31,9 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/members`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/members`
+      );
       console.log(response);
       const data = await response.json();
       setData(data);
@@ -46,13 +48,13 @@ const App = () => {
         key: member._id,
         n: member.name,
         s: member.gender.toUpperCase().charAt(0),
-        // about: member.about,
         spouses: member.spouseIds,
         f: member.father,
         m: member.mother,
         tribe: member.tribe,
         biography: member.biography,
         address: member.address,
+        ancestorChain: member.ancestorChain,
         dob: new Date(member.dateOfBirth).toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
