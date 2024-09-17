@@ -7,18 +7,18 @@ import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
-import EditModal from "../../components/Modals/EditModal";
+import EditModal from "../../components/Modals/EditMemberModal";
 import { Badge, Descriptions, Modal } from "antd";
 const ViewPersonsList = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = (item) => {
+  const showEditModal = (item) => {
     console.log(`item data: ${JSON.stringify(item, null, 2)}`);
     setSelectedRecord(item);
-    setIsModalOpen(true);
+    setEditModalOpen(true);
   };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  
+  const handelEditModalCancel = () => {
+    setEditModalOpen(false);
+    setSelectedRecord(null);
   };
 
   const [personList, setPersonList] = useState([]);
@@ -102,8 +102,8 @@ const ViewPersonsList = () => {
 
   const filteredUsers = personList.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  // Get the current page's users
+);
+// Get the current page's users
   const indexOfLastUser = currentPage * recordsPerPage;
   const indexOfFirstUser = indexOfLastUser - recordsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -129,6 +129,7 @@ const ViewPersonsList = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isDeleteModalOpen, setIsDeletModal] = useState(false);
   const [isPublicFigureModalOpen, sePublicFigureModal] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
 
   const openDeleteModal = (record) => {
     setSelectedRecord(record);
@@ -240,7 +241,7 @@ const ViewPersonsList = () => {
                         </button>
                         {/* Edit button  */}
                         <button
-                          onClick={() => showModal(item)}
+                          onClick={() => showEditModal(item)}
                           className="hover:text-red-900 text-red"
                         >
                           <FaUserEdit />
@@ -381,11 +382,11 @@ const ViewPersonsList = () => {
         // </div>
       )}
       {/* Edit Modal */}
-      {selectedRecord && isModalOpen && (
+      {selectedRecord && isEditModalOpen && (
         <EditModal
-          isModalOpen={isModalOpen}
+          isModalOpen={isEditModalOpen}
           data={selectedRecord}
-          handleCancel={handleCancel}
+          handleCancel={handelEditModalCancel}
           fetchData={fetchData}
         />
       )}
