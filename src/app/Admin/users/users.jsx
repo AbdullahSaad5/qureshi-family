@@ -1,4 +1,5 @@
 "use client";
+import { FaUserEdit } from "react-icons/fa";
 import { FaUserSlash } from "react-icons/fa";
 import { FaUserShield } from "react-icons/fa";
 import { FaSpinner } from "react-icons/fa";
@@ -9,6 +10,7 @@ import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
 import { Modal, Descriptions, Badge } from "antd";
+import EditUserModal from "@/app/components/Modals/EditUserModal";
 
 const Users = () => {
   const [userList, setUserList] = useState([]);
@@ -72,6 +74,14 @@ const Users = () => {
       }
     }
   };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long", // 'short' for abbreviated month name
+      day: "numeric",
+    });
+  };
 
   // Paggination
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,6 +116,7 @@ const Users = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isupdateUserStatusMoldalOpen, setUpdaUserStatusModalOpen] =
     useState(false);
+  const [isEditModalOpen, setIEditModalOpen] = useState(false);
 
   // Handle the change in select for recordPerpage
   const handleRecordsChange = (event) => {
@@ -121,7 +132,7 @@ const Users = () => {
     setSelectedRecord(null);
     setViewIsModalOpen(false);
   };
-  const openRejectModal = (record) => {
+  const openDeletModal = (record) => {
     setSelectedRecord(record);
     setIsDeleteModalOpen(true);
   };
@@ -129,6 +140,15 @@ const Users = () => {
   const closeDeleteModal = () => {
     setSelectedRecord(null);
     setIsDeleteModalOpen(false);
+  };
+  const openEditModal = (record) => {
+    setSelectedRecord(record);
+    setIEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setSelectedRecord(null);
+    setIEditModalOpen(false);
   };
   const openUserStatusUpdaedModal = (record) => {
     setSelectedRecord(record);
@@ -231,7 +251,7 @@ const Users = () => {
                           </svg>
                         </button>
                         <button
-                          onClick={() => openRejectModal(item)}
+                          onClick={() => openDeletModal(item)}
                           className="hover:text-red-900 text-red"
                         >
                           <MdDeleteForever />
@@ -241,6 +261,12 @@ const Users = () => {
                           className=""
                         >
                           {item?.isBlocked ? <FaUserShield /> : <FaUserSlash />}
+                        </button>
+                        <button
+                          onClick={() => openEditModal(item)}
+                          className="hover:text-red-900 text-red"
+                        >
+                          <FaUserEdit />
                         </button>
                       </div>
                     </td>
@@ -270,12 +296,6 @@ const Users = () => {
           onCancel={closeViewModal}
         >
           <Descriptions bordered column={1}>
-            <Descriptions.Item label="Name">
-              {selectedRecord?.fullName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Contact">
-              {selectedRecord?.contact}
-            </Descriptions.Item>
             <Descriptions.Item label="Status">
               {selectedRecord?.status === "active" ? (
                 <Badge status="success" text="Active" />
@@ -283,11 +303,19 @@ const Users = () => {
                 <Badge status="error" text="Blocked" />
               )}
             </Descriptions.Item>
+            <Descriptions.Item label="Name">
+              {selectedRecord?.fullName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Contact">
+              {selectedRecord?.contact}
+            </Descriptions.Item>
             <Descriptions.Item label="Role">
               {selectedRecord?.role || "Admin"}
             </Descriptions.Item>
             <Descriptions.Item label="Date of Joining">
-              {new Date(selectedRecord?.date_time).toLocaleDateString()}
+              {selectedRecord?.date_time
+                ? formatDate(selectedRecord?.date_time)
+                : `-`}
             </Descriptions.Item>
           </Descriptions>
         </Modal>
@@ -408,6 +436,19 @@ const Users = () => {
           </div>
         </div>
       )}
+      {/* Eidit User Details */}
+
+      {
+        isEditModalOpen && selectedRecord && (
+          <EditUserModal
+          isModalOpen={isEditModalOpen}
+          data={selectedRecord}
+          handleCancel={closeEditModal}
+          fetchData={fetchData}
+          />
+
+        )
+      }
     </div>
   );
 };
