@@ -15,12 +15,10 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
     handleSubmit,
     watch,
     reset,
-
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      isAdmin: "",
-      isBlocked: "",
       fullName: "",
       contact: "",
       email: "",
@@ -44,32 +42,34 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
   useEffect(() => {
     console.log(`data : ${JSON.stringify(data, null, 2)}`);
     reset({
-      isBlocked: data.isBlocked,
-      isAdmin: data.isAdmin,
+      userID: data._id,
+      // isBlocked: data.isBlocked,
+      // isAdmin: data.isAdmin,
       fullName: data?.fullName,
       contact: data?.contact,
       email: data?.email,
     });
+    setValue("isAdmin", data.isAdmin);
+    setValue("status", data.status);
   }, []);
 
   const onSubmit = async (formData) => {
     setLoadingButton(true);
     console.log(`Form submission: ${JSON.stringify(formData, null, 2)}`);
     try {
-      // const response = await API.put(`/members/${data._id}`, formData);
-      // console.log("Success:", response.data);
-      // toast.success("Members Profile updated Successfully");
-      // handleCancel();
-      // reset();
-      // fetchData();
+      const response = await API.post(`/update_profile`, formData);
+      console.log("Success:", response.data);
+      toast.success(response.data.message);
+      handleCancel();
+      reset();
+      fetchData();
     } catch (error) {
-      // console.error("Error:", error);
-      // if (error.response.data.message === "Mother ID is required") {
-      //   toast.error("Add spouse details before adding a child.");
-      //   setSelectedParentID(error.response.data.fatherID);
-      //   handleCancel();
-      //   return;
-      // }
+      console.error("Error:", error);
+      {
+        toast.error(error.response.data.message);
+        setSelectedParentID(error.response.data.fatherID);
+        handleCancel();
+      }
     } finally {
       setLoadingButton(false);
     }
@@ -86,24 +86,24 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
           {/* Status Select */}
           <div className="col-span-6">
             <label
-              htmlFor="isAdmin"
+              htmlFor="status"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               Status
             </label>
             <select
-              id="isBlocked"
-              {...register("isBlocked", {
+              id="status"
+              {...register("status", {
                 required: "Please select an option",
               })}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="">Select...</option>
-              <option value="false">Active</option>
-              <option value="true">Block</option>
+              <option value="active">Active</option>
+              <option value="blocked">Block</option>
             </select>
-            {errors.isBlocked && (
-              <p className="text-red-500 text-sm">{errors.isBlocked.message}</p>
+            {errors.status && (
+              <p className="text-red-500 text-sm">{errors.status.message}</p>
             )}
           </div>
           {/* Admin Select */}
@@ -119,6 +119,11 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               {...register("isAdmin", {
                 required: "Please select an option",
               })}
+              onChange={(e) => {
+                const value = e.target.value === "true"; // Convert to boolean
+                e.target.value = String(value); // Convert back to string so the form can handle it
+                return value;
+              }}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="">Select...</option>
@@ -210,13 +215,13 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
           </div>
-         
+
           {/* Submit Button */}
           <div className="col-span-12  text-center mt-6">
             <button
               disabled={loadingButton}
               type="submit"
-              className={` inline-flex w-full justify-center bg-[#7457dd] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#8e54d1] ${
+              className={` inline-flex w-full justify-center items-center bg-[#7457dd] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#8e54d1] ${
                 loadingButton ? "cursor-not-allowed" : ""
               }`}
             >
