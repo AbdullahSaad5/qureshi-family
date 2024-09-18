@@ -1,11 +1,16 @@
 "use client";
-import { ImCross } from "react-icons/im";
+import { FaUserEdit } from "react-icons/fa";
+import { FaUserSlash } from "react-icons/fa";
+import { FaUserShield } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import API from "../../axios";
 import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
+import { Modal, Descriptions, Badge } from "antd";
+import EditUserModal from "@/app/components/Modals/EditUserModal";
 
 const Users = () => {
   const [userList, setUserList] = useState([]);
@@ -25,12 +30,16 @@ const Users = () => {
     });
   }
   const [loading, setLoading] = useState(true);
+  const [loadingButton, setLoadingButton] = useState(false);
   const handleDelete = async () => {
+    setLoadingButton(true);
     if (selectedRecord) {
       try {
         const newState = removeObjectWithId(userList, selectedRecord._id);
         setUserList(newState);
-        const res = API.delete(`/createUser/remove/${selectedRecord._id}`);
+        const res = await API.delete(
+          `/createUser/remove/${selectedRecord._id}`
+        );
         // fetchData();
         closeDeleteModal();
         toast.success("Record deleted successfully:");
@@ -40,10 +49,39 @@ const Users = () => {
         );
         toast.error("Error deleting record:", error);
         // Handle error (e.g., show a toast notification)
+      } finally {
+        setLoadingButton(false);
       }
     }
   };
- 
+  const handleUpdateUserStatus = async () => {
+    if (selectedRecord) {
+      setLoadingButton(true);
+      try {
+        const res = await API.put(`/updatestatus`, {
+          userID: selectedRecord._id,
+          status: selectedRecord.isBlocked ? "active" : "blocked",
+        });
+        toast.success(res.data.message);
+        fetchData();
+        closeUserStatusUpdaedModal();
+        setLoadingButton(false);
+      } catch (error) {
+        toast.error("Error updating record:", error);
+        // Handle error (e.g., show a toast notification)
+      } finally {
+        setLoadingButton(false);
+      }
+    }
+  };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long", // 'short' for abbreviated month name
+      day: "numeric",
+    });
+  };
 
   // Paggination
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,9 +111,12 @@ const Users = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
   const [isViewModalOpen, setViewIsModalOpen] = useState(false);
- 
+
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isupdateUserStatusMoldalOpen, setUpdaUserStatusModalOpen] =
+    useState(false);
+  const [isEditModalOpen, setIEditModalOpen] = useState(false);
 
   // Handle the change in select for recordPerpage
   const handleRecordsChange = (event) => {
@@ -91,7 +132,7 @@ const Users = () => {
     setSelectedRecord(null);
     setViewIsModalOpen(false);
   };
-  const openRejectModal = (record) => {
+  const openDeletModal = (record) => {
     setSelectedRecord(record);
     setIsDeleteModalOpen(true);
   };
@@ -100,7 +141,24 @@ const Users = () => {
     setSelectedRecord(null);
     setIsDeleteModalOpen(false);
   };
- 
+  const openEditModal = (record) => {
+    setSelectedRecord(record);
+    setIEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setSelectedRecord(null);
+    setIEditModalOpen(false);
+  };
+  const openUserStatusUpdaedModal = (record) => {
+    setSelectedRecord(record);
+    setUpdaUserStatusModalOpen(true);
+  };
+
+  const closeUserStatusUpdaedModal = () => {
+    setSelectedRecord(null);
+    setUpdaUserStatusModalOpen(false);
+  };
 
   return (
     <div className="mx-auto">
@@ -133,6 +191,9 @@ const Users = () => {
                   <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
                     contact
                   </th>
+                  <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
+                    Status
+                  </th>
 
                   <th className="px-4 py-4 font-medium text-black dark:text-white">
                     Actions
@@ -157,6 +218,11 @@ const Users = () => {
                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                       <p className="text-black dark:text-white">
                         {item.contact}
+                      </p>
+                    </td>
+                    <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                      <p className="text-black dark:text-white">
+                        {item?.status}
                       </p>
                     </td>
 
@@ -185,12 +251,23 @@ const Users = () => {
                           </svg>
                         </button>
                         <button
-                          onClick={() => openRejectModal(item)}
+                          onClick={() => openDeletModal(item)}
                           className="hover:text-red-900 text-red"
                         >
                           <MdDeleteForever />
                         </button>
-                        
+                        <button
+                          onClick={() => openUserStatusUpdaedModal(item)}
+                          className=""
+                        >
+                          {item?.isBlocked ? <FaUserShield /> : <FaUserSlash />}
+                        </button>
+                        <button
+                          onClick={() => openEditModal(item)}
+                          className="hover:text-red-900 text-red"
+                        >
+                          <FaUserEdit />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -212,61 +289,36 @@ const Users = () => {
       )}
       {/* View record details  */}
       {isViewModalOpen && selectedRecord && (
-        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
-            >
-              <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
-            </div>
-
-            <span
-              className="hidden sm:inline-block sm:h-screen sm:align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-            {/* View user details  */}
-            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <h3
-                      className="text-gray-900 text-xl font-bold leading-6"
-                      id="modal-title"
-                    >
-                      User Details
-                    </h3>
-                    <div className="mt-2">
-                      <p className="text-gray-700   text-sm md:text-lg">
-                        Name: {selectedRecord.fullName}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Phone: {selectedRecord.contact}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Role: {selectedRecord.role || "admin"}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        About: {selectedRecord.aboutYou}
-                      </p>
-                      {/* Add more fields as needed */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button
-                  onClick={closeViewModal}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Modal
+          title="User Information"
+          open={isViewModalOpen}
+          footer={false}
+          onCancel={closeViewModal}
+        >
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Status">
+              {selectedRecord?.status === "active" ? (
+                <Badge status="success" text="Active" />
+              ) : (
+                <Badge status="error" text="Blocked" />
+              )}
+            </Descriptions.Item>
+            <Descriptions.Item label="Name">
+              {selectedRecord?.fullName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Contact">
+              {selectedRecord?.contact}
+            </Descriptions.Item>
+            <Descriptions.Item label="Role">
+              {selectedRecord?.role || "Admin"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Date of Joining">
+              {selectedRecord?.date_time
+                ? formatDate(selectedRecord?.date_time)
+                : `-`}
+            </Descriptions.Item>
+          </Descriptions>
+        </Modal>
       )}
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && selectedRecord && (
@@ -306,10 +358,14 @@ const Users = () => {
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
+                  disabled={loadingButton}
                   onClick={handleDelete}
-                  className="inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm"
+                  className={`inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
+                    loadingButton && "cursor-not-allowed"
+                  }`}
                 >
-                  Yes, Remove
+                  <span> Yes, Remove</span>
+                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
                 </button>
                 <button
                   onClick={closeDeleteModal}
@@ -322,7 +378,77 @@ const Users = () => {
           </div>
         </div>
       )}
-      
+      {/* Update user Status  */}
+      {isupdateUserStatusMoldalOpen && selectedRecord && (
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+            >
+              <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
+            </div>
+
+            <span
+              className="hidden sm:inline-block sm:h-screen sm:align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+
+            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <h3
+                      className="text-gray-900 text-lg font-medium leading-6"
+                      id="modal-title"
+                    >
+                      Confirm Status Update
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-gray-500 text-sm">
+                        Are you sure you want to Updated this user status?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button
+                  onClick={handleUpdateUserStatus}
+                  className={`inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
+                    loadingButton ? "cursor-not-allowed" : ""
+                  }`}
+                  disabled={loadingButton}
+                >
+                  <span>Update User</span>
+                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
+                </button>
+                <button
+                  onClick={closeUserStatusUpdaedModal}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Eidit User Details */}
+
+      {
+        isEditModalOpen && selectedRecord && (
+          <EditUserModal
+          isModalOpen={isEditModalOpen}
+          data={selectedRecord}
+          handleCancel={closeEditModal}
+          fetchData={fetchData}
+          />
+
+        )
+      }
     </div>
   );
 };

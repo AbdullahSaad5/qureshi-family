@@ -4,12 +4,14 @@ import Image from "next/image";
 import ClickOutside from "../ClickOutside";
 import { useRouter } from "next/navigation";
 import ProfileUser from "../../../_assets/user-01.png";
+import { useAuth } from "../../../context/AuthContext"
 // @ts-ignore
 const DropdownUser = ({}) => {
   interface User {
     fullName: string;
     designation: string;
   }
+  const { setUserVerified } = useAuth();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -126,6 +128,14 @@ const DropdownUser = ({}) => {
           <button
             onClick={() => {
               setUser(null);
+
+              localStorage.removeItem("fullName");
+              localStorage.removeItem("email");
+              localStorage.removeItem("contact");
+              localStorage.removeItem("userId");
+              setUserVerified(false);
+              localStorage.removeItem("userToken");
+
               router.push("/signin");
             }}
             className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"

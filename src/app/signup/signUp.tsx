@@ -170,7 +170,7 @@ const Signup: React.FC = () => {
                   Already have an account?{" "}
                   <button
                     className="font-medium text-blue-600 hover:underline dark:text-primary-500"
-                    onClick={() => router.push("/login")}
+                    onClick={() => router.push("/signin")}
                   >
                     Login here
                   </button>

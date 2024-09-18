@@ -10,7 +10,6 @@ import { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +26,9 @@ export default function RootLayout({
     const storedUser = localStorage.getItem("userToken");
     // console.log(JSON.stringify(storedUser, null, 2));
     if (!storedUser) {
-      router.push("signin");
+
+      router.push("/signin");
+
     }
     setTimeout(() => setLoading(false), 1000);
   }, [router]);
@@ -36,10 +37,8 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          
-            {/* <Toaster /> */}
-            {children}
-          
+          {/* <Toaster /> */}
+          {children}
         </div>
       </body>
     </html>

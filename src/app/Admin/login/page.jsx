@@ -1,13 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import API from "../../axios";
 import { toast } from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useContext } from "react";
+import { FaSpinner } from "react-icons/fa";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const router = useRouter();
 
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
@@ -24,6 +26,7 @@ function Login() {
   };
 
   const handleLogin = async (e) => {
+    setLoadingButton(true);
     e.preventDefault();
     try {
       const res = await API.post("/login", loginInfo);
@@ -47,6 +50,9 @@ function Login() {
         if (error.response.status === 401) {
           // Specific handling for incorrect password or unauthorized access
           toast.error("Incorrect email or password. Please try again.");
+        } else if (error.response.status === 403) {
+          // Specific handling for incorrect password or unauthorized access
+          toast.error(error.response.data.message);
         } else if (error.response.data && error.response.data.message) {
           // Other specific error messages from the server
           toast.error(`Login failed: ${error.response.data.message}`);
@@ -61,8 +67,18 @@ function Login() {
         );
       }
       console.error("Error during login:", error);
+    } finally {
+      setLoadingButton(false);
     }
   };
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userToken");
+    // console.log(JSON.stringify(storedUser, null, 2));
+    if (storedUser) {
+      router.push("/Admin");
+    }
+    setTimeout(() => setLoading(false), 1000);
+  }, [router]);
 
   return (
     <div>
@@ -124,14 +140,16 @@ function Login() {
                 </div>
 
                 <button
+                  disabled={loadingButton}
                   type="submit"
-                  className="focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-4"
+                  className={` flex justify-center items-center focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-4
+                    ${loadingButton && "cursor-not-allowed"}
+                    `}
                 >
-                  Sign In
+                  <span>Sign In</span>
+                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
                 </button>
-                
               </form>
-             
             </div>
           </div>
         </div>

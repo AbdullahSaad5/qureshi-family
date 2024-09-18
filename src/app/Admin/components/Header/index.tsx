@@ -114,6 +114,7 @@ const Header = (props: {
           </ul>
 
           {/* <!-- User Area --> */}
+
           {storedUser ? (
             <DropdownUser />
           ) : (
@@ -125,6 +126,7 @@ const Header = (props: {
               LogIn
             </button>
           )}
+
           {/* <!-- User Area --> */}
         </div>
       </div>

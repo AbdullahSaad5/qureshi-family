@@ -255,7 +255,7 @@ function Signup() {
                     placeholder="••••••••"
                     className="bg-gray-50 border-gray-300 text-gray-900 focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full rounded-lg border p-2.5 text-sm dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     {...register("password", {
-                      required: "Password is required",
+                      required: "Password is required test",
                       pattern: {
                         value:
                           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
