@@ -19,21 +19,21 @@ let genoData;
 
 const SPOUSE_SPACING = 30;
 const NODE_WIDTH = 200;
-const NODE_HEIGHT = 80;
+const NODE_HEIGHT = 90;
 
-const MALE_BACKGROUND = "#afd5ef";
-const FEMALE_BACKGROUND = "#f5dad7";
+const MALE_BACKGROUND = "#f5f5f5";
+const FEMALE_BACKGROUND = "#f5f5f5";
 const LINK_COLOR = "#424242";
 const MARRIAGE_COLOR = "#000000";
 
 function initDiagram() {
   const $ = go.GraphObject.make;
-  // set your license key here before creating the diagram: go.Diagram.licenseKey = "...";
+
   go.Diagram.licenseKey = "adsfewfwaefasdfdsfs";
   const diagram = $(go.Diagram, {
     initialDocumentSpot: go.Spot.Bottom,
     initialViewportSpot: go.Spot.Bottom,
-    "undoManager.isEnabled": true, // must be set to allow for model change listening
+    "undoManager.isEnabled": true,
     initialAutoScale: go.Diagram.Uniform,
     allowMove: false,
     allowDragOut: false,
@@ -49,12 +49,11 @@ function initDiagram() {
       }
     },
     model: $(go.GraphLinksModel, {
-      linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
+      linkKeyProperty: "key",
     }),
     "toolManager.hoverDelay": 400,
     "toolManager.toolTipDuration": 10000,
 
-    // Make highlighted nodes stand out with red stroke
     nodeSelectionAdornmentTemplate: $(
       go.Adornment,
       "Auto",
@@ -74,75 +73,168 @@ function initDiagram() {
     }),
   });
 
-  function makeExpanderButton(color) {
+  function makeExpanderButton() {
+    const $ = go.GraphObject.make;
     return $(
-      "PanelExpanderButton",
-      "BUTTON",
+      go.Panel,
+      "Horizontal",
       {
-        width: 20,
-        height: 20,
         alignment: go.Spot.TopRight,
         alignmentFocus: go.Spot.Center,
-        visible: false,
+        cursor: "pointer",
       },
-      $(go.Shape, "Circle", { fill: color, stroke: null }),
-      $(go.Shape, "PlusLine", { stroke: "white", strokeWidth: 2 })
+      $(go.Shape, "Rectangle", {
+        width: 14,
+        height: 14,
+        fill: "lightblue",
+        stroke: null,
+      }),
+      $(go.TextBlock, "+", {
+        font: "12px sans-serif",
+        margin: 2,
+        click: showChildren,
+      })
     );
+  }
+
+  function nodeTemplate() {
+    return $(
+      go.Node,
+      "Auto",
+      {
+        locationSpot: go.Spot.Center,
+        selectionObjectName: "SHAPE",
+        click: (e, node) => {
+          e.diagram.startTransaction("toggle expand/collapse");
+          const isExpanded = node.isTreeExpanded;
+          node.isTreeExpanded = !isExpanded;
+          e.diagram.commitTransaction("toggle expand/collapse");
+        },
+      },
+      $(go.Shape, "RoundedRectangle", {
+        name: "SHAPE",
+        fill: "white",
+        strokeWidth: 2,
+        stroke: "#80b6fc",
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
+      }),
+      $(
+        go.Panel,
+        "Vertical",
+        $(
+          go.TextBlock,
+          { font: "bold 14px sans-serif", margin: 5 },
+          new go.Binding("text", "n")
+        ),
+        $(
+          go.TextBlock,
+          { font: "12px sans-serif", margin: 5 },
+          new go.Binding("text", "dob", (dob) => `DOB: ${dob || "Unknown"}`)
+        ),
+        $(
+          go.TextBlock,
+          { font: "12px sans-serif", margin: 5 },
+          new go.Binding(
+            "text",
+            "tribe",
+            (tribe) => `Tribe: ${tribe || "Unknown"}`
+          )
+        )
+      ),
+      $(
+        go.Panel,
+        "Horizontal",
+        { alignment: go.Spot.TopRight, alignmentFocus: go.Spot.Center },
+        makeExpanderButton()
+      ),
+      new go.Binding("isTreeExpanded").makeTwoWay()
+    );
+  }
+
+  diagram.nodeTemplateMap.add(
+    "ExpandableNode",
+    $(
+      go.Node,
+      "Auto",
+      { background: "lightblue" },
+      $(
+        go.Shape,
+        "Rectangle",
+        { strokeWidth: 0, fill: "white" },
+        new go.Binding("fill", "color")
+      ),
+      $(go.TextBlock, { margin: 10 }, new go.Binding("text", "key")),
+      // Plus sign for expand/collapse
+      $(
+        go.Panel,
+        "Horizontal",
+        { alignment: go.Spot.Right, alignmentFocus: go.Spot.Right },
+        $(go.TextBlock, "+", { click: showChildren })
+      )
+    )
+  );
+
+  function showChildren(e, obj) {
+    const node = obj.part;
+    const model = node.diagram.model;
+    const isExpanded = node.isTreeExpanded;
+
+    model.startTransaction("Expand/Collapse");
+    model.setDataProperty(node.data, "isTreeExpanded", !isExpanded);
+
+    if (isExpanded) {
+      // Hide children
+      node.findTreeChildrenNodes().each((child) => {
+        model.setDataProperty(child.data, "isTreeExpanded", false);
+      });
+    } else {
+      // Show children
+      node.findTreeChildrenNodes().each((child) => {
+        model.setDataProperty(child.data, "isTreeExpanded", true);
+      });
+    }
+
+    model.commitTransaction("Expand/Collapse");
   }
 
   diagram.nodeTemplate = $(
     go.Node,
     "Auto",
     {
-      isTreeExpanded: false,
+      locationSpot: go.Spot.Center,
       selectionObjectName: "SHAPE",
-    },
-    $(
-      go.Shape,
-      "RoundedRectangle",
-      {
-        name: "SHAPE",
-        fill: "white",
-        strokeWidth: 2,
-        stroke: "#80b6fc",
-        portId: "",
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        parameter1: 10,
+      click: (e, node) => {
+        e.diagram.startTransaction("toggle expand/collapse");
+        const isExpanded = node.isTreeExpanded;
+        node.isTreeExpanded = !isExpanded;
+        e.diagram.commitTransaction("toggle expand/collapse");
       },
-      new go.Binding("fill", "s", (s) =>
-        s === "M" ? MALE_BACKGROUND : FEMALE_BACKGROUND
-      )
-    ),
+    },
+    $(go.Shape, "RoundedRectangle", {
+      name: "SHAPE",
+      fill: "white",
+      strokeWidth: 2,
+      stroke: "#80b6fc",
+      width: NODE_WIDTH,
+      height: NODE_HEIGHT,
+    }),
     $(
       go.Panel,
       "Vertical",
       $(
         go.TextBlock,
-        {
-          font: "bold 14px sans-serif",
-          margin: 5,
-          alignment: go.Spot.TopLeft,
-          maxSize: new go.Size(NODE_WIDTH - 30, NaN),
-        },
+        { font: "bold 14px sans-serif", margin: 5 },
         new go.Binding("text", "n")
       ),
       $(
         go.TextBlock,
-        {
-          font: "12px sans-serif",
-          margin: 5,
-          alignment: go.Spot.TopLeft,
-        },
+        { font: "12px sans-serif", margin: 5 },
         new go.Binding("text", "dob", (dob) => `DOB: ${dob || "Unknown"}`)
       ),
       $(
         go.TextBlock,
-        {
-          font: "12px sans-serif",
-          margin: 5,
-          alignment: go.Spot.TopLeft,
-        },
+        { font: "12px sans-serif", margin: 5 },
         new go.Binding(
           "text",
           "tribe",
@@ -150,19 +242,13 @@ function initDiagram() {
         )
       )
     ),
-    makeExpanderButton("#80b6fc"),
-    {
-      click: (e, obj) => {
-        e.diagram.startTransaction("toggled expand/collapse");
-        const node = obj.part;
-        if (node) {
-          node.isTreeExpanded = !node.isTreeExpanded;
-        }
-        e.diagram.commitTransaction("toggled expand/collapse");
-      },
-    },
-    new go.Binding("isTreeExpanded").makeTwoWay(),
-    new go.Binding("wasTreeExpanded").makeTwoWay()
+    $(
+      go.Panel,
+      "Horizontal",
+      { alignment: go.Spot.TopRight, alignmentFocus: go.Spot.Center },
+      makeExpanderButton()
+    ),
+    new go.Binding("isTreeExpanded").makeTwoWay()
   );
 
   diagram.linkTemplate = $(
@@ -250,8 +336,8 @@ function initDiagram() {
   );
 
   function nodeTemplate(gender) {
-    const maleImage = "https://www.w3schools.com/howto/img_avatar.png"; // Male avatar
-    const femaleImage = "https://www.w3schools.com/howto/img_avatar2.png"; // Female avatar
+    const maleImage = "https://www.w3schools.com/howto/img_avatar.png";
+    const femaleImage = "https://www.w3schools.com/howto/img_avatar2.png";
 
     return $(
       go.Node,
@@ -272,13 +358,13 @@ function initDiagram() {
           }
         },
       },
-      $(go.Shape, "RoundedRectangle", {
+      $(go.Shape, {
         name: "SHAPE",
         fill: gender === "M" ? MALE_BACKGROUND : FEMALE_BACKGROUND,
-        stroke: gender === "M" ? "#5dade2" : "#f09e97",
+        stroke: gender === "M" ? "#e5e4e2" : "#e5e4e2",
         strokeWidth: 2,
         width: NODE_WIDTH,
-        height: NODE_HEIGHT,
+        height: NODE_HEIGHT, // Increase node height
         parameter1: gender === "M" ? 5 : 10, // corner radius
         portId: "",
       }),
@@ -286,18 +372,27 @@ function initDiagram() {
         go.Panel,
         "Vertical",
         { margin: 5 },
-        // Image panel
+        // Circular image container
         $(
           go.Panel,
-          "Position",
+          "Auto", // Use an Auto panel to wrap the image inside a circular shape
           { alignment: go.Spot.TopCenter, alignmentFocus: go.Spot.TopCenter },
+          // Create circular shape for the image container
+          $(go.Shape, {
+            width: 48,
+            height: 48,
+            fill: "transparent", // No fill for the circle, only border if desired
+            stroke: gender === "M" ? "#e5e4e2" : "#e5e4e2", // Border color
+            strokeWidth: 1,
+          }),
+          // Image inside the circular shape
           $(go.Picture, {
             source: gender === "M" ? maleImage : femaleImage,
-            width: 48, // set width
-            height: 48, // set height
-            imageStretch: go.GraphObject.UniformToFill, // similar to object-fit: cover
-            alignment: go.Spot.TopCenter,
-            margin: new go.Margin(-12, 0, 0, 0), // position the image with half above the node
+            width: 48,
+            height: 48,
+            imageStretch: go.GraphObject.UniformToFill, // Keep the aspect ratio and fill the shape
+            alignment: go.Spot.Center, // Center the image inside the circle
+            margin: new go.Margin(0), // Align with the circular shape
           })
         ),
         $(
@@ -337,128 +432,23 @@ function initDiagram() {
     );
   }
 
-  // console.log(go.TreeExpanderButton);
-
-  // Define the node template with TreeExpanderButton
-  // diagram.nodeTemplate = $(
-  //   go.Node,
-  //   "Horizontal",
-  //   {
-  //     locationSpot: go.Spot.Center,
-  //     locationObjectName: "SHAPE",
-  //     selectionObjectName: "SHAPE",
-  //     layerName: "Foreground",
-  //     cursor: "pointer",
-  //     toolTip: nodeToolTip,
-  //     click: (e, node) => {
-  //       const showModal = node.diagram.model.modelData.showModal;
-  //       const setData = node.diagram.model.modelData.setData;
-  //       if (showModal && setData) {
-  //         setData(node.data);
-  //         showModal();
-  //       }
-  //     },
-  //   },
-  //   $(go.Shape, "Ellipse", {
-  //     name: "SHAPE",
-  //     fill: "white",
-  //     strokeWidth: 1,
-  //   }),
-  //   $(go.TextBlock, { margin: 5 }, new go.Binding("text", "key")),
-  //   $(
-  //     go.Panel,
-  //     "Horizontal",
-  //     { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left },
-  //     $(go.TreeExpanderButton)
-  //   )
-  // );
-
-  // function nodeTemplate(gender) {
-  //   return $(
-  //     go.Node,
-  //     "Auto",
-  //     {
-  //       locationSpot: go.Spot.Center,
-  //       locationObjectName: "SHAPE",
-  //       selectionObjectName: "SHAPE",
-  //       layerName: "Foreground",
-  //       cursor: "pointer",
-  //       toolTip: nodeToolTip, // Add the tooltip to the node
-  //       click: (e, node) => {
-  //         // toggleChildrenVisibility(node);
-  //         const showModal = node.diagram.model.modelData.showModal;
-  //         const setData = node.diagram.model.modelData.setData;
-  //         if (showModal && setData) {
-  //           setData(node.data);
-  //           showModal();
-  //         }
-  //       },
-  //     },
-  //     $(go.Shape, "RoundedRectangle", {
-  //       name: "SHAPE",
-  //       fill: gender === "M" ? MALE_BACKGROUND : FEMALE_BACKGROUND,
-  //       stroke: gender === "M" ? "#5dade2" : "#f09e97",
-  //       strokeWidth: 2,
-  //       width: NODE_WIDTH,
-  //       height: NODE_HEIGHT,
-  //       parameter1: gender === "M" ? 5 : 10, // corner radius
-  //       portId: "",
-  //     }),
-  //     $(
-  //       go.Panel,
-  //       "Horizontal",
-  //       { margin: 5 },
-  //       $(
-  //         go.Panel,
-  //         "Vertical",
-  //         { alignment: go.Spot.Left },
-  //         $(
-  //           go.TextBlock,
-  //           { font: "bold 14px sans-serif", maxSize: new go.Size(180, NaN) },
-  //           new go.Binding("text", "n")
-  //         ),
-  //         // Add a blank line after the name
-  //         $(
-  //           go.TextBlock,
-  //           { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-  //           new go.Binding(
-  //             "text",
-  //             "",
-  //             (data) => `DOB: ${data.dob || "Unknown"}`
-  //           )
-  //         ),
-  //         $(
-  //           go.TextBlock,
-  //           { font: "12px sans-serif", maxSize: new go.Size(180, NaN) },
-  //           new go.Binding(
-  //             "text",
-  //             "",
-  //             (data) => `Tribe: ${data.tribe || "Unknown"}`
-  //           )
-  //         )
-  //       )
-  //     )
-  //   );
-  // }
-
   diagram.nodeTemplateMap.add("M", nodeTemplate("M"));
   diagram.nodeTemplateMap.add("F", nodeTemplate("F"));
 
   setupDiagram(diagram, genoData, 4 /* focus on this person */);
 
-  diagram.linkTemplate = // for parent-child relationships
-    $(
-      go.Link,
-      new go.Binding("routing", "routing"),
-      {
-        corner: 5,
-        layerName: "Background",
-        selectable: false,
-        fromSpot: go.Spot.Bottom,
-        toSpot: go.Spot.Top,
-      },
-      $(go.Shape, { stroke: LINK_COLOR, strokeWidth: 2 })
-    );
+  diagram.linkTemplate = $(
+    go.Link,
+    new go.Binding("routing", "routing"),
+    {
+      corner: 5,
+      layerName: "Background",
+      selectable: false,
+      fromSpot: go.Spot.Bottom,
+      toSpot: go.Spot.Top,
+    },
+    $(go.Shape, { stroke: LINK_COLOR, strokeWidth: 2 })
+  );
 
   diagram.linkTemplateMap.add(
     "Marriage", // for marriage relationships
@@ -471,7 +461,6 @@ function initDiagram() {
     )
   );
 
-  // define a simple Node template
   diagram.nodeTemplate = $(
     go.Node,
     "Auto", // the Shape will go around the TextBlock
@@ -758,6 +747,17 @@ GenogramLayout.prototype.assignLayers = function () {
 
 GenogramLayout.prototype.commitNodes = function () {
   go.LayeredDigraphLayout.prototype.commitNodes.call(this);
+  this.network.vertexes.each(function (v) {
+    if (v.node !== null && !v.node.isLinkLabel) {
+      if (v.node.data.isExpanded === false) {
+        // Hide children if node is collapsed
+        v.node.visible = false;
+      } else {
+        v.node.position = new go.Point(v.x, v.y);
+      }
+    }
+  });
+
   // position regular nodes
   this.network.vertexes.each(function (v) {
     if (v.node !== null && !v.node.isLinkLabel) {
@@ -930,6 +930,16 @@ const Genogram = (props) => {
   };
   const initDiagramWithModal = useCallback(() => {
     const diagram = initDiagram();
+
+    // Set initial data for nodes
+    diagram.model.nodeDataArray.forEach((node) => {
+      if (node.level > 3) {
+        diagram.model.setDataProperty(node, "isExpanded", false);
+      } else {
+        diagram.model.setDataProperty(node, "isExpanded", true);
+      }
+    });
+
     diagram.model.modelData.showModal = showModal;
     diagram.model.modelData.setData = setData;
     return diagram;

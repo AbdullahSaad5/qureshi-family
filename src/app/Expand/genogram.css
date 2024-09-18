@@ -16,7 +16,7 @@
   width: 100%;
   height: 100%;
   border: solid 1px black;
-  background-color: #eee;
+  background-color: #ecf3f9;
 }
 
 .diagram-explain-component {
@@ -25,5 +25,5 @@
   /* height: 1000px; */
   flex: 1;
   border: solid 1px black;
-  background-color: #eee;
+  background-color: #ecf3f9;
 }

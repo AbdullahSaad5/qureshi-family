@@ -21,8 +21,8 @@ const SPOUSE_SPACING = 30;
 const NODE_WIDTH = 200;
 const NODE_HEIGHT = 80;
 
-const MALE_BACKGROUND = "#afd5ef";
-const FEMALE_BACKGROUND = "#f5dad7";
+const MALE_BACKGROUND = "#f5f5f5";
+const FEMALE_BACKGROUND = "#f5f5f5";
 const LINK_COLOR = "#424242";
 const MARRIAGE_COLOR = "#000000";
 
@@ -250,8 +250,8 @@ function initDiagram() {
   );
 
   function nodeTemplate(gender) {
-    const maleImage = "https://www.w3schools.com/howto/img_avatar.png"; // Male avatar
-    const femaleImage = "https://www.w3schools.com/howto/img_avatar2.png"; // Female avatar
+    const maleImage = "https://www.w3schools.com/howto/img_avatar.png";
+    const femaleImage = "https://www.w3schools.com/howto/img_avatar2.png";
 
     return $(
       go.Node,
@@ -272,13 +272,13 @@ function initDiagram() {
           }
         },
       },
-      $(go.Shape, "RoundedRectangle", {
+      $(go.Shape, {
         name: "SHAPE",
         fill: gender === "M" ? MALE_BACKGROUND : FEMALE_BACKGROUND,
-        stroke: gender === "M" ? "#5dade2" : "#f09e97",
+        stroke: gender === "M" ? "#e5e4e2" : "#e5e4e2",
         strokeWidth: 2,
         width: NODE_WIDTH,
-        height: NODE_HEIGHT,
+        height: NODE_HEIGHT, // Increase node height
         parameter1: gender === "M" ? 5 : 10, // corner radius
         portId: "",
       }),
@@ -286,18 +286,27 @@ function initDiagram() {
         go.Panel,
         "Vertical",
         { margin: 5 },
-        // Image panel
+        // Circular image container
         $(
           go.Panel,
-          "Position",
+          "Auto", // Use an Auto panel to wrap the image inside a circular shape
           { alignment: go.Spot.TopCenter, alignmentFocus: go.Spot.TopCenter },
+          // Create circular shape for the image container
+          $(go.Shape, {
+            width: 48,
+            height: 48,
+            fill: "transparent", // No fill for the circle, only border if desired
+            stroke: gender === "M" ? "#e5e4e2" : "#e5e4e2", // Border color
+            strokeWidth: 1,
+          }),
+          // Image inside the circular shape
           $(go.Picture, {
             source: gender === "M" ? maleImage : femaleImage,
-            width: 48, // set width
-            height: 48, // set height
-            imageStretch: go.GraphObject.UniformToFill, // similar to object-fit: cover
-            alignment: go.Spot.TopCenter,
-            margin: new go.Margin(-12, 0, 0, 0), // position the image with half above the node
+            width: 48,
+            height: 48,
+            imageStretch: go.GraphObject.UniformToFill, // Keep the aspect ratio and fill the shape
+            alignment: go.Spot.Center, // Center the image inside the circle
+            margin: new go.Margin(0), // Align with the circular shape
           })
         ),
         $(

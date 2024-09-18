@@ -112,7 +112,7 @@ function Footer() {
       <div className="border-b-2 border-white w-[100%] mb-4 mt-16" />
       {/* Third Line - Copyright */}
       <div className="mb-0 mt-12 md:mt-12 lg:mt-8 lg:mb-0 text-center text-sm md:text-sm lg:text-sm font-medium">
-        <p className="p-3">Copyright© 2024 Sharj e Nasb</p>
+        <p className="p-3">Copyright© 2024 Shajra e Nasb</p>
         <p className="">Design and Develop by decimal solutions</p>
       </div>
     </footer>

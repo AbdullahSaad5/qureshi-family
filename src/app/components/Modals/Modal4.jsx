@@ -9,9 +9,10 @@ const DetailsModal = ({ isModalOpen, handleOk, handleCancel, data }) => {
   console.log("Data inside modal");
   console.log(data);
 
-  const ancestorChain = (data?.ancestorChain || []).filter(
-    (ancestor) => ancestor.name && ancestor.id
-  );
+  // Check if ancestorChain is an array before filtering
+  const ancestorChain = Array.isArray(data?.ancestorChain)
+    ? data.ancestorChain.filter((ancestor) => ancestor.name && ancestor.id)
+    : [];
 
   const handleClick = (id) => {
     router.push(`/Explore/${id}`);
