@@ -2,6 +2,7 @@
 
 const Genogram = dynamic(() => import("@/app/Expand/Geogram"), { ssr: false });
 import dynamic from "next/dynamic";
+import { FaSpinner } from "react-icons/fa";
 import "@/app/Expand/genogram.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -26,6 +27,7 @@ export default function PublicFigureTree() {
   const [data, setData] = useState([]);
   const [isAcceptedModal, setAcceptModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const openAcceptModal = () => {
     setAcceptModalOpen(true);
   };
@@ -42,6 +44,7 @@ export default function PublicFigureTree() {
   };
   const handelAccept = async () => {
     try {
+      setLoadingButton(true);
       await API.put(`/addChildApprov/${id}`);
       // await axios.put(`/api/update-endpoint/${selectedRecord._id}`, {
       //   status: "approved", // Add or update the status field to 'approved'
@@ -53,10 +56,13 @@ export default function PublicFigureTree() {
     } catch (error) {
       console.error("Error updating record:", error);
       // Handle error (e.g., show a toast notification)
+    } finally {
+      setLoadingButton(false);
     }
   };
   const handelReject = async () => {
     try {
+      setLoadingButton(true);
       await API.put(`/addChildDec/${id}`);
       // await axios.put(`/api/update-endpoint/${selectedRecord._id}`, {
       //   status: "approved", // Add or update the status field to 'approved'
@@ -68,6 +74,8 @@ export default function PublicFigureTree() {
     } catch (error) {
       console.error("Error updating record:", error);
       // Handle error (e.g., show a toast notification)
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -124,7 +132,7 @@ export default function PublicFigureTree() {
   return (
     <>
       <>
-        <div className=" flex justify-end">
+        <div className=" flex justify-end mt-2">
           <button
             onClick={() => openAcceptModal()}
             className="mr-5 mb-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
@@ -181,10 +189,16 @@ export default function PublicFigureTree() {
                 </div>
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
+                    disabled={loadingButton}
                     onClick={handelAccept}
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 sm:ml-3 sm:w-auto sm:text-sm"
+                    className={`inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 sm:ml-3 sm:w-auto sm:text-sm ${
+                      loadingButton && "cursor-not-allowed"
+                    }`}
                   >
-                    Yes, Add
+                    <span> Yes, Add</span>
+                    {loadingButton && (
+                      <FaSpinner className="animate-spin ml-2" />
+                    )}
                   </button>
                   <button
                     onClick={closeAcceptModal}
@@ -235,10 +249,16 @@ export default function PublicFigureTree() {
                 </div>
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
+                    disabled={loadingButton}
                     onClick={handelReject}
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm"
+                    className={`inline-flex w-full justify-center items-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
+                      loadingButton && "cursor-not-allowed"
+                    }`}
                   >
-                    Yes, rejecet
+                    <span> Yes, Reject</span>
+                    {loadingButton && (
+                      <FaSpinner className="animate-spin ml-2" />
+                    )}
                   </button>
                   <button
                     onClick={() => closeRejectModal()}
