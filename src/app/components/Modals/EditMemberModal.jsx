@@ -1,5 +1,5 @@
 "use client";
-
+import { FaSpinner } from "react-icons/fa";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Modal } from "antd";
@@ -25,6 +25,8 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
     },
   });
 
+  const [loadingButton, setLoadingButton] = useState(false);
+
   useEffect(() => {
     console.log(`data : ${JSON.stringify(data, null, 2)}`);
     reset({
@@ -36,6 +38,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
   }, []);
 
   const onSubmit = async (formData) => {
+    setLoadingButton(true);
     console.log(`Form submission: ${JSON.stringify(formData, null, 2)}`);
     try {
       const response = await API.put(`/members/${data._id}`, formData);
@@ -53,6 +56,8 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
       //   handleCancel();
       //   return;
       // }
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -150,10 +155,14 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
           {/* Submit Button */}
           <div className="col-span-12  text-center mt-6">
             <button
+              disabled={loadingButton}
               type="submit"
-              className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
+              className={` inline-flex w-full justify-center bg-[#7457dd] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#8e54d1] ${
+                loadingButton ? "cursor-not-allowed" : ""
+              }`}
             >
-              Update Details
+              <span> Update Details</span>
+              {loadingButton && <FaSpinner className="animate-spin ml-2" />}
             </button>
           </div>
         </form>

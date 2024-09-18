@@ -86,6 +86,7 @@ function Profile() {
                 localStorage.removeItem("email");
                 localStorage.removeItem("contact");
                 localStorage.removeItem("userId");
+                localStorage.removeItem("userToken");
                 setUserVerified(false);
                 router.push("/signin");
               }}

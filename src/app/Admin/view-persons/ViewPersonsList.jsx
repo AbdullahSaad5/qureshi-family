@@ -1,25 +1,24 @@
 "use client";
-import { ImCross } from "react-icons/im";
 import { FaUserEdit } from "react-icons/fa";
-
+import { FaSpinner } from "react-icons/fa";
 import { FaCrown } from "react-icons/fa";
 import API from "../../axios";
 import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
-import Modal1 from "../../components/Modals/Modal1";
-import EditModal from "../../components/Modals/EditModal";
+import EditModal from "../../components/Modals/EditMemberModal";
+import { Badge, Descriptions, Modal } from "antd";
 const ViewPersonsList = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = (item) => {
+  const showEditModal = (item) => {
     console.log(`item data: ${JSON.stringify(item, null, 2)}`);
     setSelectedRecord(item);
-    setIsModalOpen(true);
+    setEditModalOpen(true);
   };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  
+  const handelEditModalCancel = () => {
+    setEditModalOpen(false);
+    setSelectedRecord(null);
   };
 
   const [personList, setPersonList] = useState([]);
@@ -38,6 +37,7 @@ const ViewPersonsList = () => {
     return arr.filter((obj) => obj.id !== id);
   }
   const [loading, setLoading] = useState(true);
+  const [loadingButton, setLoadingButton] = useState(false);
   // delete user :not being used
   const handelDelete = async () => {
     if (selectedRecord) {
@@ -69,6 +69,7 @@ const ViewPersonsList = () => {
     }
   };
   const handleFmousPersonality = async () => {
+    setLoadingButton(true);
     if (selectedRecord) {
       try {
         const res = await API.post(`/makePublicFigure/${selectedRecord._id}`);
@@ -81,6 +82,8 @@ const ViewPersonsList = () => {
         );
         toast.error("Error updating record:", error);
         // Handle error (e.g., show a toast notification)
+      } finally {
+        setLoadingButton(false);
       }
     }
   };
@@ -99,8 +102,8 @@ const ViewPersonsList = () => {
 
   const filteredUsers = personList.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  // Get the current page's users
+);
+// Get the current page's users
   const indexOfLastUser = currentPage * recordsPerPage;
   const indexOfFirstUser = indexOfLastUser - recordsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -126,6 +129,7 @@ const ViewPersonsList = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isDeleteModalOpen, setIsDeletModal] = useState(false);
   const [isPublicFigureModalOpen, sePublicFigureModal] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
 
   const openDeleteModal = (record) => {
     setSelectedRecord(record);
@@ -237,7 +241,7 @@ const ViewPersonsList = () => {
                         </button>
                         {/* Edit button  */}
                         <button
-                          onClick={() => showModal(item)}
+                          onClick={() => showEditModal(item)}
                           className="hover:text-red-900 text-red"
                         >
                           <FaUserEdit />
@@ -275,80 +279,114 @@ const ViewPersonsList = () => {
       )}
       {/* View record details  */}
       {isViewModalOpen && selectedRecord && (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
-            >
-              <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
-            </div>
+        <Modal
+          title="Member Information"
+          open={isViewModalOpen}
+          footer={false}
+          onCancel={closeViewModal}
+        >
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Name">
+              {selectedRecord?.name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Gender">
+              {selectedRecord?.gender || "-"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Father Name">
+              {selectedRecord?.father?.name || "-"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Mother Name">
+              {selectedRecord?.mother?.name || "-"}
+            </Descriptions.Item>
 
-            <span
-              className="hidden sm:inline-block sm:h-screen sm:align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
+            <Descriptions.Item label="Tribe">
+              {selectedRecord?.tribe || "-"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Is Prominent Figure">
+              {selectedRecord?.isProminentFigure ? "Yes" : "No" || "-"}
+            </Descriptions.Item>
 
-            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <h3
-                      className="text-gray-900 text-xl font-bold leading-6"
-                      id="modal-title"
-                    >
-                      User Details
-                    </h3>
-                    <div className="mt-2">
-                      <p className="text-gray-700   text-sm md:text-lg">
-                        Name: {selectedRecord.name || `-`}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Gender: {selectedRecord.gender || `-`}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Father: {selectedRecord?.father?.name || `-`}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Mother: {selectedRecord?.mother?.name || `-`}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Prominent Figure :{" "}
-                        {selectedRecord?.isProminentFigure.toString() || `-`}
-                      </p>
-                      <p className="text-gray-700  text-sm md:text-lg ">
-                        Date of Birth:{" "}
-                        {formatDate(
-                          selectedRecord.dateOfBirth
-                            ? selectedRecord.dateOfBirth
-                            : `not provided`
-                        )}
-                      </p>
-                      {/* Add more fields as needed */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button
-                  onClick={closeViewModal}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+            <Descriptions.Item label="Date of Birth">
+              {selectedRecord?.dateOfBirth
+                ? new Date(selectedRecord?.dateOfBirth).toLocaleDateString()
+                : "-"}
+            </Descriptions.Item>
+          </Descriptions>
+        </Modal>
+        // <div className="fixed inset-0 z-10 overflow-y-auto">
+        //   <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+        //     <div
+        //       className="fixed inset-0 transition-opacity"
+        //       aria-hidden="true"
+        //     >
+        //       <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
+        //     </div>
+
+        //     <span
+        //       className="hidden sm:inline-block sm:h-screen sm:align-middle"
+        //       aria-hidden="true"
+        //     >
+        //       &#8203;
+        //     </span>
+
+        //     <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+        //       <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        //         <div className="sm:flex sm:items-start">
+        //           <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+        //             <h3
+        //               className="text-gray-900 text-xl font-bold leading-6"
+        //               id="modal-title"
+        //             >
+        //               User Details
+        //             </h3>
+        //             <div className="mt-2">
+        //               <p className="text-gray-700   text-sm md:text-lg">
+        //                 Name: {selectedRecord.name || `-`}
+        //               </p>
+        //               <p className="text-gray-700  text-sm md:text-lg ">
+        //                 Gender: {selectedRecord.gender || `-`}
+        //               </p>
+        //               <p className="text-gray-700  text-sm md:text-lg ">
+        //                 Father: {selectedRecord?.father?.name || `-`}
+        //               </p>
+        //               <p className="text-gray-700  text-sm md:text-lg ">
+        //                 Mother: {selectedRecord?.mother?.name || `-`}
+        //               </p>
+        //               <p className="text-gray-700  text-sm md:text-lg ">
+        //                 Prominent Figure :{" "}
+        //                 {selectedRecord?.isProminentFigure.toString() || `-`}
+        //               </p>
+        //               <p className="text-gray-700  text-sm md:text-lg ">
+        //                 Date of Birth:{" "}
+        //                 {formatDate(
+        //                   selectedRecord.dateOfBirth
+        //                     ? selectedRecord.dateOfBirth
+        //                     : `not provided`
+        //                 )}
+        //               </p>
+        //               {/* Add more fields as needed */}
+        //             </div>
+        //           </div>
+        //         </div>
+        //       </div>
+        //       <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+        //         <button
+        //           onClick={closeViewModal}
+        //           className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
+        //         >
+        //           Close
+        //         </button>
+        //       </div>
+        //     </div>
+        //   </div>
+        // </div>
       )}
       {/* Edit Modal */}
-      {selectedRecord && isModalOpen && (
+      {selectedRecord && isEditModalOpen && (
         <EditModal
-          isModalOpen={isModalOpen}
+          isModalOpen={isEditModalOpen}
           data={selectedRecord}
-          handleCancel={handleCancel}
+          handleCancel={handelEditModalCancel}
           fetchData={fetchData}
         />
       )}
@@ -382,9 +420,9 @@ const ViewPersonsList = () => {
                     </h3>
                     <div className="mt-2">
                       <p className="text-gray-500 text-sm">
-                        {selectedRecord.selectedRecord
-                          ? `Are you sure you want to remove from Famous Personality`
-                          : ` Are you sure you want to add this user as Famous Personality`}
+                        {selectedRecord?.isProminentFigure
+                          ? `Are you sure you want to remove this person from Famous Personality`
+                          : `Are you sure you want to add this person as Famous Personality`}
                       </p>
                     </div>
                   </div>
@@ -392,10 +430,14 @@ const ViewPersonsList = () => {
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
+                  disabled={loadingButton}
                   onClick={handleFmousPersonality}
-                  className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm"
+                  className={`inline-flex w-full justify-center items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm ${
+                    loadingButton ? "cursor-not-allowed" : ""
+                  }`}
                 >
-                  Yes
+                  <span> Yes</span>
+                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
                 </button>
                 <button
                   onClick={closePublicFigureModal}
