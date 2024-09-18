@@ -15,7 +15,7 @@ const ViewPersonsList = () => {
     setSelectedRecord(item);
     setEditModalOpen(true);
   };
-  
+
   const handelEditModalCancel = () => {
     setEditModalOpen(false);
     setSelectedRecord(null);
@@ -102,8 +102,8 @@ const ViewPersonsList = () => {
 
   const filteredUsers = personList.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
-);
-// Get the current page's users
+  );
+  // Get the current page's users
   const indexOfLastUser = currentPage * recordsPerPage;
   const indexOfFirstUser = indexOfLastUser - recordsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -180,7 +180,7 @@ const ViewPersonsList = () => {
             <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="px-4 py-4 font-medium text-black dark:text-white">
+                  <th className="px-4 py-4 text-left font-medium text-black dark:text-white xl:pl-11">
                     Index
                   </th>
                   <th className="min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
@@ -198,7 +198,7 @@ const ViewPersonsList = () => {
               <tbody>
                 {currentUsers.map((item, key) => (
                   <tr key={key}>
-                    <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                    <td className="  border-b border-[#eee] px-4 py-5 dark:border-strokedark  xl:pl-11">
                       <p className="text-black dark:text-white">
                         {key + 1 + recordsPerPage * (currentPage - 1)}
                       </p>
@@ -436,8 +436,12 @@ const ViewPersonsList = () => {
                     loadingButton ? "cursor-not-allowed" : ""
                   }`}
                 >
-                  <span> Yes</span>
-                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
+                  <div className=" flex justify-center items-center">
+                    <span> Yes</span>
+                    {loadingButton && (
+                      <FaSpinner className="animate-spin ml-2" />
+                    )}
+                  </div>
                 </button>
                 <button
                   onClick={closePublicFigureModal}

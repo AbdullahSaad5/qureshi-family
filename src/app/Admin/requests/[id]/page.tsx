@@ -10,6 +10,7 @@ import Header from "../../../components/LandingPage/Header";
 import Footer from "../../../components/LandingPage/Footer";
 import toast from "react-hot-toast";
 import API from "../../../axios";
+import Loader from "../../components/common/Loader";
 import { useRouter } from "next/navigation";
 // Define the Member interface
 interface Member {
@@ -127,7 +128,12 @@ export default function PublicFigureTree() {
     }) || [];
   console.log(modifiedData);
 
-  if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
+  if (!modifiedData || !modifiedData?.length)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   return (
     <>

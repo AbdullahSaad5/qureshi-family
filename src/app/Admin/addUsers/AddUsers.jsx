@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { FaSpinner } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import API from "../../axios";
 import { toast } from "react-hot-toast";
@@ -24,6 +25,7 @@ function Signup() {
     confirmPassword: true,
   });
   const router = useRouter();
+  const [loadingButton, setLoadingButton] = useState(false);
 
   // const [errors, setErrors] = useState({});
 
@@ -78,6 +80,7 @@ function Signup() {
 
   const handleSignup = async (data) => {
     try {
+      setLoadingButton(true);
       const res = await API.post("/createUser/add", {
         fullName: data.fullName,
         contact: data.contact,
@@ -101,6 +104,8 @@ function Signup() {
           error.response?.message || "An error occurred. Please try again."
         }`
       );
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -353,10 +358,18 @@ function Signup() {
               {/* Submit Button */}
               <div className="col-span-2">
                 <button
+                  disabled={loadingButton}
                   type="submit"
-                  className="focus:ring-primary-300 dark:hover:bg-primary-700 dark:focus:ring-primary-800 w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-4 dark:bg-primary"
+                  className={`focus:ring-primary-300 dark:hover:bg-primary-700 dark:focus:ring-primary-800 w-full rounded-lg bg-blue-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-500 focus:outline-none focus:ring-4 dark:bg-primary  ${
+                    loadingButton && "cursor-not-allowed"
+                  }`}
                 >
-                  Create Account
+                  <div className=" flex justify-center items-center">
+                    <span> Create Account</span>
+                    {loadingButton && (
+                      <FaSpinner className="animate-spin ml-2" />
+                    )}
+                  </div>
                 </button>
               </div>
             </form>

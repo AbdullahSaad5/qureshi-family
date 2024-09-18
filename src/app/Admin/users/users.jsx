@@ -203,7 +203,7 @@ const Users = () => {
               <tbody>
                 {currentUsers.map((item, key) => (
                   <tr key={key}>
-                    <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                    <td className=" flex justify-center text-center items-center border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                       <p className="text-black dark:text-white">
                         {key + 1 + recordsPerPage * (currentPage - 1)}
                       </p>
@@ -222,7 +222,7 @@ const Users = () => {
                     </td>
                     <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                       <p className="text-black dark:text-white">
-                        {item?.status}
+                        {item?.status === "active" ? `Active` : `Block`}
                       </p>
                     </td>
 
@@ -310,7 +310,7 @@ const Users = () => {
               {selectedRecord?.contact}
             </Descriptions.Item>
             <Descriptions.Item label="Role">
-              {selectedRecord?.role || "Admin"}
+              {selectedRecord?.isAdmin ? `Admin` : `User`}
             </Descriptions.Item>
             <Descriptions.Item label="Date of Joining">
               {selectedRecord?.date_time
@@ -378,7 +378,7 @@ const Users = () => {
           </div>
         </div>
       )}
-      {/* Update user Status  */}
+      {/* Update user Status Active Blocke  */}
       {isupdateUserStatusMoldalOpen && selectedRecord && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
@@ -417,7 +417,7 @@ const Users = () => {
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   onClick={handleUpdateUserStatus}
-                  className={`inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
+                  className={`inline-flex w-full justify-center items-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
                     loadingButton ? "cursor-not-allowed" : ""
                   }`}
                   disabled={loadingButton}
@@ -438,17 +438,14 @@ const Users = () => {
       )}
       {/* Eidit User Details */}
 
-      {
-        isEditModalOpen && selectedRecord && (
-          <EditUserModal
+      {isEditModalOpen && selectedRecord && (
+        <EditUserModal
           isModalOpen={isEditModalOpen}
           data={selectedRecord}
           handleCancel={closeEditModal}
           fetchData={fetchData}
-          />
-
-        )
-      }
+        />
+      )}
     </div>
   );
 };
