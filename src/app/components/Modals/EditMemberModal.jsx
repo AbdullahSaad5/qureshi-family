@@ -157,7 +157,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
             <button
               disabled={loadingButton}
               type="submit"
-              className={` inline-flex w-full justify-center bg-[#7457dd] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#8e54d1] ${
+              className={` inline-flex w-full justify-center items-center bg-[#7457dd] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#8e54d1] ${
                 loadingButton ? "cursor-not-allowed" : ""
               }`}
             >

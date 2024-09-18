@@ -2,6 +2,7 @@
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { FaSpinner } from "react-icons/fa";
 import API from "../../axios";
 import { useForm } from "react-hook-form";
 function UpdatePassword({ userId }) {
@@ -15,7 +16,6 @@ function UpdatePassword({ userId }) {
     mode: "onChange",
   });
   const newPassword = watch("newPassword");
-  const password = watch("password");
   // const [userData, setUserData] = useState({
   //   oldPassword: "",
   //   newPassword: "",
@@ -26,6 +26,7 @@ function UpdatePassword({ userId }) {
     newPassword: false,
     reEnterPassword: false,
   });
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const togglePasswordVisibility = (pass) => {
     // setShowPassword(!showPassword[pass]);
@@ -38,6 +39,7 @@ function UpdatePassword({ userId }) {
   const handleUpdatePassword = async (data) => {
     console.log(`userId : ${userId}, data: ${data.newPassword}`);
     try {
+      setLoadingButton(true);
       const res = await API.post("/update_password", {
         userId,
         ...data,
@@ -55,6 +57,8 @@ function UpdatePassword({ userId }) {
           "An error occurred. Please try again."
         }`
       );
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -113,7 +117,6 @@ function UpdatePassword({ userId }) {
               </label>
               <div className="relative">
                 <input
-                  watch
                   type={showPassword.newPassword ? "text" : "password"}
                   {...register("newPassword", {
                     required: "New Password is required",
@@ -123,6 +126,9 @@ function UpdatePassword({ userId }) {
                       message:
                         "Must contain 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character",
                     },
+                    validate: (value) =>
+                      value !== watch("oldPassword") ||
+                      "New password cannot be the same as the old password",
                   })}
                   placeholder="Enter New Password"
                   className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -190,10 +196,16 @@ function UpdatePassword({ userId }) {
               Cancel
             </button>
             <button
-              className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
+              disabled={loadingButton}
+              className={`flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90  ${
+                loadingButton ? "cursor-not-allowed" : ""
+              }`}
               type="submit"
             >
-              Update
+              <div className="flex justify-center items-center">
+                <span> Update</span>
+                {loadingButton && <FaSpinner className="animate-spin ml-2" />}
+              </div>
             </button>
           </div>
         </form>
