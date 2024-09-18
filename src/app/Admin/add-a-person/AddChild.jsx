@@ -4,6 +4,7 @@
 const Genogram = dynamic(() => import("./Geogram.jsx"), { ssr: false });
 import dynamic from "next/dynamic";
 import "./genogram.css";
+import Loader from "../components/common/Loader";
 import { useForm } from "react-hook-form";
 import Modal1 from "../../components/Modals/Modal1.jsx";
 import Modal2 from "../../components/Modals/Modal2.jsx";
@@ -69,7 +70,12 @@ const App = () => {
     }) || [];
   console.log(modifiedData);
 
-  if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
+  if (!modifiedData || !modifiedData?.length)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   return (
     <>
