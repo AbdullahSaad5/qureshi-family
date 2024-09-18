@@ -170,7 +170,7 @@ const EditProfile = () => {
                     })}
                   />
                   {errors.name && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-rose-500 text-sm">
                       {errors.name.message}
                     </p>
                   )}
@@ -203,7 +203,7 @@ const EditProfile = () => {
                     })}
                   />
                   {errors.contact && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-rose-500 text-sm">
                       {errors.contact.message}
                     </p>
                   )}
@@ -290,7 +290,7 @@ const EditProfile = () => {
                     </div>
                   </div>
                   {errors.password && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-rose-500 text-sm">
                       {errors.password.message}
                     </p>
                   )}
@@ -327,7 +327,7 @@ const EditProfile = () => {
                     </div>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-rose-500 text-sm">
                       {errors.confirmPassword.message}
                     </p>
                   )}

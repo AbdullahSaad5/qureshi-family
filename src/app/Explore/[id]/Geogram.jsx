@@ -11,9 +11,9 @@ import { FaMinus } from "react-icons/fa";
 import { BiFullscreen } from "react-icons/bi";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
-import Modal4 from "../components/Modals/Modal4";
-import male from "../_assets/male.png";
-import female from "../_assets/female.png";
+import Modal4 from "../../components/Modals/Modal4";
+// import male from "../_assets/male.png";
+// import female from "../_assets/female.png";
 
 let genoData;
 
@@ -39,8 +39,8 @@ function initDiagram() {
     allowDragOut: false,
     allowLink: false,
     allowRelink: false,
-    minScale: 0.3,
-    maxScale: 2.0,
+    minScale: 0.4,
+    maxScale: 1,
 
     click: (e) => {
       const part = e.diagram.findPartAt(e.documentPoint, true);
@@ -718,7 +718,7 @@ GenogramLayout.prototype.extendCohort = function (coll, node) {
   if (coll.has(node)) return;
   coll.add(node);
   let lay = this;
-  node?.linksConnected.each(function (l) {
+  node.linksConnected.each(function (l) {
     if (l.isLabeledLink) {
       // if it's a marriage link, continue with both spouses
       lay.extendCohort(coll, l.fromNode);

@@ -1,10 +1,8 @@
 "use client";
 
-
-const Genogram = dynamic(() => import("../../Expand/Geogram"), { ssr: false });
-
+const Genogram = dynamic(() => import("./Geogram"), { ssr: false });
 import dynamic from "next/dynamic";
-import "@/app/Expand/genogram.css";
+import "./genogram.css";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Header from "../../components/LandingPage/Header";
@@ -20,7 +18,9 @@ export default function PublicFigureTree() {
     if (id) {
       console.log(id);
       const fetchData = async () => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTreeById/${id}`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTreeById/${id}`
+        );
         const result = await response.json();
 
         setData(result);
@@ -63,16 +63,13 @@ export default function PublicFigureTree() {
   if (!modifiedData || !modifiedData?.length) return <div>Loading...</div>;
 
   return (
-    <>
-      <>
-        <Header />
+    <div className=" h-full min-h-[calc(170vh-112px)] flex-col flex items-stretch justify-stretch">
+      <Header />
 
-        <div className="genogram">
-          <Genogram Genogram={modifiedData} />
-        </div>
-
-        <Footer />
-      </>
-    </>
+      <div className="genogram mt-10">
+        <Genogram Genogram={modifiedData} />
+      </div>
+      <Footer />
+    </div>
   );
 }

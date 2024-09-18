@@ -54,18 +54,18 @@ function Search() {
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
       const result = await response.json();
-      console.log("Search result:", result);
-
-      setPersons(result); // Store API response in state
+      console.log(result.message);
+      if (result.message === "No persons found matching the criteria.") {
+        toast.error("No persons found");
+        setPersons([]);
+        return;
+      }
+      setPersons(result);
     } catch (error) {
       console.error("Error:", error);
     } finally {
-      setLoading(false); // Set loading to false after fetching data
+      setLoading(false);
     }
   };
 

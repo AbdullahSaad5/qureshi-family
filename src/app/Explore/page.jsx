@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 export default function Explore() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0); 
-  const [pageSize, setPageSize] = useState(10); 
+  const [totalItems, setTotalItems] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   const router = useRouter();
 
@@ -56,10 +56,10 @@ export default function Explore() {
               <thead className="bg-[#82D026] text-black ">
                 <tr>
                   <th className="p-3 border-2 border-[#EEEEEE] text-center">
-                    id
+                    ID
                   </th>
                   <th className="p-3 border-2 border-[#EEEEEE] text-center">
-                    Name
+                    Member Name
                   </th>
                   <th className="p-3 text-center">Description</th>
                 </tr>
@@ -101,6 +101,7 @@ export default function Explore() {
           {/* Pagination Component */}
           <div className="mt-12 mb-8">
             <Pagination
+              className=""
               current={currentPage}
               total={totalItems}
               pageSize={pageSize}
