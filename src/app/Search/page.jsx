@@ -186,17 +186,17 @@ function Search() {
 
       {/* Table to display the results */}
       {persons.length > 0 && (
-        <div className="mt-6 p-4 max-w-4xl mx-auto">
+        <div className="mt-6 p-4 overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   #
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Biography
                 </th>
               </tr>
@@ -204,16 +204,16 @@ function Search() {
             <tbody className="bg-white divide-y divide-gray-200">
               {persons.map((person, index) => (
                 <tr key={person._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {index + 1}
                   </td>
                   <td
                     onClick={() => router.push(`/Explore/${person._id}`)}
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 cursor-pointer"
+                    className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 cursor-pointer"
                   >
                     {person.name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {person.biography || ""}
                   </td>
                 </tr>
