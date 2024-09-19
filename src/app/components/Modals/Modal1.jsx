@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaSpinner } from "react-icons/fa";
 import { Button, Modal } from "antd";
 import { CollapseProps } from "antd";
 import { Collapse } from "antd";
@@ -29,6 +30,7 @@ const Modal1 = ({
   const [showAddSpouseButton, setShowAddSpouseButton] = useState(false);
   const [selctedWife, setSelectedWife] = useState("");
   const [selctedFather, setSelectedFather] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const {
     register,
@@ -56,6 +58,8 @@ const Modal1 = ({
     console.log("Form submission");
     console.log(formData);
     try {
+      setLoadingButton(true);
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/addChild`,
         formData
@@ -81,6 +85,8 @@ const Modal1 = ({
         setIsAddSpouseModalOpen(true);
         return;
       }
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -158,7 +164,7 @@ const Modal1 = ({
           setShowAddSpouseButton(true);
         } else {
           setShowAddSpouseButton(false);
-        
+
           setSpouseOptions(formattedOptions);
         }
 
@@ -597,10 +603,16 @@ const Modal1 = ({
           <div className="col-span-12  text-center mt-6">
             <button
               type="submit"
+              disabledloadingButton
               disabled={showAddSpouseButton}
-              className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
+              className={`bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d] ${
+                loadingButton && "cursor-not-allowed"
+              }`}
             >
-              Add Member
+              <div className=" flex justify-center items-center">
+                <span> Add Member</span>
+                {loadingButton && <FaSpinner className="animate-spin ml-2" />}
+              </div>
             </button>
           </div>
         </form>

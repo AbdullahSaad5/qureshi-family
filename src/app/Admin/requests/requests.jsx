@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { ImCheckmark2 } from "react-icons/im";
 import Loader from "../components/common/Loader/index";
 import { useRouter } from "next/navigation";
+import Pagination from "../components/Paggination/Paggination";
+
 const Requests = () => {
   const router = useRouter();
   const [data, setData] = useState();
@@ -65,7 +67,32 @@ const Requests = () => {
       day: "numeric",
     });
   };
-
+  // Paggination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState("");
+  // Filter users based on search term
+  const filteredUsers = data?.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  // Get the current page's users
+  const indexOfLastUser = currentPage * recordsPerPage;
+  const indexOfFirstUser = indexOfLastUser - recordsPerPage;
+  const currentUsers = filteredUsers?.slice(indexOfFirstUser, indexOfLastUser);
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredUsers?.length / recordsPerPage);
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // Handle the change in select for recordPerpage
+  const handleRecordsChange = (event) => {
+    setRecordsPerPage(parseInt(event.target.value));
+    setCurrentPage(1);
+  };
+  // Handle search
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to first page when a new search is done
+  };
   useEffect(() => {
     fetchData();
   }, []);
@@ -107,6 +134,17 @@ const Requests = () => {
         <Loader />
       ) : (
         <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+          <div className="grid grid-cols-6">
+            <div className="col-span-6">
+              <input
+                type="text"
+                placeholder="Search users by name"
+                value={searchTerm}
+                onChange={handleSearch}
+                className="mb-2 w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+              />
+            </div>
+          </div>
           <div className="max-w-full overflow-x-auto">
             <table className="w-full table-auto">
               <thead>
@@ -126,7 +164,7 @@ const Requests = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((packageItem, key) => (
+                {currentUsers.map((packageItem, key) => (
                   <tr key={key}>
                     <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">
@@ -196,6 +234,16 @@ const Requests = () => {
                 ))}
               </tbody>
             </table>
+            {/* Pagination Buttons */}
+            <Pagination
+              totalPages={totalPages}
+              usersPerPage={recordsPerPage}
+              totalUsers={filteredUsers.length}
+              paginate={paginate}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              handleRecordsChange={handleRecordsChange}
+            />
           </div>
         </div>
       )}

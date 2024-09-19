@@ -1,5 +1,6 @@
 "use client";
 import UpdatePassword from "./UpdatePassword";
+import { FaSpinner } from "react-icons/fa";
 import Breadcrumb from "../components/BreadCrumbs/Breadcrumbs";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
@@ -39,6 +40,7 @@ const Settings = () => {
     aboutYou: "",
     profilePicture: "",
   });
+  const [loadingButton, setLoadingButton] = useState(false);
   // const validateForm = () => {
   //   let errors = {};
   //   const phoneRegex = /^\+\d{12}$/;
@@ -82,6 +84,7 @@ const Settings = () => {
   // Handle form submission (save to local storage)
   const handleSubmitUpdate = async (data) => {
     try {
+      setLoadingButton(true);
       const response = await API.patch(`/createUser/update/${userData._id}`, {
         fullName: data.fullName,
         aboutYou: data.aboutYou,
@@ -98,6 +101,8 @@ const Settings = () => {
       toast.error(
         error.response?.data?.message || "Error updating user information"
       );
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -247,7 +252,8 @@ const Settings = () => {
                         </svg>
                       </span>
                       <input
-                        className="w-full rounded border border-stroke bg-gray-3 py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        disabled={true}
+                        className="w-full rounded border border-stroke bg-gray py-3 pl-11.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                         type="email"
                         name="email"
                         // value={userData.email}
@@ -281,7 +287,7 @@ const Settings = () => {
                       className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                       type="text"
                       name="designation"
-                      value={"admin"}
+                      value={userData?.isAdmin ? `Admin` : `User`}
                       required
                       id="designation"
                       placeholder="designation"
@@ -362,10 +368,18 @@ const Settings = () => {
 
                   <div className="flex justify-end gap-4.5">
                     <button
-                      className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
+                      disabled={loadingButton}
+                      className={`flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90  ${
+                        loadingButton ? "cursor-not-allowed" : ""
+                      }`}
                       type="submit"
                     >
-                      Update
+                      <div className="flex justify-center items-center">
+                        <span> Update</span>
+                        {loadingButton && (
+                          <FaSpinner className="animate-spin ml-2" />
+                        )}
+                      </div>
                     </button>
                   </div>
                 </form>

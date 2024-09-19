@@ -1,5 +1,5 @@
 "use client";
-
+import { FaSpinner } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Modal } from "antd";
@@ -23,7 +23,7 @@ const Modal2 = ({
   } = useForm({
     mode: "onChange", // Validate on change
   });
-
+  const [loadingButton, setLoadingButton] = useState(false);
   // Function to handle form submission
   const onSubmitSpouse = async (data) => {
     console.log("Form Submitted:", data);
@@ -34,6 +34,7 @@ const Modal2 = ({
     setValue("personId", slectedFatherID);
 
     try {
+      setLoadingButton(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/addSpouse`,
         {
@@ -61,6 +62,8 @@ const Modal2 = ({
     } catch (error) {
       console.error("Error adding spouse:", error);
       toast.error("An error occurred while adding the spouse.");
+    } finally {
+      setLoadingButton(false);
     }
   };
 
@@ -173,7 +176,10 @@ const Modal2 = ({
               type="submit"
               className="bg-[#82D026] text-white font-semibold py-2 px-4 rounded-lg hover:bg-[#79b41d]"
             >
-              Add Spouse
+              <div className=" flex justify-center items-center">
+                <span> Add Spouse</span>
+                {loadingButton && <FaSpinner className="animate-spin ml-2" />}
+              </div>
             </button>
           </div>
         </form>
