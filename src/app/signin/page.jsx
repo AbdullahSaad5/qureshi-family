@@ -18,7 +18,7 @@ function Login() {
   const [loadingButton, setLoadingButton] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const { verifyUser } = useAuth();
+  const { verifyUser, setIsAdmin } = useAuth();
 
   const {
     register,
@@ -50,10 +50,16 @@ function Login() {
         localStorage.setItem("fullName", response.data.data.fullName);
       typeof window !== "undefined" &&
         localStorage.setItem("userToken", JSON.stringify(response.data.data));
+      typeof window !== "undefined" &&
+        localStorage.setItem(
+          "isAdmin",
+          JSON.stringify(response.data.data.isAdmin)
+        );
       toast.success(response.data.message);
       verifyUser();
       if (response.data.data.isAdmin === true) {
         router.push("/Admin");
+        setIsAdmin(true);
       } else {
         router.push("/Explore");
       }

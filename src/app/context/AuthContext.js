@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userVerified, setUserVerified] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const verifyUser = () => {
     setUserVerified(true);
@@ -23,11 +24,25 @@ export const AuthProvider = ({ children }) => {
     } else {
       setUserVerified(false);
     }
+    const admin =
+      typeof window !== "undefined" && localStorage.getItem("isAdmin");
+    console.log("admin inside use effect");
+    console.log(admin);
+    if (admin) {
+      setIsAdmin(true);
+    }
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ userVerified, verifyUser, logoutUser, setUserVerified }}
+      value={{
+        userVerified,
+        verifyUser,
+        logoutUser,
+        setUserVerified,
+        isAdmin,
+        setIsAdmin,
+      }}
     >
       {children}
     </AuthContext.Provider>

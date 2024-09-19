@@ -13,7 +13,7 @@ function Header() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { userVerified, logoutUser } = useAuth();
+  const { userVerified, isAdmin } = useAuth();
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -26,6 +26,11 @@ function Header() {
     setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+    console.log("Is admin inside use effect");
+    console.log(isAdmin);
+  });
+
   return (
     <div className="p-5 w-full bg-[#FFFFFF] flex flex-row justify-between items-center px-6 lg:px-10 relative shadow-md">
       <div
@@ -33,14 +38,6 @@ function Header() {
         className="flex items-center gap-2 cursor-pointer"
       >
         <Image src={logo} alt="logo" width={80} height={80} />
-        {/* <div className="flex flex-col gap-1">
-          <h1 className="text-[#82D026] text-2xl md:text-xl lg:text-2xl font-semibold">
-            Shajra e
-          </h1>
-          <h3 className="text-[#000000] text-xl md:text-lg lg:text-xl text-center font-semibold">
-            Nasb
-          </h3>
-        </div> */}
       </div>
 
       <div
@@ -75,7 +72,7 @@ function Header() {
           >
             About Us
           </div>
-          {userVerified && (
+          {isAdmin && (
             <div
               onClick={() => handleNavigation("/Admin")}
               className="text-[#000000] text-xl md:text-lg lg:text-xl font-semibold cursor-pointer"

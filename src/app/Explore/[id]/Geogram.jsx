@@ -11,7 +11,7 @@ import { FaMinus } from "react-icons/fa";
 import { BiFullscreen } from "react-icons/bi";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
-import Modal4 from "../../components/Modals/Modal4";
+import Modal4 from "../../components/Modals/Modal5";
 // import male from "../_assets/male.png";
 // import female from "../_assets/female.png";
 

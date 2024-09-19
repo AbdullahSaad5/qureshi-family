@@ -11,9 +11,12 @@ import Modal3 from "../components/Modals/Modal3.jsx";
 import Header from "../components/LandingPage/Header.jsx";
 import Footer from "../components/LandingPage/Footer.jsx";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const App = () => {
   const [data, setData] = useState([]);
+  const { userVerified } = useAuth();
+
   const [reFetchtree, setReFetchtree] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddSpouseButtonClick, setIsAddSpouseButtonClick] = useState(false);
@@ -77,48 +80,56 @@ const App = () => {
   return (
     <div className=" h-full min-h-[calc(170vh-112px)] flex-col flex items-stretch justify-stretch">
       <Header />
-      <div>
-        <div className="w-full flex justify-end py-4">
-          <button
-            onClick={() => setIsAddSpouseButtonClick(true)}
-            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
-          >
-            Add Spouse
-          </button>
+      {userVerified ? (
+        <>
+          <div>
+            <div className="w-full flex justify-end py-4">
+              <button
+                onClick={() => setIsAddSpouseButtonClick(true)}
+                className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+              >
+                Add Spouse
+              </button>
 
-          <button
-            onClick={showModal}
-            className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
-          >
-            Add Member
-          </button>
+              <button
+                onClick={showModal}
+                className="mr-5 text-white bg-[#82D026] font-semibold py-2 px-4 rounded-lg hover:bg-[#76bb22] transition-colors duration-300 ease-in-out"
+              >
+                Add Member
+              </button>
+            </div>
+          </div>
+          <Modal1
+            isModalOpen={isModalOpen}
+            handleCancel={handleCancel}
+            setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
+            setSelectedFatherID={setSelectedFatherID}
+            setReFetchtree={setReFetchtree}
+            reFetchtree={reFetchtree}
+          />
+          <Modal2
+            isAddSpouseModalOpen={isAddSpouseModalOpen}
+            setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
+            slectedFatherID={slectedFatherID}
+            setReFetchtree={setReFetchtree}
+            reFetchtree={reFetchtree}
+          />
+          <Modal3
+            isAddSpouseButtonClick={isAddSpouseButtonClick}
+            setIsAddSpouseButtonClick={setIsAddSpouseButtonClick}
+            setReFetchtree={setReFetchtree}
+            reFetchtree={reFetchtree}
+          />
+
+          <div className="genogram">
+            <Genogram Genogram={modifiedData} />
+          </div>
+        </>
+      ) : (
+        <div className="p-10 flex justify-center font-semibold">
+          Please login to access the Family tree graph
         </div>
-      </div>
-      <Modal1
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
-        setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
-        setSelectedFatherID={setSelectedFatherID}
-        setReFetchtree={setReFetchtree}
-        reFetchtree={reFetchtree}
-      />
-      <Modal2
-        isAddSpouseModalOpen={isAddSpouseModalOpen}
-        setIsAddSpouseModalOpen={setIsAddSpouseModalOpen}
-        slectedFatherID={slectedFatherID}
-        setReFetchtree={setReFetchtree}
-        reFetchtree={reFetchtree}
-      />
-      <Modal3
-        isAddSpouseButtonClick={isAddSpouseButtonClick}
-        setIsAddSpouseButtonClick={setIsAddSpouseButtonClick}
-        setReFetchtree={setReFetchtree}
-        reFetchtree={reFetchtree}
-      />
-
-      <div className="genogram">
-        <Genogram Genogram={modifiedData} />
-      </div>
+      )}
       <Footer />
     </div>
   );

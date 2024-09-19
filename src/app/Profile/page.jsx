@@ -10,7 +10,7 @@ import { useAuth } from "../context/AuthContext";
 
 function Profile() {
   const router = useRouter();
-  const { setUserVerified } = useAuth();
+  const { setUserVerified, setIsAdmin } = useAuth();
 
   const [fullName, setFullName] = useState("");
   const [email, setemail] = useState("");
@@ -87,6 +87,8 @@ function Profile() {
                 localStorage.removeItem("contact");
                 localStorage.removeItem("userId");
                 localStorage.removeItem("userToken");
+                localStorage.removeItem("isAdmin");
+                setIsAdmin(false);
                 setUserVerified(false);
                 router.push("/signin");
               }}
