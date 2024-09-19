@@ -55,6 +55,13 @@ const EditProfile = () => {
         }
       );
       toast.success("Info Updated Sucessfully");
+      console.log(response.data);
+      typeof window !== "undefined" &&
+        localStorage.setItem("contact", response.data.user.contact);
+      typeof window !== "undefined" &&
+        localStorage.setItem("fullName", response.data.user.fullName);
+      typeof window !== "undefined" &&
+        localStorage.setItem("userToken", JSON.stringify(response.data.user));
       router.push("/Profile");
     } catch (error) {
       console.error("Error details:", error);
@@ -81,6 +88,7 @@ const EditProfile = () => {
           newPassword: data.password,
         }
       );
+
       toast.success("Password updated Sucessfully");
       router.push("/Profile");
     } catch (error) {
@@ -106,7 +114,7 @@ const EditProfile = () => {
       setValue("contact", contact);
       setValue("name", username);
     }
-  });
+  },[]);
   return (
     <>
       <Header />
@@ -175,22 +183,7 @@ const EditProfile = () => {
                     </p>
                   )}
                 </div>
-                {/* Email Input */}
-                {/* <div className="mb-4">
-                <label className="block mb-1 text-gray-700">Email</label>
-                <input
-                  type="email"
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter your email"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
-                  })}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
-              </div> */}
+
                 {/* Contact Input */}
                 <div className="mb-4">
                   <label className="block mb-1 text-gray-700">Contact</label>
