@@ -94,6 +94,8 @@ const Settings = () => {
 
       if (response.status === 200) {
         localStorage.setItem("userToken", JSON.stringify(response.data.data));
+        localStorage.setItem("fullName", response.data.data.fullName);
+        localStorage.setItem("contact", response.data.data.contact);
         toast.success("User information updated successfully");
       }
     } catch (error) {

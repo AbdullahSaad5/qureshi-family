@@ -179,7 +179,7 @@ const Users = () => {
           </div>
 
           <div className="max-w-full overflow-x-auto">
-            <table className="w-full table-auto">
+            <table className=" min-w-[600px] w-full table-auto">
               <thead>
                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                   <th className="px-4 py-4 text-left font-medium text-black dark:text-white xl:pl-11">
@@ -417,12 +417,22 @@ const Users = () => {
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   onClick={handleUpdateUserStatus}
-                  className={`inline-flex w-full justify-center items-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
+                  className={`inline-flex w-full justify-center items-center rounded-md border border-transparent ${
+                    selectedRecord?.status === "active"
+                      ? ` bg-red`
+                      : `bg-blue-500`
+                  }  px-4 py-2 text-base font-medium text-white shadow-sm ${
+                    selectedRecord?.status === "active"
+                      ? `hover:bg-red`
+                      : `hover:bg-blue-700`
+                  } hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
                     loadingButton ? "cursor-not-allowed" : ""
                   }`}
                   disabled={loadingButton}
                 >
-                  <span>Update User</span>
+                  <span>
+                    {selectedRecord?.status === "active" ? ` Block` : `Active`}
+                  </span>
                   {loadingButton && <FaSpinner className="animate-spin ml-2" />}
                 </button>
                 <button
