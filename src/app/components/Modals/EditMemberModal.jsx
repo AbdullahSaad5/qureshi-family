@@ -95,7 +95,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               placeholder="Name"
             />
             {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+              <p className="text-red text-sm">{errors.name.message}</p>
             )}
           </div>
           {/* Tribe */}
@@ -114,7 +114,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               placeholder="Tribe"
             />
             {errors.tribe && (
-              <p className="text-red-500 text-sm">{errors.tribe.message}</p>
+              <p className="text-red text-sm">{errors.tribe.message}</p>
             )}
           </div>
           {/* Address */}
@@ -133,7 +133,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               placeholder="Address"
             />
             {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address.message}</p>
+              <p className="text-red text-sm">{errors.address.message}</p>
             )}
           </div>
           {/* About Input */}

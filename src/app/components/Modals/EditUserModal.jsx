@@ -103,7 +103,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               <option value="blocked">Block</option>
             </select>
             {errors.status && (
-              <p className="text-red-500 text-sm">{errors.status.message}</p>
+              <p className="text-red text-sm">{errors.status.message}</p>
             )}
           </div>
           {/* Admin Select */}
@@ -131,7 +131,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               <option value="false">No</option>
             </select>
             {errors.isAdmin && (
-              <p className="text-red-500 text-sm">{errors.isAdmin.message}</p>
+              <p className="text-red text-sm">{errors.isAdmin.message}</p>
             )}
           </div>
           {/* fullName */}
@@ -160,7 +160,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               placeholder="Name"
             />
             {errors.fullName && (
-              <p className="text-red-500 text-sm">{errors.fullName.message}</p>
+              <p className="text-red text-sm">{errors.fullName.message}</p>
             )}
           </div>
           {/* Contact */}
@@ -186,7 +186,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               placeholder="+-- --- ------- "
             />
             {errors.contact && (
-              <p className="text-red-500 text-sm">{errors.contact.message}</p>
+              <p className="text-red text-sm">{errors.contact.message}</p>
             )}
           </div>
           {/* Email */}
@@ -212,7 +212,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
               placeholder="Address"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
+              <p className="text-red text-sm">{errors.email.message}</p>
             )}
           </div>
 
