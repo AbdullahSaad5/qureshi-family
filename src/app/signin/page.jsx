@@ -64,6 +64,12 @@ function Login() {
         router.push("/Explore");
       }
     } catch (error) {
+      console.log("Inside error");
+      console.log(error);
+      if (error.response.data.message === "Your profile is blocked") {
+        toast.error("Your profile is blocked");
+        return;
+      }
       if (error.response) {
         const message = error.response.data.message;
         toast.error(message);

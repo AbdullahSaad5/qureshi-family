@@ -87,6 +87,7 @@ function Signup() {
         email: data.email,
         password: data.password,
         aboutYou: data.aboutYou,
+        isAdmin: data.isAdmin ? "true" : "false",
       });
       console.log(`reponse ${res.data.status}`);
       if (res.data.status) {
@@ -322,6 +323,13 @@ function Signup() {
                     {errors.confirmPassword.message}
                   </p>
                 )}
+              </div>
+
+              <div className="col-span-2">
+                <label className="flex gap-2">
+                  <input type="checkbox" {...register("isAdmin")} />
+                  <div>Make Admin</div>
+                </label>
               </div>
 
               {/* About Input */}
