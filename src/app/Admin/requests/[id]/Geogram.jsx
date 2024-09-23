@@ -1007,7 +1007,7 @@ const Genogram = (props) => {
       </div>
       <div className="w-full min-h-screen  ">
         <ReactDiagram
-          className="w-full min-h-screen  z-999999"
+          className="w-full min-h-screen z-30"
           initDiagram={initDiagramWithModal}
           divClassName="diagram-component"
           onModelChange={handleModelChange}
