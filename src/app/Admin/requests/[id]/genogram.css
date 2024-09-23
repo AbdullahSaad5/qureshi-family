@@ -17,7 +17,7 @@
   border: solid 1px black;
   background-color: #ecf3f9;
   min-height: 100vh;
-  z-index: 999999;
+  z-index: 30;
 }
 
 .diagram-explain-component {
