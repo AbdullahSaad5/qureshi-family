@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
-import { Modal, Descriptions, Badge } from "antd";
+import { Modal, Descriptions, Badge, Button } from "antd";
 import EditUserModal from "@/app/components/Modals/EditUserModal";
 
 const Users = () => {
@@ -322,130 +322,57 @@ const Users = () => {
       )}
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && selectedRecord && (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
+        <Modal
+          title="Confirm Deletion"
+          open={isDeleteModalOpen}
+          onCancel={closeDeleteModal}
+          footer={[
+            <Button
+              key="submit"
+              style={{
+                backgroundColor: "#f44336",
+                color: "white",
+              }}
+              loading={loadingButton}
+              onClick={handleDelete}
             >
-              <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
-            </div>
-
-            <span
-              className="hidden sm:inline-block sm:h-screen sm:align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-
-            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <h3
-                      className="text-gray-900 text-lg font-medium leading-6"
-                      id="modal-title"
-                    >
-                      Confirm Deletion
-                    </h3>
-                    <div className="mt-2">
-                      <p className="text-gray-500 text-sm">
-                        Are you sure you want to remove this user?
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button
-                  disabled={loadingButton}
-                  onClick={handleDelete}
-                  className={`inline-flex w-full justify-center rounded-md border border-transparent bg-red px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
-                    loadingButton && "cursor-not-allowed"
-                  }`}
-                >
-                  <span> Yes, Remove</span>
-                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
-                </button>
-                <button
-                  onClick={closeDeleteModal}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+              Confirm
+            </Button>,
+          ]}
+        >
+          <p>Are you sure you want to delete this user?</p>
+        </Modal>
       )}
-      {/* Update user Status Active Blocke  */}
+      {/* Update user Status Active / Block  */}
       {isupdateUserStatusMoldalOpen && selectedRecord && (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
+        <Modal
+          title="Confirm Status Update"
+          open={isupdateUserStatusMoldalOpen}
+          onCancel={closeUserStatusUpdaedModal}
+          footer={[
+            <Button
+              key="submit"
+              style={{
+                backgroundColor: `${
+                  selectedRecord?.status === "active" ? "#f44336" : "#4caf50"
+                }`,
+                color: "white",
+              }}
+              loading={loadingButton}
+              onClick={handleUpdateUserStatus}
             >
-              <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
-            </div>
-
-            <span
-              className="hidden sm:inline-block sm:h-screen sm:align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-
-            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <h3
-                      className="text-gray-900 text-lg font-medium leading-6"
-                      id="modal-title"
-                    >
-                      Confirm Status Update
-                    </h3>
-                    <div className="mt-2">
-                      <p className="text-gray-500 text-sm">
-                        Are you sure you want to Updated this user status?
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button
-                  onClick={handleUpdateUserStatus}
-                  className={`inline-flex w-full justify-center items-center rounded-md border border-transparent ${
-                    selectedRecord?.status === "active"
-                      ? ` bg-red`
-                      : `bg-blue-500`
-                  }  px-4 py-2 text-base font-medium text-white shadow-sm ${
-                    selectedRecord?.status === "active"
-                      ? `hover:bg-red`
-                      : `hover:bg-blue-700`
-                  } hover:bg-red sm:ml-3 sm:w-auto sm:text-sm ${
-                    loadingButton ? "cursor-not-allowed" : ""
-                  }`}
-                  disabled={loadingButton}
-                >
-                  <span>
-                    {selectedRecord?.status === "active" ? ` Block` : `Active`}
-                  </span>
-                  {loadingButton && <FaSpinner className="animate-spin ml-2" />}
-                </button>
-                <button
-                  onClick={closeUserStatusUpdaedModal}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+              Confirm
+            </Button>,
+          ]}
+        >
+          <p>
+            {selectedRecord?.status === "active"
+              ? `Are you sure you want to block this user?`
+              : `Are you sure you want un-block this user?`}
+          </p>
+        </Modal>
       )}
+
       {/* Eidit User Details */}
 
       {isEditModalOpen && selectedRecord && (

@@ -8,7 +8,7 @@ import Loader from "../components/common/Loader/index";
 import { useEffect, useState } from "react";
 import Pagination from "../components/Paggination/Paggination";
 import EditModal from "../../components/Modals/EditMemberModal";
-import { Badge, Descriptions, Modal } from "antd";
+import { Badge, Button, Descriptions, Modal } from "antd";
 const ViewPersonsList = () => {
   const showEditModal = (item) => {
     console.log(`item data: ${JSON.stringify(item, null, 2)}`);
@@ -392,67 +392,32 @@ const ViewPersonsList = () => {
       )}
       {/* Add as Public Figure */}
       {isPublicFigureModalOpen && selectedRecord && (
-        <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              aria-hidden="true"
+        <Modal
+          title=" Update Famous Personality"
+          open={isPublicFigureModalOpen}
+          onCancel={closePublicFigureModal}
+          footer={[
+            <Button
+              key="submit"
+              style={{
+                backgroundColor: `${
+                  selectedRecord?.isProminentFigure ? "#f44336" : "#4caf50"
+                }`,
+                color: "white",
+              }}
+              loading={loadingButton}
+              onClick={handleFmousPersonality}
             >
-              <div className="bg-gray-500 absolute inset-0 opacity-75"></div>
-            </div>
-
-            <span
-              className="hidden sm:inline-block sm:h-screen sm:align-middle"
-              aria-hidden="true"
-            >
-              &#8203;
-            </span>
-
-            <div className="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                    <h3
-                      className="text-gray-900 text-lg font-medium leading-6"
-                      id="modal-title"
-                    >
-                      Update Famous Personality
-                    </h3>
-                    <div className="mt-2">
-                      <p className="text-gray-500 text-sm">
-                        {selectedRecord?.isProminentFigure
-                          ? `Are you sure you want to remove this person from Famous Personality`
-                          : `Are you sure you want to add this person as Famous Personality`}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button
-                  disabled={loadingButton}
-                  onClick={handleFmousPersonality}
-                  className={`inline-flex w-full justify-center items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-800 sm:ml-3 sm:w-auto sm:text-sm ${
-                    loadingButton ? "cursor-not-allowed" : ""
-                  }`}
-                >
-                  <div className=" flex justify-center items-center">
-                    <span> Yes</span>
-                    {loadingButton && (
-                      <FaSpinner className="animate-spin ml-2" />
-                    )}
-                  </div>
-                </button>
-                <button
-                  onClick={closePublicFigureModal}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50 mt-3 inline-flex w-full justify-center rounded-md border bg-white px-4 py-2 text-base font-medium shadow-sm sm:mt-0 sm:w-auto sm:text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+              Confirm
+            </Button>,
+          ]}
+        >
+          <p>
+            {selectedRecord?.isProminentFigure
+              ? `Are you sure you want to remove this person from Famous Personality`
+              : `Are you sure you want to add this person as Famous Personality`}
+          </p>
+        </Modal>
       )}
     </div>
   );
