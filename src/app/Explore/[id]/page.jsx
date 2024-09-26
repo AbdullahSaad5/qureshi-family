@@ -258,6 +258,10 @@ export default function PublicFigureTree() {
         <div className="junction-13"></div>
         <div className="junction-14"></div>
       </div>
+
+
+
+{/* 
       <div className="ancestor-chain">
   <h2 className="ancestor-title">Ancestor Chain</h2>
   {ancestorChain?.ancestorChain ? (
@@ -265,7 +269,34 @@ export default function PublicFigureTree() {
   ) : (
     <p>No ancestor chain data available.</p>
   )}
+</div> */}
+
+<div className="ancestor-chain">
+  <h2 className="ancestor-title">Ancestor Chain</h2>
+  {ancestorChain?.ancestorChain ? (
+    <p className="clickable-chain">
+      {ancestorChain.ancestorChain.split(" > ").map((ancestor, index) => (
+        <span key={index}>
+          <span
+            onClick={() => handleProfileClick(ancestor)}
+            className="clickable-name"
+          >
+            {ancestor}
+          </span>
+          {/* Add '>' only between the items, not after the last one */}
+          {index < ancestorChain.ancestorChain.split(" > ").length - 1 && (
+            <span className="separator"> &gt; </span>
+          )}
+        </span>
+      ))}
+    </p>
+  ) : (
+    <p>No ancestor chain data available.</p>
+  )}
 </div>
+
+
+
       <Footer />
     </div>
   );
