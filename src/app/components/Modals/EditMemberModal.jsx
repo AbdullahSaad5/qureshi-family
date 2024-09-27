@@ -35,7 +35,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
       tribe: data?.tribe,
       biography: data?.biography,
     });
-  }, []);
+  });
 
   const onSubmit = async (formData) => {
     setLoadingButton(true);
