@@ -41,6 +41,40 @@
     transition: text-decoration 0.3s; /* Smooth transition for the underline effect */
     border-bottom: 0.7px solid black;
   }
+
+
+
+
+  .ancestor-chain {
+    padding: 20px;
+  }
+  
+  .ancestor-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .ancestor-row, .current-person-row {
+    margin-bottom: 10px;
+  }
+  
+  .current-person-row {
+    font-weight: bold;
+  }
+  
+
+  
+  .separator {
+    margin: 0 5px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+
+
+
+
+
   
   /* Underline only on hover */
   .clickable-name:hover {

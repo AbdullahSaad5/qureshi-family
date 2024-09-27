@@ -261,40 +261,63 @@ export default function PublicFigureTree() {
 
 
 
-{/* 
       <div className="ancestor-chain">
   <h2 className="ancestor-title">Ancestor Chain</h2>
-  {ancestorChain?.ancestorChain ? (
-    <p>{ancestorChain.ancestorChain}</p>
-  ) : (
-    <p>No ancestor chain data available.</p>
-  )}
-</div> */}
 
-<div className="ancestor-chain">
-  <h2 className="ancestor-title">Ancestor Chain</h2>
-  {ancestorChain?.ancestorChain ? (
-    <p className="clickable-chain">
-      {ancestorChain.ancestorChain.split(" > ").map((ancestor, index) => (
-        <span key={index}>
-          <span
-            onClick={() => handleProfileClick(ancestor)}
-            className="clickable-name"
-          >
-            {ancestor}
-          </span>
-          {/* Add '>' only between the items, not after the last one */}
-          {index < ancestorChain.ancestorChain.split(" > ").length - 1 && (
-            <span className="separator"> &gt; </span>
-          )}
-        </span>
-      ))}
-    </p>
+  {ancestorChain?.ancestorChains ? (
+    <div>
+      {/* Father's Side Chain */}
+      <div className="ancestor-row">
+        <h3>Father Side</h3>
+        {ancestorChain.ancestorChains.fatherSide
+          .slice() // Create a shallow copy of the array to avoid mutating the original
+          .reverse() // Reverse the order for display
+          .map((ancestor, index) => (
+            <span key={ancestor.id}>
+              <span
+                onClick={() => handleProfileClick(ancestor.id)} // Pass the ancestor's ID when clicked
+                className="clickable-name"
+              >
+                {ancestor.name}
+              </span>
+              {/* Add "Son of" or "Daughter of" instead of '>' */}
+              {index < ancestorChain.ancestorChains.fatherSide.length - 1 && (
+                <span className="separator">
+                  {ancestor.gender === 'male' ? ' Son of ' : ' Daughter of '}
+                </span>
+              )}
+            </span>
+          ))}
+      </div>
+
+      {/* Mother's Side Chain */}
+      <div className="ancestor-row">
+        <h3>Mother Side</h3>
+        {ancestorChain.ancestorChains.motherSide
+          .slice() // Create a shallow copy of the array to avoid mutating the original
+          .reverse() // Reverse the order for display
+          .map((ancestor, index) => (
+            <span key={ancestor.id}>
+              <span
+                onClick={() => handleProfileClick(ancestor.id)} // Pass the ancestor's ID when clicked
+                className="clickable-name"
+              >
+                {ancestor.name}
+              </span>
+              {/* Add "Son of" or "Daughter of" instead of '>' */}
+              {index < ancestorChain.ancestorChains.motherSide.length - 1 && (
+                <span className="separator">
+                  {ancestor.gender === 'male' ? ' Son of ' : ' Daughter of '}
+                </span>
+              )}
+            </span>
+          ))}
+      </div>
+    </div>
   ) : (
     <p>No ancestor chain data available.</p>
   )}
 </div>
-
 
 
       <Footer />
