@@ -65,19 +65,19 @@ export default function PublicFigureTree() {
           </div>
         </div>
         <div className="child-2">
-          <div className="box-header">Father of Mother</div>
+          <div className="box-header">Mother of Father</div>
           <div
             className="box-name"
-            onClick={() => handleProfileClick(data.fatherOfMother?._id)}
+            onClick={() => handleProfileClick(data.motherOfFather?._id)}
           >
             {data.fatherOfMother?.name || "Unknown"}
           </div>
         </div>
         <div className="child-3">
-          <div className="box-header">Mother of Father</div>
+          <div className="box-header">Father of Mother</div>
           <div
             className="box-name"
-            onClick={() => handleProfileClick(data.motherOfFather?._id)}
+            onClick={() => handleProfileClick(data.fatherOfMother?._id)}
           >
             {data.motherOfFather?.name || "Unknown"}
           </div>
