@@ -51,7 +51,7 @@ const EditModal = ({ isModalOpen, handleCancel, data, fetchData }) => {
     });
     setValue("isAdmin", data.isAdmin);
     setValue("status", data.status);
-  }, []);
+  });
 
   const onSubmit = async (formData) => {
     setLoadingButton(true);
