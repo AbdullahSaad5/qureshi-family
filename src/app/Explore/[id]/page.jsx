@@ -268,7 +268,7 @@ export default function PublicFigureTree() {
     <div>
       {/* Father's Side Chain */}
       <div className="ancestor-row">
-        <h3>Father's Side</h3>
+        <h3>Father Side</h3>
         {ancestorChain.ancestorChains.fatherSide
           .slice() // Create a shallow copy of the array to avoid mutating the original
           .reverse() // Reverse the order for display
@@ -292,7 +292,7 @@ export default function PublicFigureTree() {
 
       {/* Mother's Side Chain */}
       <div className="ancestor-row">
-        <h3>Mother's Side</h3>
+        <h3>Mother Side</h3>
         {ancestorChain.ancestorChains.motherSide
           .slice() // Create a shallow copy of the array to avoid mutating the original
           .reverse() // Reverse the order for display
