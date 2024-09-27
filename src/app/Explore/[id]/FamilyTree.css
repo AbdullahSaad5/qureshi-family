@@ -29,7 +29,7 @@
     position: relative;
     border-radius: 13px;
     border: 2px solid #81d027;
-    padding: 10px 5px 5px 5px;
+    padding: 10px 0px 5px 0px;
     text-align: center;
     box-sizing: border-box; /* Include padding and border in width */
     width: 100%; /* Ensure full width of grid column */
@@ -39,6 +39,7 @@
   .clickable-name {
     cursor: pointer; /* Change cursor to pointer on hover */
     transition: text-decoration 0.3s; /* Smooth transition for the underline effect */
+    border-bottom: 0.7px solid black;
   }
   
   /* Underline only on hover */
@@ -63,7 +64,7 @@
     width: 100%;
     padding: 10px;
     font-size: 0.8vw;
-  
+
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
   }

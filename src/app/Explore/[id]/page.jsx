@@ -56,7 +56,7 @@ export default function PublicFigureTree() {
       <div className="grid">
         {/* Grandparents */}
         <div className="child-1">
-          <div className="box-header">Father's Father</div>
+          <div className="box-header">Father of Father</div>
           <div
             className="box-name"
             onClick={() => handleProfileClick(data.fatherOfFather?._id)}
@@ -65,7 +65,7 @@ export default function PublicFigureTree() {
           </div>
         </div>
         <div className="child-2">
-          <div className="box-header">Father's Mother</div>
+          <div className="box-header">Father of Mother</div>
           <div
             className="box-name"
             onClick={() => handleProfileClick(data.fatherOfMother?._id)}
@@ -74,7 +74,7 @@ export default function PublicFigureTree() {
           </div>
         </div>
         <div className="child-3">
-          <div className="box-header">Mother's Father</div>
+          <div className="box-header">Mother of Father</div>
           <div
             className="box-name"
             onClick={() => handleProfileClick(data.motherOfFather?._id)}
@@ -83,7 +83,7 @@ export default function PublicFigureTree() {
           </div>
         </div>
         <div className="child-4">
-          <div className="box-header">Mother's Mother</div>
+          <div className="box-header">Mother of Mother</div>
           <div
             className="box-name"
             onClick={() => handleProfileClick(data.motherOfMother?._id)}
@@ -112,7 +112,7 @@ export default function PublicFigureTree() {
         </div>
 
         <div className="child-7">
-          <div className="box-header">Father's Siblings</div>
+          <div className="box-header"> Siblings of Father</div>
           <div className="box-name">
             {data.fatherSiblings?.length > 0
               ? data.fatherSiblings.map((sibling) => (
@@ -129,7 +129,7 @@ export default function PublicFigureTree() {
         </div>
 
         <div className="child-8">
-          <div className="box-header">Mother's Siblings</div>
+          <div className="box-header"> Siblings  of Mother</div>
           <div className="box-name">
             {data.motherSiblings?.length > 0
               ? data.motherSiblings.map((sibling) => (
